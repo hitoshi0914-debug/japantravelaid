@@ -12,7 +12,7 @@ export const siteConfig = {
    * Google AdSense のサイト運営者 ID。japanrockbar と同じアカウントを使う場合は同じ ID（'pub-9333391296410668'）で、
    * AdSense の「サイト」にこのドメインを追加して審査を受ける。審査に出すまでは空にしておく。
    */
-  adsensePublisherId: '',
+  adsensePublisherId: 'pub-9333391296410668',
   /**
    * 喫煙所の「閉鎖・間違いを報告」に使う Google フォームの「事前入力した URL」。スポット ID の欄に SPOT_ID と入れたもの
    * （scripts/smoking/create_report_form.gs を実行すると実行ログに出る）。空のあいだは報告リンクを出さない。
