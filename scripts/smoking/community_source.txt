@@ -1,2 +1,3 @@
 # 「喫煙所を追加」フォームの承認済み投稿を返す Apps Script ウェブアプリの URL（1行）。
 # scripts/smoking/create_submit_form.gs を「ウェブアプリ」としてデプロイしたときの URL を書く。空なら投稿は使わない。
+https://script.google.com/macros/s/AKfycbyeMI75Td9JqSSyr1mx416eTtG5KwQ-eHZp8mAnLAzAAKyNC_wxCFrMFyXh4CHj3sFT/exec
