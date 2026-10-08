@@ -4,6 +4,8 @@
 	"$schema": "./node_modules/wrangler/config-schema.json",
 	"name": "japantravelaid",
 	"compatibility_date": "2026-10-01",
+	// 独自ドメイン（Cloudflare で購入済み）。デプロイ時に DNS と証明書が自動で設定される
+	"routes": [{ "pattern": "japantravelaid.com", "custom_domain": true }],
 	"assets": {
 		"directory": "./dist",
 		"html_handling": "auto-trailing-slash",
