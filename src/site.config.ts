@@ -22,7 +22,7 @@ export const siteConfig = {
    * 「喫煙所を追加」の Google フォームの「事前入力した URL」。緯度・経度の欄に LAT・LNG と入れたもの
    * （scripts/smoking/create_submit_form.gs を実行すると実行ログに出る）。空のあいだは追加ボタンを出さない。
    */
-  smokingSubmitFormUrl: '',
+  smokingSubmitFormUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSehC0d8OxepcvWQDFfGghY3IfTDDp1N8v0tnzOcdVz9Nt08rQ/viewform?usp=pp_url&entry.1866195325=LAT&entry.1852076158=LNG',
   /** 連絡先（about・プライバシーポリシーに出す）。 */
   contactEmail: '',
 };
