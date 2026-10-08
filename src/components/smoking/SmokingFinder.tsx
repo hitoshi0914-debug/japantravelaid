@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { CircleMarker, MapContainer, Marker, TileLayer, useMap } from 'react-leaflet';
 import L from 'leaflet';
-import { Clock, Flag, Footprints, Home, Languages, List, LocateFixed, MapPin, Navigation, RefreshCw, WifiOff } from 'lucide-react';
+import { Clock, Flag, Home, Languages, List, LocateFixed, MapPin, Navigation, RefreshCw, WifiOff } from 'lucide-react';
 import { localized, reportUrl, routeUrl, type Spot, type SpotLang, type SpotsFile } from '../../lib/smoking';
 
 // ---------- データ型（scripts/smoking/SCHEMA.md・src/lib/smoking.ts） ----------
@@ -25,7 +25,6 @@ const LANGS: { code: LangCode; label: string }[] = [
 const T = {
   en: {
     title: 'Smoking Area Finder',
-    subtitle: 'Public smoking areas near you in Japan',
     locate: 'Find near me',
     locating: 'Getting your location…',
     denied: 'Location is off. Showing results around Tokyo Station instead.',
@@ -51,7 +50,6 @@ const T = {
   },
   'zh-Hant': {
     title: '吸菸區搜尋',
-    subtitle: '尋找您附近的日本公共吸菸區',
     locate: '搜尋附近',
     locating: '正在取得位置…',
     denied: '未開啟定位，改為顯示東京車站周邊。',
@@ -77,7 +75,6 @@ const T = {
   },
   'zh-Hans': {
     title: '吸烟区查找',
-    subtitle: '查找您附近的日本公共吸烟区',
     locate: '查找附近',
     locating: '正在获取位置…',
     denied: '未开启定位，改为显示东京站周边。',
@@ -103,7 +100,6 @@ const T = {
   },
   ko: {
     title: '흡연구역 찾기',
-    subtitle: '내 주변 일본 공공 흡연구역',
     locate: '내 주변 찾기',
     locating: '위치를 확인하는 중…',
     denied: '위치 정보가 꺼져 있어 도쿄역 주변을 표시합니다.',
@@ -129,7 +125,6 @@ const T = {
   },
   ja: {
     title: '喫煙所ファインダー',
-    subtitle: '近くの公衆喫煙所を探す',
     locate: '現在地から探す',
     locating: '現在地を取得中…',
     denied: '位置情報がオフのため、東京駅周辺を表示しています。',
@@ -363,48 +358,41 @@ export default function SmokingFinder({ pageLang }: Props) {
 
       {/* ヘッダーとリスト */}
       <div className="flex min-h-0 flex-1 flex-col md:order-1 md:w-[420px] md:flex-none md:border-r md:border-slate-200">
-        <header className="border-b border-slate-200 px-4 pt-3 pb-2">
-          <div className="flex items-start justify-between gap-2">
-            <div className="flex items-start gap-2">
-              <a
-                href={`/${pageLang}/`}
-                aria-label={t.home}
-                title={t.home}
-                className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-slate-200 text-slate-700 active:scale-95"
-              >
-                <Home className="h-4 w-4" />
-              </a>
-              <div>
-                <h1 className="text-lg leading-tight font-bold">{t.title}</h1>
-                <p className="text-xs text-slate-500">{t.subtitle}</p>
-              </div>
-            </div>
-            <Languages className="mt-1 h-5 w-5 shrink-0 text-slate-400" aria-hidden />
-          </div>
-          <div className="mt-2 flex gap-1 overflow-x-auto" role="group" aria-label="Language">
-            {LANGS.map((l) => (
-              <button
-                key={l.code}
-                onClick={() => switchLang(l.code)}
-                aria-pressed={lang === l.code}
-                className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${lang === l.code ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-700'}`}
-              >
-                {l.label}
-              </button>
-            ))}
-          </div>
-          <div className="mt-2 flex items-center gap-2">
-            <button
-              onClick={() => setCigOnly((v) => !v)}
-              aria-pressed={cigOnly}
-              className={`rounded-full border px-3 py-1 text-xs font-semibold ${cigOnly ? 'border-teal-700 bg-teal-700 text-white' : 'border-slate-300 text-slate-700'}`}
+        {/* 見出しは1行（ホーム・タイトル・言語）＋絞り込み1つだけ。地域一覧への入口はリストの下 */}
+        <header className="border-b border-slate-200 px-4 py-2">
+          <div className="flex items-center gap-2">
+            <a
+              href={`/${pageLang}/`}
+              aria-label={t.home}
+              title={t.home}
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-slate-200 text-slate-700 active:scale-95"
             >
-              🚬 {t.cigOnly}
-            </button>
-            <a href={`/${pageFor(lang)}/smoking/areas/`} className="ml-auto flex items-center gap-1 text-xs font-semibold text-teal-800 underline">
-              <List className="h-3.5 w-3.5" /> {t.byArea}
+              <Home className="h-4 w-4" />
             </a>
+            <h1 className="min-w-0 flex-1 truncate text-base font-bold">{t.title}</h1>
+            <label className="flex shrink-0 items-center gap-1 rounded-full bg-slate-100 py-1 pr-1 pl-2 text-xs text-slate-700">
+              <Languages className="h-3.5 w-3.5" aria-hidden />
+              <select
+                value={lang}
+                onChange={(e) => switchLang(e.target.value as LangCode)}
+                aria-label="Language"
+                className="bg-transparent font-medium outline-none"
+              >
+                {LANGS.map((l) => (
+                  <option key={l.code} value={l.code}>
+                    {l.label}
+                  </option>
+                ))}
+              </select>
+            </label>
           </div>
+          <button
+            onClick={() => setCigOnly((v) => !v)}
+            aria-pressed={cigOnly}
+            className={`mt-2 rounded-full border px-3 py-1 text-xs font-semibold ${cigOnly ? 'border-teal-700 bg-teal-700 text-white' : 'border-slate-300 text-slate-700'}`}
+          >
+            🚬 {t.cigOnly}
+          </button>
         </header>
 
         <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-6">
@@ -425,10 +413,10 @@ export default function SmokingFinder({ pageLang }: Props) {
             </div>
           )}
 
-          <h2 className="mt-4 mb-2 text-sm font-semibold text-slate-500">{t.nearest}</h2>
-          {data && nearest.length === 0 && <p className="text-sm text-slate-500">{cigOnly ? t.noCig : t.noSpots}</p>}
+          <h2 className="sr-only">{t.nearest}</h2>
+          {data && nearest.length === 0 && <p className="mt-3 text-sm text-slate-500">{cigOnly ? t.noCig : t.noSpots}</p>}
 
-          <ol className="space-y-2">
+          <ol className="mt-3 space-y-2">
             {nearest.map((s, i) => {
               const name = localized(s.name, lang) ?? t.unnamed;
               const address = localized(s.address, lang);
@@ -449,23 +437,30 @@ export default function SmokingFinder({ pageLang }: Props) {
                           <MapPin className="h-3 w-3 shrink-0" /> {address}
                         </p>
                       )}
-                      <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-600">
+                      {/* 距離と徒歩は1行。種類・紙巻き/加熱式は分かっているときだけ出す（「不明」は出さない） */}
+                      <p className="mt-1 text-sm text-slate-700">
                         <span className="font-semibold text-slate-900">{formatDistance(s.distance)}</span>
-                        <span className="flex items-center gap-1">
-                          <Footprints className="h-3 w-3" /> {t.walk(Math.max(1, Math.round(s.distance / WALK_M_PER_MIN)))}
-                        </span>
-                        <span className="rounded bg-slate-100 px-1.5 py-0.5">{t.types[s.type]}</span>
-                        <span className={`rounded px-1.5 py-0.5 ${s.tobacco === 'any' ? 'bg-teal-100 text-teal-900' : s.tobacco === 'heated_only' ? 'bg-violet-100 text-violet-900' : 'bg-slate-100 text-slate-500'}`}>
-                          {t.tobacco[s.tobacco]}
-                        </span>
-                        {s.access === 'customers' && <span className="rounded bg-amber-200 px-1.5 py-0.5 font-semibold text-amber-950">{t.customersOnly}</span>}
-                        {s.hours && (
-                          <span className="flex items-center gap-1">
-                            <Clock className="h-3 w-3" /> {s.hours}
-                          </span>
-                        )}
-                      </div>
-                      {reportUrl(s.id) && (
+                        {' · '}
+                        {t.walk(Math.max(1, Math.round(s.distance / WALK_M_PER_MIN)))}
+                      </p>
+                      {(s.type !== 'unknown' || s.tobacco !== 'unknown' || s.access === 'customers' || s.hours) && (
+                        <div className="mt-1 flex flex-wrap items-center gap-1.5 text-xs text-slate-600">
+                          {s.type !== 'unknown' && <span className="rounded bg-slate-100 px-1.5 py-0.5">{t.types[s.type]}</span>}
+                          {s.tobacco !== 'unknown' && (
+                            <span className={`rounded px-1.5 py-0.5 ${s.tobacco === 'any' ? 'bg-teal-100 text-teal-900' : 'bg-violet-100 text-violet-900'}`}>
+                              {t.tobacco[s.tobacco]}
+                            </span>
+                          )}
+                          {s.access === 'customers' && <span className="rounded bg-amber-200 px-1.5 py-0.5 font-semibold text-amber-950">{t.customersOnly}</span>}
+                          {s.hours && (
+                            <span className="flex items-center gap-1">
+                              <Clock className="h-3 w-3" /> {s.hours}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                      {/* 報告リンクは選んだカードにだけ出す */}
+                      {active && reportUrl(s.id) && (
                         <a
                           href={reportUrl(s.id)!}
                           target="_blank"
@@ -494,7 +489,10 @@ export default function SmokingFinder({ pageLang }: Props) {
             })}
           </ol>
 
-          <p className="mt-5 rounded-lg bg-slate-50 px-3 py-2 text-xs leading-relaxed text-slate-600">{t.tip}</p>
+          <a href={`/${pageFor(lang)}/smoking/areas/`} className="mt-5 flex items-center gap-1 text-sm font-semibold text-teal-800 underline">
+            <List className="h-4 w-4" /> {t.byArea}
+          </a>
+          <p className="mt-3 rounded-lg bg-slate-50 px-3 py-2 text-xs leading-relaxed text-slate-600">{t.tip}</p>
           {data && (
             <p className="mt-3 text-[11px] leading-relaxed text-slate-400">
               {t.updated}: {data.generated_at.slice(0, 10)} ·{' '}
