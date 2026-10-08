@@ -24,6 +24,9 @@ const LANGS: { code: LangCode; label: string }[] = [
 
 const T = {
   en: {
+    findTitle: "Found a smoking area that's not on the map?",
+    findBody: 'Tell us and it goes up with your nickname. The more you add, the higher your badge.',
+    findCta: 'Tell us',
     addSpot: 'Add a spot',
     addedBy: (n: string) => `Added by ${n}`,
     ranks: { bronze: 'Bronze', silver: 'Silver', gold: 'Gold', platinum: 'Platinum', diamond: 'Diamond' },
@@ -54,6 +57,9 @@ const T = {
     report: 'Report closed / wrong info',
   },
   'zh-Hant': {
+    findTitle: '發現地圖上沒有的吸菸區嗎？',
+    findBody: '告訴我們，會附上您的暱稱刊登。投稿越多，等級越高。',
+    findCta: '告訴我們',
     addSpot: '新增吸菸區',
     addedBy: (n: string) => `由 ${n} 新增`,
     ranks: { bronze: '銅牌', silver: '銀牌', gold: '金牌', platinum: '白金', diamond: '鑽石' },
@@ -84,6 +90,9 @@ const T = {
     report: '回報已關閉／資訊有誤',
   },
   'zh-Hans': {
+    findTitle: '发现地图上没有的吸烟区吗？',
+    findBody: '告诉我们，会附上您的昵称发布。投稿越多，等级越高。',
+    findCta: '告诉我们',
     addSpot: '添加吸烟区',
     addedBy: (n: string) => `由 ${n} 添加`,
     ranks: { bronze: '铜牌', silver: '银牌', gold: '金牌', platinum: '白金', diamond: '钻石' },
@@ -114,6 +123,9 @@ const T = {
     report: '报告已关闭／信息有误',
   },
   ko: {
+    findTitle: '지도에 없는 흡연구역을 찾으셨나요?',
+    findBody: '알려 주시면 닉네임과 함께 올려 드려요. 많이 올릴수록 등급이 올라가요.',
+    findCta: '알려 주기',
     addSpot: '흡연구역 추가',
     addedBy: (n: string) => `${n} 님이 추가`,
     ranks: { bronze: '브론즈', silver: '실버', gold: '골드', platinum: '플래티넘', diamond: '다이아' },
@@ -144,6 +156,9 @@ const T = {
     report: '폐쇄·정보 오류 신고',
   },
   ja: {
+    findTitle: '地図にない喫煙所を見つけたら教えてね',
+    findBody: 'ニックネーム付きで地図に載ります。投稿が増えるとランクが上がります。',
+    findCta: '教える',
     addSpot: '喫煙所を追加',
     addedBy: (n: string) => `${n} さんが追加`,
     ranks: { bronze: 'ブロンズ', silver: 'シルバー', gold: 'ゴールド', platinum: 'プラチナ', diamond: 'ダイヤ' },
@@ -256,6 +271,28 @@ function RankBadge({ rank, label }: { rank: RankId; label: string }) {
     <span className={`inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[10px] font-bold ${RANK_STYLE[rank]}`}>
       <Icon className="h-3 w-3" /> {label}
     </span>
+  );
+}
+
+// 「地図にない喫煙所を見つけたら教えてね」の案内（開始画面と検索結果の下）
+function AddPrompt({ t, onClick, href }: { t: (typeof T)[LangCode]; onClick?: () => void; href?: string }) {
+  const cls = 'flex shrink-0 items-center gap-1 rounded-full bg-amber-500 px-3 py-1.5 text-xs font-bold text-white active:scale-95';
+  return (
+    <div className="flex items-center gap-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5 text-left">
+      <div className="min-w-0 flex-1">
+        <p className="text-sm font-bold text-amber-950">{t.findTitle}</p>
+        <p className="mt-0.5 text-xs text-amber-900">{t.findBody}</p>
+      </div>
+      {href ? (
+        <a href={href} target="_blank" rel="noopener" data-ga="smoking_add" className={cls}>
+          <Plus className="h-3.5 w-3.5" /> {t.findCta}
+        </a>
+      ) : (
+        <button onClick={onClick} data-ga="smoking_add" className={cls}>
+          <Plus className="h-3.5 w-3.5" /> {t.findCta}
+        </button>
+      )}
+    </div>
   );
 }
 
@@ -455,6 +492,20 @@ export default function SmokingFinder({ pageLang }: Props) {
     </label>
   );
 
+  // 開始画面の「教える」: 現在地を取ってからフォームを開く（非同期のあとの新しいタブはブロックされやすいので同じタブで）
+  function addFromStart() {
+    const go = (pos: [number, number] | null) => {
+      const url = submitUrl(pos);
+      if (url) location.href = url;
+    };
+    if (!('geolocation' in navigator)) return go(null);
+    navigator.geolocation.getCurrentPosition(
+      (p) => go([p.coords.latitude, p.coords.longitude]),
+      () => go(null),
+      { enableHighAccuracy: true, timeout: 15_000, maximumAge: 60_000 },
+    );
+  }
+
   function start() {
     setStarted(true);
     locate();
@@ -489,6 +540,11 @@ export default function SmokingFinder({ pageLang }: Props) {
           <a href={`/${pageFor(lang)}/smoking/areas/`} className="mt-4 text-center text-sm font-semibold text-teal-800 underline">
             {t.byArea}
           </a>
+          {addUrl && (
+            <div className="mt-8">
+              <AddPrompt t={t} onClick={addFromStart} />
+            </div>
+          )}
         </div>
         <p className="text-center text-[11px] text-slate-400">© OpenStreetMap contributors</p>
       </div>
@@ -668,6 +724,11 @@ export default function SmokingFinder({ pageLang }: Props) {
             })}
           </ol>
 
+          {addUrl && data && (
+            <div className="mt-4">
+              <AddPrompt t={t} href={addUrl} />
+            </div>
+          )}
           <a href={`/${pageFor(lang)}/smoking/areas/`} className="mt-5 flex items-center gap-1 text-sm font-semibold text-teal-800 underline">
             <List className="h-4 w-4" /> {t.byArea}
           </a>
