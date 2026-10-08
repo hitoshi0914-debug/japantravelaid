@@ -1,5 +1,5 @@
 ---
-// プライバシーポリシー（5言語）。計測・広告の項目は設定（site.config）があるときだけ出す。
+// プライバシーポリシー（9言語）。計測・広告の項目は設定（site.config）があるときだけ出す。
 import { langPaths, tr, type Lang } from '../../i18n/locales';
 import { ui } from '../../i18n/ui';
 import Base from '../../layouts/Base.astro';
@@ -84,6 +84,66 @@ const C = {
     adsLink: 'Google 광고 설정',
     mapsH: 'Google 지도 링크',
     maps: '길찾기 버튼은 Google 지도를 엽니다. Google 지도에서 허용한 경우에만 위치 정보가 Google에 공유됩니다.',
+  },
+  de: {
+    locH: 'Ihr Standort',
+    loc: 'Die Raucherbereich-Suche verwendet Ihren Standort nur in Ihrem Browser, um Orte in der Nähe zu sortieren. Er wird nicht an uns gesendet. Wenn Sie das Formular „Ort hinzufügen“ öffnen, werden Ihre Koordinaten eingetragen, damit Sie sie senden können.',
+    savedH: 'Ihre Auswahl',
+    saved: 'Ihre Sprache und die Symptome, die Sie auf der Apotheken-Karte antippen, werden nur in Ihrem eigenen Browser (localStorage) gespeichert. Sie werden niemals an uns gesendet.',
+    formsH: 'Meldungen und neue Orte',
+    forms: 'Meldungen und neue Orte werden über Google Forms gesendet. Ihr Spitzname (falls Sie einen angeben) und freigegebene Orte werden auf dieser Website angezeigt. Bitte geben Sie weder Ihren echten Namen noch andere persönliche Daten ein.',
+    gaH: 'Analyse',
+    ga: 'Wir verwenden Google Analytics, um zu verstehen, wie die Website genutzt wird (aufgerufene Seiten, angetippte Schaltflächen). Sie können dies im Cookie-Banner ablehnen.',
+    adsH: 'Werbung',
+    ads: 'Wir verwenden Google AdSense. Google und seine Partner können Cookies verwenden, um Werbung auf Grundlage Ihrer Besuche auf dieser und anderen Websites anzuzeigen. Personalisierte Werbung können Sie hier deaktivieren:',
+    adsLink: 'Google-Werbeeinstellungen',
+    mapsH: 'Links zu Google Maps',
+    maps: 'Die Wegbeschreibungs-Schaltflächen öffnen Google Maps. Ihr Standort wird nur dann an Google weitergegeben, wenn Sie es dort erlauben.',
+  },
+  fr: {
+    locH: 'Votre position',
+    loc: "Le localisateur d'espaces fumeurs utilise votre position uniquement dans votre navigateur, pour trier les lieux proches. Elle ne nous est pas envoyée. Si vous ouvrez le formulaire « Ajouter un lieu », vos coordonnées sont préremplies pour que vous puissiez les envoyer.",
+    savedH: 'Vos choix',
+    saved: 'Votre langue et les symptômes que vous touchez sur la carte pour le pharmacien sont enregistrés uniquement dans votre propre navigateur (localStorage). Ils ne nous sont jamais envoyés.',
+    formsH: 'Signalements et nouveaux lieux',
+    forms: "Les signalements et les nouveaux lieux sont envoyés via Google Forms. Votre pseudo (si vous en saisissez un) et les lieux approuvés sont affichés sur ce site. Merci de ne pas saisir votre vrai nom ni d'autres informations personnelles.",
+    gaH: "Mesure d'audience",
+    ga: "Nous utilisons Google Analytics pour comprendre comment le site est utilisé (pages consultées, boutons touchés). Vous pouvez refuser dans le bandeau des cookies.",
+    adsH: 'Publicité',
+    ads: "Nous utilisons Google AdSense. Google et ses partenaires peuvent utiliser des cookies pour afficher des publicités en fonction de vos visites sur ce site et sur d'autres sites. Vous pouvez désactiver les annonces personnalisées sur la page",
+    adsLink: 'Paramètres des annonces Google',
+    mapsH: 'Liens vers Google Maps',
+    maps: "Les boutons d'itinéraire ouvrent Google Maps. Votre position n'est partagée avec Google que si vous l'y autorisez.",
+  },
+  it: {
+    locH: 'La tua posizione',
+    loc: 'La ricerca delle aree fumatori usa la tua posizione solo nel tuo browser, per ordinare i luoghi vicini. Non viene inviata a noi. Se apri il modulo «Aggiungi un luogo», le tue coordinate vengono inserite per permetterti di inviarle.',
+    savedH: 'Le tue scelte',
+    saved: 'La lingua e i sintomi che tocchi sulla scheda per il farmacista vengono salvati solo nel tuo browser (localStorage). Non vengono mai inviati a noi.',
+    formsH: 'Segnalazioni e nuovi luoghi',
+    forms: 'Segnalazioni e nuovi luoghi vengono inviati tramite Google Moduli. Il tuo nickname (se lo inserisci) e i luoghi approvati vengono mostrati su questo sito. Non inserire il tuo vero nome né altri dati personali.',
+    gaH: 'Statistiche',
+    ga: 'Usiamo Google Analytics per capire come viene utilizzato il sito (pagine visitate, pulsanti toccati). Puoi rifiutare dal banner dei cookie.',
+    adsH: 'Pubblicità',
+    ads: 'Usiamo Google AdSense. Google e i suoi partner possono usare i cookie per mostrare annunci basati sulle tue visite a questo e ad altri siti. Puoi disattivare gli annunci personalizzati in',
+    adsLink: 'Impostazioni annunci di Google',
+    mapsH: 'Link a Google Maps',
+    maps: 'I pulsanti delle indicazioni stradali aprono Google Maps. La tua posizione viene condivisa con Google solo se lo consenti lì.',
+  },
+  es: {
+    locH: 'Tu ubicación',
+    loc: 'El buscador de zonas para fumar usa tu ubicación solo en tu navegador, para ordenar los lugares cercanos. No se nos envía. Si abres el formulario «Añadir un lugar», tus coordenadas se rellenan para que puedas enviarlas.',
+    savedH: 'Lo que seleccionas',
+    saved: 'Tu idioma y los síntomas que tocas en la tarjeta para el farmacéutico se guardan solo en tu propio navegador (localStorage). Nunca se nos envían.',
+    formsH: 'Avisos y lugares nuevos',
+    forms: 'Los avisos y los lugares nuevos se envían mediante Google Forms. Tu apodo (si escribes uno) y los lugares aprobados se muestran en este sitio. No escribas tu nombre real ni otros datos personales.',
+    gaH: 'Analítica',
+    ga: 'Usamos Google Analytics para entender cómo se usa el sitio (páginas vistas, botones pulsados). Puedes rechazarlo en el aviso de cookies.',
+    adsH: 'Publicidad',
+    ads: 'Usamos Google AdSense. Google y sus socios pueden usar cookies para mostrar anuncios basados en tus visitas a este y otros sitios. Puedes desactivar los anuncios personalizados en',
+    adsLink: 'Configuración de anuncios de Google',
+    mapsH: 'Enlaces a Google Maps',
+    maps: 'Los botones de cómo llegar abren Google Maps. Tu ubicación solo se comparte con Google si lo permites allí.',
   },
 }[lang];
 const title = tr(ui.privacy, lang);

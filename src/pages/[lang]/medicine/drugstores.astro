@@ -3,38 +3,150 @@
 import { langPaths, type Lang } from '../../../i18n/locales';
 import Base from '../../../layouts/Base.astro';
 
-export const getStaticPaths = () => langPaths(['en']);
+export const getStaticPaths = () => langPaths();
 const lang = Astro.params.lang as Lang;
 const maps = (q: string) => 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q);
+
+// 店の看板にある日本語（kind-ja・第1類医薬品・登録販売者）はどの言語でも日本語のまま見せる。
+const C = {
+  en: {
+    title: 'Nearby Drugstores',
+    desc: 'Find a drugstore near you in Japan, and know the difference between a drugstore and a prescription-only pharmacy.',
+    open: 'Open drugstores near me', openNow: 'Open now (late-night)',
+    kindsH: 'Two kinds of shops',
+    drugstore: ['Drugstore', 'sells over-the-counter medicine. Big chains have long hours.'],
+    pharmacy: ['Prescription pharmacy', "mainly fills doctors' prescriptions. Often has few or no OTC products."],
+    tipsH: 'Good to know',
+    class1: ['(Class 1, e.g. some stronger pain relievers) can only be sold while a ', 'pharmacist', ' is on duty. At night you may not be able to buy them.'],
+    seller: ['Other OTC medicines can be sold by a ', 'registered seller', '.'],
+    taxFree: ['Many drugstores offer ', 'tax-free', ' shopping with your passport.'],
+  },
+  ja: {
+    title: '近くのドラッグストア',
+    desc: '近くのドラッグストアを探す。ドラッグストアと調剤薬局の違い。',
+    open: '近くのドラッグストアを開く', openNow: '今開いている店（深夜）',
+    kindsH: '2種類の店',
+    drugstore: ['ドラッグストア', '市販薬を売っている。大手チェーンは営業時間が長い。'],
+    pharmacy: ['調剤薬局', '主に医師の処方せんの薬を出す。市販薬はほとんど置いていないことが多い。'],
+    tipsH: '知っておくと便利',
+    class1: ['（一部の強めの鎮痛薬など）は、', '薬剤師', 'がいる時間しか買えません。夜は買えないことがあります。'],
+    seller: ['それ以外の市販薬は', '登録販売者', 'も販売できます。'],
+    taxFree: ['多くのドラッグストアで、パスポートを見せると', '免税', 'で買えます。'],
+  },
+  'zh-tw': {
+    title: '附近的藥妝店',
+    desc: '尋找附近的日本藥妝店，並了解藥妝店與處方藥局的差別。',
+    open: '開啟附近的藥妝店', openNow: '現在營業中（深夜）',
+    kindsH: '兩種店',
+    drugstore: ['藥妝店', '販售非處方藥。大型連鎖店營業時間較長。'],
+    pharmacy: ['處方藥局', '主要依醫師處方配藥，通常幾乎沒有非處方藥。'],
+    tipsH: '實用資訊',
+    class1: ['（例如部分較強的止痛藥）只能在', '藥劑師', '值班時購買，晚上可能買不到。'],
+    seller: ['其他非處方藥也可由', '登錄販賣者', '販售。'],
+    taxFree: ['許多藥妝店出示護照即可', '免稅', '購物。'],
+  },
+  'zh-cn': {
+    title: '附近的药妆店',
+    desc: '查找附近的日本药妆店，并了解药妆店与处方药局的区别。',
+    open: '打开附近的药妆店', openNow: '现在营业中（深夜）',
+    kindsH: '两种店',
+    drugstore: ['药妆店', '销售非处方药。大型连锁店营业时间较长。'],
+    pharmacy: ['处方药局', '主要按医生处方配药，通常几乎没有非处方药。'],
+    tipsH: '实用信息',
+    class1: ['（例如部分较强的止痛药）只能在', '药剂师', '值班时购买，晚上可能买不到。'],
+    seller: ['其他非处方药也可由', '登录销售者', '销售。'],
+    taxFree: ['许多药妆店出示护照即可', '免税', '购物。'],
+  },
+  ko: {
+    title: '가까운 드러그스토어',
+    desc: '가까운 일본 드러그스토어를 찾고, 드러그스토어와 처방약국의 차이를 알아보세요.',
+    open: '가까운 드러그스토어 열기', openNow: '지금 영업 중(심야)',
+    kindsH: '두 종류의 가게',
+    drugstore: ['드러그스토어', '일반의약품을 판매합니다. 대형 체인은 영업시간이 깁니다.'],
+    pharmacy: ['처방약국', '주로 의사의 처방전 약을 조제합니다. 일반의약품은 거의 없는 경우가 많습니다.'],
+    tipsH: '알아두면 좋은 점',
+    class1: ['(일부 강한 진통제 등)은 ', '약사', '가 있는 시간에만 살 수 있습니다. 밤에는 못 살 수도 있습니다.'],
+    seller: ['그 밖의 일반의약품은 ', '등록판매자', '도 판매할 수 있습니다.'],
+    taxFree: ['많은 드러그스토어에서 여권을 보여주면 ', '면세', '로 살 수 있습니다.'],
+  },
+  de: {
+    title: 'Drogerien in der Nähe',
+    desc: 'Finden Sie eine Drogerie in Ihrer Nähe in Japan und erfahren Sie den Unterschied zwischen Drogerie und Apotheke für Rezepte.',
+    open: 'Drogerien in der Nähe öffnen', openNow: 'Jetzt geöffnet (spätabends)',
+    kindsH: 'Zwei Arten von Geschäften',
+    drugstore: ['Drogerie', 'verkauft rezeptfreie Arzneimittel. Große Ketten haben lange Öffnungszeiten.'],
+    pharmacy: ['Apotheke für Rezepte', 'gibt hauptsächlich ärztlich verschriebene Arzneimittel ab. Oft gibt es kaum oder keine rezeptfreien Produkte.'],
+    tipsH: 'Gut zu wissen',
+    class1: ['(Klasse 1, z. B. einige stärkere Schmerzmittel) dürfen nur verkauft werden, wenn ein ', 'Apotheker', ' anwesend ist. Nachts können Sie sie eventuell nicht kaufen.'],
+    seller: ['Andere rezeptfreie Arzneimittel darf auch ein ', 'registrierter Verkäufer', ' verkaufen.'],
+    taxFree: ['Viele Drogerien bieten mit Ihrem Reisepass ', 'steuerfreies', ' Einkaufen an.'],
+  },
+  fr: {
+    title: 'Drogueries à proximité',
+    desc: 'Trouvez une droguerie près de vous au Japon et découvrez la différence entre une droguerie et une pharmacie qui délivre les ordonnances.',
+    open: 'Ouvrir les drogueries à proximité', openNow: 'Ouvert maintenant (tard le soir)',
+    kindsH: 'Deux types de magasins',
+    drugstore: ['Droguerie (drugstore)', 'vend des médicaments sans ordonnance. Les grandes chaînes ont des horaires étendus.'],
+    pharmacy: ['Pharmacie d’ordonnances', 'délivre surtout les médicaments prescrits par un médecin. Souvent peu ou pas de produits sans ordonnance.'],
+    tipsH: 'Bon à savoir',
+    class1: ['(classe 1, par ex. certains antidouleurs plus puissants) ne peuvent être vendus qu’en présence d’un ', 'pharmacien', '. La nuit, vous ne pourrez peut-être pas les acheter.'],
+    seller: ['Les autres médicaments sans ordonnance peuvent être vendus par un ', 'vendeur agréé', '.'],
+    taxFree: ['Beaucoup de drogueries proposent des achats ', 'en détaxe', ' sur présentation du passeport.'],
+  },
+  it: {
+    title: 'Drugstore vicini',
+    desc: 'Trova un drugstore vicino a te in Giappone e scopri la differenza tra drugstore e farmacia che dispensa ricette.',
+    open: 'Apri i drugstore vicini', openNow: 'Aperti ora (a tarda notte)',
+    kindsH: 'Due tipi di negozi',
+    drugstore: ['Drugstore', 'vende farmaci da banco. Le grandi catene hanno orari lunghi.'],
+    pharmacy: ['Farmacia per ricette', 'dispensa soprattutto farmaci prescritti dal medico. Spesso ha pochi o nessun prodotto da banco.'],
+    tipsH: 'Buono a sapersi',
+    class1: ['(classe 1, ad es. alcuni antidolorifici più forti) si possono vendere solo quando è presente un ', 'farmacista', '. Di notte potresti non riuscire ad acquistarli.'],
+    seller: ['Gli altri farmaci da banco possono essere venduti da un ', 'venditore registrato', '.'],
+    taxFree: ['Molti drugstore offrono acquisti ', 'tax-free', ' mostrando il passaporto.'],
+  },
+  es: {
+    title: 'Droguerías cercanas',
+    desc: 'Encuentre una droguería cerca de usted en Japón y conozca la diferencia entre una droguería y una farmacia de recetas.',
+    open: 'Abrir droguerías cercanas', openNow: 'Abiertas ahora (de noche)',
+    kindsH: 'Dos tipos de tiendas',
+    drugstore: ['Droguería (drugstore)', 'vende medicamentos sin receta. Las grandes cadenas tienen horarios amplios.'],
+    pharmacy: ['Farmacia de recetas', 'dispensa sobre todo medicamentos recetados por un médico. A menudo tiene pocos o ningún producto sin receta.'],
+    tipsH: 'Conviene saber',
+    class1: ['(clase 1, p. ej. algunos analgésicos más fuertes) solo se pueden vender cuando hay un ', 'farmacéutico', ' presente. Por la noche puede que no pueda comprarlos.'],
+    seller: ['Los demás medicamentos sin receta también los puede vender un ', 'vendedor registrado', '.'],
+    taxFree: ['Muchas droguerías ofrecen compras ', 'libres de impuestos', ' con su pasaporte.'],
+  },
+}[lang];
 ---
 
-<Base lang={lang} title="Nearby Drugstores" description="Find a drugstore near you in Japan, and know the difference between a drugstore and a prescription-only pharmacy." path="medicine/drugstores/" backHref={`/${lang}/medicine/`}>
-  <h1 class="page-title">📍 Nearby Drugstores</h1>
+<Base lang={lang} title={C.title} description={C.desc} path="medicine/drugstores/" backHref={`/${lang}/medicine/`}>
+  <h1 class="page-title">📍 {C.title}</h1>
 
   <a class="map-btn" href={maps('ドラッグストア')} target="_blank" rel="noopener" data-ga="map_click" data-ga-params='{"target":"drugstore"}'>
-    Open drugstores near me <span lang="ja">ドラッグストア</span>
+    {C.open} {lang !== 'ja' && <span lang="ja">ドラッグストア</span>}
   </a>
-  <a class="map-btn map-btn--sub" href={maps('drugstore open now')} target="_blank" rel="noopener" data-ga="map_click" data-ga-params='{"target":"drugstore_open"}'>
-    Open now (late-night)
+  <a class="map-btn map-btn--sub" href={maps(lang === 'ja' ? 'ドラッグストア 営業中' : 'drugstore open now')} target="_blank" rel="noopener" data-ga="map_click" data-ga-params='{"target":"drugstore_open"}'>
+    {C.openNow}
   </a>
 
-  <h2>Two kinds of shops</h2>
+  <h2>{C.kindsH}</h2>
   <div class="kinds">
     <div class="kind ok">
       <p class="kind-ja" lang="ja">ドラッグストア</p>
-      <p><strong>Drugstore</strong> — sells over-the-counter medicine. Big chains have long hours.</p>
+      <p><strong>{C.drugstore[0]}</strong> — {C.drugstore[1]}</p>
     </div>
     <div class="kind no">
       <p class="kind-ja" lang="ja">調剤薬局 / 処方箋受付</p>
-      <p><strong>Prescription pharmacy</strong> — mainly fills doctors' prescriptions. Often has few or no OTC products.</p>
+      <p><strong>{C.pharmacy[0]}</strong> — {C.pharmacy[1]}</p>
     </div>
   </div>
 
-  <h2>Good to know</h2>
+  <h2>{C.tipsH}</h2>
   <ul class="tips">
-    <li><strong lang="ja">第1類医薬品</strong> (Class 1, e.g. some stronger pain relievers) can only be sold while a <strong>pharmacist</strong> is on duty. At night you may not be able to buy them.</li>
-    <li>Other OTC medicines can be sold by a <strong>registered seller</strong> (<span lang="ja">登録販売者</span>).</li>
-    <li>Many drugstores offer <strong>tax-free</strong> shopping with your passport.</li>
+    <li><strong lang="ja">第1類医薬品</strong> {C.class1[0]}<strong>{C.class1[1]}</strong>{C.class1[2]}</li>
+    <li>{C.seller[0]}<strong>{C.seller[1]}</strong>{lang !== 'ja' && <> (<span lang="ja">登録販売者</span>)</>}{C.seller[2]}</li>
+    <li>{C.taxFree[0]}<strong>{C.taxFree[1]}</strong>{C.taxFree[2]}</li>
   </ul>
 </Base>
 

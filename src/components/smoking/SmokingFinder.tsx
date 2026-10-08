@@ -4,24 +4,14 @@ import { useEffect, useMemo, useState } from 'react';
 import { CircleMarker, MapContainer, Marker, TileLayer, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { Clock, Flag, Gem, Home, Medal, Plus, Languages, List, LocateFixed, MapPin, Navigation, RefreshCw, WifiOff } from 'lucide-react';
-import type { Lang } from '../../i18n/locales';
-import { contributionCounts, localized, rankFor, reportUrl, routeUrl, siteLang, spotLang, submitUrl, type RankId, type Spot, type SpotLang, type SpotsFile } from '../../lib/smoking';
+import { locales, type Lang } from '../../i18n/locales';
+import { contributionCounts, localized, rankFor, reportUrl, routeUrl, spotLang, submitUrl, type RankId, type Spot, type SpotLang, type SpotsFile } from '../../lib/smoking';
 
 // ---------- データ型（scripts/smoking/SCHEMA.md・src/lib/smoking.ts） ----------
-
-type LangCode = SpotLang;
 
 type WithDistance = Spot & { distance: number };
 
 // ---------- 多言語 ----------
-
-const LANGS: { code: LangCode; label: string }[] = [
-  { code: 'en', label: 'EN' },
-  { code: 'zh-Hant', label: '繁中' },
-  { code: 'zh-Hans', label: '简中' },
-  { code: 'ko', label: '한국어' },
-  { code: 'ja', label: '日本語' },
-];
 
 const T = {
   en: {
@@ -57,7 +47,7 @@ const T = {
     noCig: 'No spots nearby are confirmed for cigarettes. Turn off the filter to see all.',
     report: 'Report closed / wrong info',
   },
-  'zh-Hant': {
+  'zh-tw': {
     findTitle: '發現地圖上沒有的吸菸區嗎？',
     findBody: '告訴我們，會附上您的暱稱刊登。投稿越多，等級越高。',
     findCta: '告訴我們',
@@ -90,7 +80,7 @@ const T = {
     noCig: '附近沒有確認可吸紙菸的地點。關閉篩選可顯示全部。',
     report: '回報已關閉／資訊有誤',
   },
-  'zh-Hans': {
+  'zh-cn': {
     findTitle: '发现地图上没有的吸烟区吗？',
     findBody: '告诉我们，会附上您的昵称发布。投稿越多，等级越高。',
     findCta: '告诉我们',
@@ -189,13 +179,142 @@ const T = {
     noCig: '近くに紙巻きOKと確認できた喫煙所がありません。絞り込みを外すとすべて表示します。',
     report: '閉鎖・間違いを報告',
   },
-} satisfies Record<LangCode, unknown>;
+  de: {
+    findTitle: 'Raucherbereich gefunden, der nicht auf der Karte ist?',
+    findBody: 'Sag uns Bescheid – er erscheint mit deinem Spitznamen. Je mehr du einträgst, desto höher dein Rang.',
+    findCta: 'Melden',
+    addSpot: 'Ort hinzufügen',
+    addedBy: (n: string) => `Hinzugefügt von ${n}`,
+    ranks: { bronze: 'Bronze', silver: 'Silber', gold: 'Gold', platinum: 'Platin', diamond: 'Diamant' },
+    about: ['Öffentliche Raucherbereiche sowie Raucherräume in Bahnhöfen und Einkaufszentren', 'Restaurants und Bars sind nicht enthalten', 'Zeigt „Zigaretten erlaubt“ oder „Nur Tabakerhitzer“, wo bekannt'],
+    start: 'Raucherbereiche in der Nähe finden',
+    title: 'Raucherbereich-Finder',
+    locate: 'In der Nähe suchen',
+    locating: 'Standort wird ermittelt…',
+    denied: 'Standort ist deaktiviert. Stattdessen wird die Umgebung des Bahnhofs Tokio angezeigt.',
+    unsupported: 'Dieser Browser kann keinen Standort teilen. Es wird die Umgebung des Bahnhofs Tokio angezeigt.',
+    nearest: 'Nächste Raucherbereiche',
+    walk: (n: number) => `${n} Min. zu Fuß`,
+    route: 'Route',
+    offline: 'Offline: gespeicherte Daten werden angezeigt',
+    loadError: 'Die Liste konnte nicht geladen werden.',
+    retry: 'Erneut versuchen',
+    unnamed: 'Raucherbereich',
+    types: { outdoor: 'Im Freien', booth: 'Raucherkabine', indoor: 'Innen', unknown: 'Raucherbereich' },
+    customersOnly: 'Nur für Kunden',
+    tip: 'In den meisten Bezirken Tokios ist Rauchen auf der Straße verboten (Bußgeld). Bitte nur in ausgewiesenen Bereichen rauchen.',
+    updated: 'Daten aktualisiert',
+    noSpots: 'Keine Raucherbereiche in den Daten gefunden.',
+    home: 'Japan Travel Aid Startseite',
+    byArea: 'Nach Gebiet suchen',
+    tobacco: { any: 'Zigaretten erlaubt', heated_only: 'Nur Tabakerhitzer', unknown: 'Tabakart unbekannt' },
+    cigOnly: 'Nur „Zigaretten erlaubt“',
+    noCig: 'In der Nähe ist kein Ort für Zigaretten bestätigt. Filter ausschalten, um alle zu sehen.',
+    report: 'Geschlossen / falsche Angaben melden',
+  },
+  fr: {
+    findTitle: "Vous avez trouvé un espace fumeurs absent de la carte ?",
+    findBody: "Signalez-le et il sera ajouté avec votre pseudo. Plus vous en ajoutez, plus votre badge monte.",
+    findCta: 'Signaler',
+    addSpot: 'Ajouter un lieu',
+    addedBy: (n: string) => `Ajouté par ${n}`,
+    ranks: { bronze: 'Bronze', silver: 'Argent', gold: 'Or', platinum: 'Platine', diamond: 'Diamant' },
+    about: ['Espaces fumeurs publics et fumoirs des gares et centres commerciaux', 'Restaurants et bars non inclus', "Indique « Cigarettes OK » ou « Tabac chauffé uniquement » lorsque l'info est connue"],
+    start: 'Trouver un espace fumeurs proche',
+    title: 'Espaces fumeurs',
+    locate: 'Autour de moi',
+    locating: 'Localisation en cours…',
+    denied: 'Localisation désactivée. Affichage autour de la gare de Tokyo.',
+    unsupported: 'Ce navigateur ne peut pas partager la position. Affichage autour de la gare de Tokyo.',
+    nearest: 'Espaces fumeurs les plus proches',
+    walk: (n: number) => `${n} min à pied`,
+    route: 'Itinéraire',
+    offline: 'Hors ligne : données enregistrées affichées',
+    loadError: 'Impossible de charger la liste.',
+    retry: 'Réessayer',
+    unnamed: 'Espace fumeurs',
+    types: { outdoor: 'Extérieur', booth: 'Cabine', indoor: 'Intérieur', unknown: 'Espace fumeurs' },
+    customersOnly: 'Réservé aux clients',
+    tip: "Fumer dans la rue est interdit dans la plupart des arrondissements de Tokyo (amende). Merci de fumer uniquement dans les espaces prévus.",
+    updated: 'Données mises à jour',
+    noSpots: 'Aucun espace fumeurs dans les données.',
+    home: 'Accueil Japan Travel Aid',
+    byArea: 'Parcourir par quartier',
+    tobacco: { any: 'Cigarettes OK', heated_only: 'Tabac chauffé uniquement', unknown: 'Type de tabac inconnu' },
+    cigOnly: 'Seulement « Cigarettes OK »',
+    noCig: "Aucun lieu proche n'est confirmé pour les cigarettes. Désactivez le filtre pour tout voir.",
+    report: 'Signaler fermé / info erronée',
+  },
+  it: {
+    findTitle: "Hai trovato un'area fumatori che non è sulla mappa?",
+    findBody: 'Segnalacela e la pubblichiamo con il tuo nickname. Più ne aggiungi, più sale il tuo livello.',
+    findCta: 'Segnala',
+    addSpot: 'Aggiungi un luogo',
+    addedBy: (n: string) => `Aggiunto da ${n}`,
+    ranks: { bronze: 'Bronzo', silver: 'Argento', gold: 'Oro', platinum: 'Platino', diamond: 'Diamante' },
+    about: ['Aree fumatori pubbliche e sale fumatori in stazioni e centri commerciali', 'Ristoranti e bar non sono inclusi', 'Indica «Sigarette OK» o «Solo tabacco riscaldato» quando è noto'],
+    start: 'Trova aree fumatori vicine',
+    title: 'Cerca aree fumatori',
+    locate: 'Vicino a me',
+    locating: 'Rilevamento posizione…',
+    denied: 'Posizione disattivata. Mostro i risultati intorno alla stazione di Tokyo.',
+    unsupported: 'Questo browser non può condividere la posizione. Mostro i risultati intorno alla stazione di Tokyo.',
+    nearest: 'Aree fumatori più vicine',
+    walk: (n: number) => `${n} min a piedi`,
+    route: 'Indicazioni',
+    offline: 'Offline: dati salvati',
+    loadError: "Impossibile caricare l'elenco.",
+    retry: 'Riprova',
+    unnamed: 'Area fumatori',
+    types: { outdoor: "All'aperto", booth: 'Cabina', indoor: 'Al chiuso', unknown: 'Area fumatori' },
+    customersOnly: 'Solo clienti',
+    tip: 'Nella maggior parte dei quartieri di Tokyo è vietato fumare per strada (con multa). Fuma solo nelle aree designate.',
+    updated: 'Dati aggiornati',
+    noSpots: 'Nessuna area fumatori nei dati.',
+    home: 'Home di Japan Travel Aid',
+    byArea: 'Cerca per zona',
+    tobacco: { any: 'Sigarette OK', heated_only: 'Solo tabacco riscaldato', unknown: 'Tipo di tabacco sconosciuto' },
+    cigOnly: 'Solo «Sigarette OK»',
+    noCig: 'Nessun luogo vicino è confermato per le sigarette. Disattiva il filtro per vederli tutti.',
+    report: 'Segnala chiuso / info errate',
+  },
+  es: {
+    findTitle: '¿Encontraste una zona de fumadores que no está en el mapa?',
+    findBody: 'Avísanos y la publicamos con tu apodo. Cuantas más añadas, más sube tu insignia.',
+    findCta: 'Avisar',
+    addSpot: 'Añadir un lugar',
+    addedBy: (n: string) => `Añadido por ${n}`,
+    ranks: { bronze: 'Bronce', silver: 'Plata', gold: 'Oro', platinum: 'Platino', diamond: 'Diamante' },
+    about: ['Zonas públicas para fumar y salas de fumadores en estaciones y centros comerciales', 'No incluye restaurantes ni bares', 'Indica «Cigarrillos OK» o «Solo tabaco calentado» cuando se sabe'],
+    start: 'Buscar zonas para fumar cerca',
+    title: 'Buscador de zonas para fumar',
+    locate: 'Cerca de mí',
+    locating: 'Obteniendo tu ubicación…',
+    denied: 'La ubicación está desactivada. Mostrando los alrededores de la estación de Tokio.',
+    unsupported: 'Este navegador no puede compartir la ubicación. Mostrando los alrededores de la estación de Tokio.',
+    nearest: 'Zonas para fumar más cercanas',
+    walk: (n: number) => `${n} min a pie`,
+    route: 'Cómo llegar',
+    offline: 'Sin conexión: mostrando datos guardados',
+    loadError: 'No se pudo cargar la lista.',
+    retry: 'Reintentar',
+    unnamed: 'Zona para fumar',
+    types: { outdoor: 'Exterior', booth: 'Cabina', indoor: 'Interior', unknown: 'Zona para fumar' },
+    customersOnly: 'Solo clientes',
+    tip: 'En la mayoría de los distritos de Tokio está prohibido fumar en la calle (con multa). Fuma solo en las zonas designadas.',
+    updated: 'Datos actualizados',
+    noSpots: 'No hay zonas para fumar en los datos.',
+    home: 'Inicio de Japan Travel Aid',
+    byArea: 'Buscar por zona',
+    tobacco: { any: 'Cigarrillos OK', heated_only: 'Solo tabaco calentado', unknown: 'Tipo de tabaco desconocido' },
+    cigOnly: 'Solo «Cigarrillos OK»',
+    noCig: 'No hay lugares cercanos confirmados para cigarrillos. Desactiva el filtro para ver todos.',
+    report: 'Avisar de cierre / datos erróneos',
+  },
+} satisfies Record<Lang, unknown>;
 
-// サイトのページの言語（URL の /en/・/ja/・/zh-tw/・/zh-cn/・/ko/）。言語ごとにページがあり、画面の言語はページの言語。
+// 画面の言語はページの言語（URL の /en/・/ja/ など、src/i18n/locales.ts の9言語）。
 type PageLang = Lang;
-
-/** その言語を表示するページの言語コード。 */
-const pageFor = (l: LangCode): PageLang => siteLang(l);
 
 // ---------- 距離 ----------
 
@@ -262,7 +381,7 @@ function RankBadge({ rank, label }: { rank: RankId; label: string }) {
 }
 
 // 「地図にない喫煙所を見つけたら教えてね」の案内（開始画面と検索結果の下）
-function AddPrompt({ t, onClick, href }: { t: (typeof T)[LangCode]; onClick?: () => void; href?: string }) {
+function AddPrompt({ t, onClick, href }: { t: (typeof T)[Lang]; onClick?: () => void; href?: string }) {
   const cls = 'flex shrink-0 items-center gap-1 rounded-full bg-amber-500 px-3 py-1.5 text-xs font-bold text-white active:scale-95';
   return (
     <div className="flex items-center gap-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5 text-left">
@@ -290,13 +409,13 @@ const OSM_CREDIT = '喫煙所 &copy; <a href="https://www.openstreetmap.org/copy
 const GSI_PALE = 'https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png';
 
 /** 地名ラベルの式。name を使うラベルだけ差し替える（道路番号などはそのまま）。 */
-function labelExpr(lang: LangCode): import('maplibre-gl').ExpressionSpecification {
+function labelExpr(lang: SpotLang): import('maplibre-gl').ExpressionSpecification {
   return lang === 'ja'
     ? ['coalesce', ['get', 'name:ja'], ['get', 'name']]
     : ['coalesce', ['get', 'name:en'], ['get', 'name_en'], ['get', 'name:latin'], ['get', 'name']];
 }
 
-function Basemap({ lang }: { lang: LangCode }) {
+function Basemap({ lang }: { lang: SpotLang }) {
   const map = useMap();
   const [gl, setGl] = useState<import('maplibre-gl').Map | null>(null);
 
@@ -364,7 +483,8 @@ interface Props {
 }
 
 export default function SmokingFinder({ pageLang }: Props) {
-  const lang: LangCode = spotLang(pageLang);
+  // 喫煙所の名前・住所と地図の地名に使う言語（データにない言語は英語）。
+  const lang: SpotLang = spotLang(pageLang);
   const [cigOnly, setCigOnly] = useState(false);
   // 地域ページの「地図で見る」（?spot=ID）から来たら、その喫煙所を中心にして選んでおく。
   const [anchor, setAnchor] = useState<[number, number] | null>(null);
@@ -376,7 +496,7 @@ export default function SmokingFinder({ pageLang }: Props) {
   // 最初はトップ（名前・説明・言語・探すボタン）だけ。ボタンを押すか ?spot= で来たら地図を出す。
   const [started, setStarted] = useState(false);
   const [online, setOnline] = useState(true);
-  const t = T[lang];
+  const t = T[pageLang];
 
   useEffect(() => {
     const spotParam = new URLSearchParams(location.search).get('spot');
@@ -409,8 +529,8 @@ export default function SmokingFinder({ pageLang }: Props) {
   }
 
   // 言語の切り替え。その言語のページ（URL）へ移動する。
-  function switchLang(l: LangCode) {
-    if (l !== lang) location.href = `/${pageFor(l)}/smoking/${location.search}`;
+  function switchLang(l: Lang) {
+    if (l !== pageLang) location.href = `/${l}/smoking/${location.search}`;
   }
 
   function locate() {
@@ -450,12 +570,12 @@ export default function SmokingFinder({ pageLang }: Props) {
     <label className="flex shrink-0 items-center gap-1 rounded-full bg-slate-100 py-1 pr-1 pl-2 text-xs text-slate-700">
       <Languages className="h-3.5 w-3.5" aria-hidden />
       <select
-        value={lang}
-        onChange={(e) => switchLang(e.target.value as LangCode)}
+        value={pageLang}
+        onChange={(e) => switchLang(e.target.value as Lang)}
         aria-label="Language"
         className="bg-transparent font-medium outline-none"
       >
-        {LANGS.map((l) => (
+        {locales.map((l) => (
           <option key={l.code} value={l.code}>
             {l.label}
           </option>
@@ -509,7 +629,7 @@ export default function SmokingFinder({ pageLang }: Props) {
           >
             <LocateFixed className="h-5 w-5" /> {t.start}
           </button>
-          <a href={`/${pageFor(lang)}/smoking/areas/`} className="mt-4 text-center text-sm font-semibold text-teal-800 underline">
+          <a href={`/${pageLang}/smoking/areas/`} className="mt-4 text-center text-sm font-semibold text-teal-800 underline">
             {t.byArea}
           </a>
           {addUrl && (
@@ -701,7 +821,7 @@ export default function SmokingFinder({ pageLang }: Props) {
               <AddPrompt t={t} href={addUrl} />
             </div>
           )}
-          <a href={`/${pageFor(lang)}/smoking/areas/`} className="mt-5 flex items-center gap-1 text-sm font-semibold text-teal-800 underline">
+          <a href={`/${pageLang}/smoking/areas/`} className="mt-5 flex items-center gap-1 text-sm font-semibold text-teal-800 underline">
             <List className="h-4 w-4" /> {t.byArea}
           </a>
           <p className="mt-3 rounded-lg bg-slate-50 px-3 py-2 text-xs leading-relaxed text-slate-600">{t.tip}</p>

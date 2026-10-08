@@ -8,7 +8,7 @@ import { locales, tr, type Lang } from '../../../../i18n/locales';
 import Base from '../../../../layouts/Base.astro';
 
 export function getStaticPaths() {
-  return locales.filter((l) => l.code === 'en').flatMap((l) =>
+  return locales.flatMap((l) =>
     tiles.filter((t) => t.kind === 'category').map((tile) => ({ params: { lang: l.code, slug: tile.id }, props: { tile } })),
   );
 }
@@ -18,6 +18,56 @@ const lang = Astro.params.lang as Lang;
 const info = categoryInfo[tile.id];
 const items = medicines.filter((m) => m.category === tile.id);
 const cardLink = `/${lang}/medicine/pharmacist/?s=${(tile.symptoms ?? []).join(',')}`;
+
+// 見出しと注記。ja のページでは言葉の意味は英語のまま（日本語↔英語の対訳表）。
+// 「名前を訳すだけで、どの製品が合うかは示さない」の注記はどの言語でも必ず残す。
+const C = {
+  en: {
+    cta: '🗣️ Ask the pharmacist with a card →', wordsH: 'Words on the box', ingrH: 'Common ingredient names',
+    ingrNote: 'Names are shown in katakana on the box. This list only translates names; it does not say which product suits you.',
+    productsH: 'Products', commonH: 'Words on every medicine box',
+  },
+  ja: {
+    cta: '🗣️ カードで薬剤師に相談する →', wordsH: '箱に書いてある言葉', ingrH: '主な成分名',
+    ingrNote: '箱では成分名がカタカナで書かれています。この表は名前を訳しているだけで、どの製品が合うかを示すものではありません。',
+    productsH: '製品', commonH: 'どの薬の箱にも出てくる言葉',
+  },
+  'zh-tw': {
+    cta: '🗣️ 用卡片詢問藥劑師 →', wordsH: '包裝上的字詞', ingrH: '常見成分名稱',
+    ingrNote: '包裝上的成分名稱以片假名標示。此列表只翻譯名稱，並不表示哪種產品適合您。',
+    productsH: '產品', commonH: '每種藥盒上都有的字詞',
+  },
+  'zh-cn': {
+    cta: '🗣️ 用卡片询问药剂师 →', wordsH: '包装上的词语', ingrH: '常见成分名称',
+    ingrNote: '包装上的成分名称以片假名标示。此列表只翻译名称，并不表示哪种产品适合您。',
+    productsH: '产品', commonH: '每种药盒上都有的词语',
+  },
+  ko: {
+    cta: '🗣️ 카드로 약사에게 물어보기 →', wordsH: '상자에 적힌 말', ingrH: '주요 성분 이름',
+    ingrNote: '상자에는 성분 이름이 가타카나로 적혀 있습니다. 이 목록은 이름만 번역한 것이며, 어떤 제품이 맞는지는 알려주지 않습니다.',
+    productsH: '제품', commonH: '모든 약 상자에 나오는 말',
+  },
+  de: {
+    cta: '🗣️ Mit einer Karte den Apotheker fragen →', wordsH: 'Wörter auf der Packung', ingrH: 'Häufige Wirkstoffnamen',
+    ingrNote: 'Auf der Packung stehen die Namen in Katakana. Diese Liste übersetzt nur Namen; sie sagt nicht, welches Produkt zu Ihnen passt.',
+    productsH: 'Produkte', commonH: 'Wörter auf jeder Medikamentenpackung',
+  },
+  fr: {
+    cta: '🗣️ Demander au pharmacien avec une carte →', wordsH: 'Mots sur la boîte', ingrH: 'Noms de substances courants',
+    ingrNote: 'Sur la boîte, les noms sont écrits en katakana. Cette liste ne fait que traduire des noms ; elle n’indique pas quel produit vous convient.',
+    productsH: 'Produits', commonH: 'Mots présents sur toutes les boîtes de médicaments',
+  },
+  it: {
+    cta: '🗣️ Chiedi al farmacista con una scheda →', wordsH: 'Parole sulla confezione', ingrH: 'Nomi comuni dei principi attivi',
+    ingrNote: 'Sulla confezione i nomi sono scritti in katakana. Questo elenco traduce solo i nomi; non indica quale prodotto sia adatto a te.',
+    productsH: 'Prodotti', commonH: 'Parole presenti su ogni confezione di farmaco',
+  },
+  es: {
+    cta: '🗣️ Preguntar al farmacéutico con una tarjeta →', wordsH: 'Palabras en la caja', ingrH: 'Nombres comunes de principios activos',
+    ingrNote: 'En la caja, los nombres aparecen en katakana. Esta lista solo traduce nombres; no indica qué producto le conviene.',
+    productsH: 'Productos', commonH: 'Palabras de todas las cajas de medicamentos',
+  },
+}[lang];
 ---
 
 <Base lang={lang} title={tr(tile.label, lang)} description={tr(info.intro, lang)} path={`medicine/category/${tile.id}/`} backHref={`/${lang}/medicine/`}>
@@ -25,18 +75,18 @@ const cardLink = `/${lang}/medicine/pharmacist/?s=${(tile.symptoms ?? []).join('
   <p class="lead">{tr(info.intro, lang)}</p>
 
   <a class="cta" href={cardLink} data-ga="category_to_card" data-ga-params={JSON.stringify({ category: tile.id })}>
-    🗣️ Ask the pharmacist with a card →
+    {C.cta}
   </a>
 
-  <h2>Words on the box</h2>
+  <h2>{C.wordsH}</h2>
   <dl class="words">
     {info.words.map((w) => (
       <div><dt lang="ja">{w.ja}</dt><dd><span class="reading">{w.reading}</span>{tr(w.meaning, lang)}</dd></div>
     ))}
   </dl>
 
-  <h2>Common ingredient names</h2>
-  <p class="note">Names are shown in katakana on the box. This list only translates names; it does not say which product suits you.</p>
+  <h2>{C.ingrH}</h2>
+  <p class="note">{C.ingrNote}</p>
   <dl class="words">
     {info.ingredients.map((w) => (
       <div><dt lang="ja">{w.ja}</dt><dd><span class="reading">{w.reading}</span>{tr(w.meaning, lang)}</dd></div>
@@ -45,13 +95,13 @@ const cardLink = `/${lang}/medicine/pharmacist/?s=${(tile.symptoms ?? []).join('
 
   {items.length > 0 && (
     <>
-      <h2>Products</h2>
+      <h2>{C.productsH}</h2>
       <ul>{items.map((m) => <li>{m.name.en} <span lang="ja">{m.name.ja}</span></li>)}</ul>
     </>
   )}
 
   <details class="common">
-    <summary>Words on every medicine box</summary>
+    <summary>{C.commonH}</summary>
     <dl class="words">
       {commonWords.map((w) => (
         <div><dt lang="ja">{w.ja}</dt><dd><span class="reading">{w.reading}</span>{tr(w.meaning, lang)}</dd></div>

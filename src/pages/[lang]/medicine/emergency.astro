@@ -4,14 +4,108 @@ import { contacts } from '../../../data/emergency';
 import { langPaths, tr, type Lang } from '../../../i18n/locales';
 import Base from '../../../layouts/Base.astro';
 
-export const getStaticPaths = () => langPaths(['en']);
+export const getStaticPaths = () => langPaths();
 const lang = Astro.params.lang as Lang;
-const mapsHospital = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('hospital English speaking');
+const mapsHospital = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(lang === 'ja' ? '病院' : 'hospital English speaking');
+
+// 店員・救急隊に見せる日本語（dt）はどの言語でも日本語のまま。dd は意味（＋ローマ字）。
+const C = {
+  en: {
+    title: 'Hospital / Emergency',
+    desc: 'Emergency numbers in Japan (119, #7119, Japan Visitor Hotline) and how to find a hospital as a visitor.',
+    lead: ['If someone is unconscious, has trouble breathing, or is badly hurt, call ', ' now.'],
+    findH: 'Find a hospital or clinic',
+    mapBtn: '📍 Open hospitals near me in Google Maps',
+    note: 'Bring your passport and travel insurance details. Many clinics close in the evening and on Sundays; for night-time care, ask the hotline above.',
+    sayH: 'Say it in Japanese',
+    say: ["It's a medical emergency. (Kyūkyū desu)", 'Is there anyone who speaks English?', 'Here is the address.'],
+  },
+  ja: {
+    title: '病院・救急',
+    desc: '日本の緊急電話番号（119・#7119・訪日外国人旅行者向けホットライン）と、旅行中に病院を探す方法。',
+    lead: ['意識がない、呼吸が苦しい、ひどいけがをしているときは、すぐに ', ' に電話してください。'],
+    findH: '病院・クリニックを探す',
+    mapBtn: '📍 Google マップで近くの病院を開く',
+    note: 'パスポートと旅行保険の情報を持って行きましょう。夜間や日曜は閉まるクリニックが多いので、夜間の受診は上のホットラインに相談してください。',
+    sayH: '',
+    say: ['', '', ''],
+  },
+  'zh-tw': {
+    title: '醫院・急救',
+    desc: '日本的緊急電話（119、#7119、訪日外國旅客熱線），以及旅客如何尋找醫院。',
+    lead: ['如果有人失去意識、呼吸困難或受重傷，請立即撥打 ', '。'],
+    findH: '尋找醫院或診所',
+    mapBtn: '📍 在 Google 地圖開啟附近的醫院',
+    note: '請攜帶護照與旅遊保險資料。許多診所晚上和週日休診；夜間就醫請洽詢上方的熱線。',
+    sayH: '用日語說',
+    say: ['是急救。（Kyūkyū desu）', '有會說英語的人嗎？', '地址在這裡。'],
+  },
+  'zh-cn': {
+    title: '医院・急救',
+    desc: '日本的紧急电话（119、#7119、访日外国游客热线），以及游客如何寻找医院。',
+    lead: ['如果有人失去意识、呼吸困难或受重伤，请立即拨打 ', '。'],
+    findH: '寻找医院或诊所',
+    mapBtn: '📍 在 Google 地图打开附近的医院',
+    note: '请携带护照和旅行保险资料。许多诊所晚上和周日休息；夜间就医请咨询上方的热线。',
+    sayH: '用日语说',
+    say: ['是急救。（Kyūkyū desu）', '有会说英语的人吗？', '地址在这里。'],
+  },
+  ko: {
+    title: '병원・응급',
+    desc: '일본의 긴급 전화번호(119, #7119, 방일 외국인 여행자 핫라인)와 여행자가 병원을 찾는 방법.',
+    lead: ['의식이 없거나, 숨쉬기 힘들거나, 크게 다친 사람이 있으면 지금 바로 ', '에 전화하세요.'],
+    findH: '병원・클리닉 찾기',
+    mapBtn: '📍 Google 지도에서 가까운 병원 열기',
+    note: '여권과 여행자 보험 정보를 챙기세요. 저녁과 일요일에는 문을 닫는 클리닉이 많습니다. 야간 진료는 위의 핫라인에 문의하세요.',
+    sayH: '일본어로 말하기',
+    say: ['응급 상황입니다. (Kyūkyū desu)', '영어를 할 수 있는 분이 있나요?', '여기 주소가 있습니다.'],
+  },
+  de: {
+    title: 'Krankenhaus / Notfall',
+    desc: 'Notrufnummern in Japan (119, #7119, Japan Visitor Hotline) und wie Sie als Reisende ein Krankenhaus finden.',
+    lead: ['Wenn jemand bewusstlos ist, Atemnot hat oder schwer verletzt ist, rufen Sie sofort die ', ' an.'],
+    findH: 'Krankenhaus oder Klinik finden',
+    mapBtn: '📍 Krankenhäuser in der Nähe in Google Maps öffnen',
+    note: 'Nehmen Sie Ihren Reisepass und die Daten Ihrer Reiseversicherung mit. Viele Kliniken schließen abends und sonntags; für Hilfe in der Nacht fragen Sie bei der Hotline oben.',
+    sayH: 'Auf Japanisch sagen',
+    say: ['Es ist ein medizinischer Notfall. (Kyūkyū desu)', 'Spricht hier jemand Englisch?', 'Hier ist die Adresse.'],
+  },
+  fr: {
+    title: 'Hôpital / urgences',
+    desc: 'Numéros d’urgence au Japon (119, #7119, Japan Visitor Hotline) et comment trouver un hôpital en tant que visiteur.',
+    lead: ['Si quelqu’un est inconscient, a du mal à respirer ou est gravement blessé, appelez le ', ' immédiatement.'],
+    findH: 'Trouver un hôpital ou une clinique',
+    mapBtn: '📍 Ouvrir les hôpitaux à proximité dans Google Maps',
+    note: 'Emportez votre passeport et les informations de votre assurance voyage. Beaucoup de cliniques ferment le soir et le dimanche ; pour des soins la nuit, renseignez-vous auprès de la ligne d’assistance ci-dessus.',
+    sayH: 'Le dire en japonais',
+    say: ['C’est une urgence médicale. (Kyūkyū desu)', 'Y a-t-il quelqu’un qui parle anglais ?', 'Voici l’adresse.'],
+  },
+  it: {
+    title: 'Ospedale / emergenze',
+    desc: 'Numeri di emergenza in Giappone (119, #7119, Japan Visitor Hotline) e come trovare un ospedale da visitatore.',
+    lead: ['Se qualcuno è privo di sensi, ha difficoltà a respirare o è gravemente ferito, chiama subito il ', '.'],
+    findH: 'Trovare un ospedale o una clinica',
+    mapBtn: '📍 Apri gli ospedali vicini in Google Maps',
+    note: 'Porta con te il passaporto e i dati della tua assicurazione di viaggio. Molte cliniche chiudono la sera e la domenica; per cure notturne chiedi alla linea di assistenza qui sopra.',
+    sayH: 'Dirlo in giapponese',
+    say: ['È un’emergenza medica. (Kyūkyū desu)', 'C’è qualcuno che parla inglese?', 'Ecco l’indirizzo.'],
+  },
+  es: {
+    title: 'Hospital / emergencias',
+    desc: 'Números de emergencia en Japón (119, #7119, Japan Visitor Hotline) y cómo encontrar un hospital como visitante.',
+    lead: ['Si alguien está inconsciente, tiene dificultad para respirar o está gravemente herido, llame al ', ' ahora mismo.'],
+    findH: 'Encontrar un hospital o una clínica',
+    mapBtn: '📍 Abrir hospitales cercanos en Google Maps',
+    note: 'Lleve su pasaporte y los datos de su seguro de viaje. Muchas clínicas cierran por la tarde-noche y los domingos; para atención nocturna, consulte la línea de ayuda de arriba.',
+    sayH: 'Decirlo en japonés',
+    say: ['Es una emergencia médica. (Kyūkyū desu)', '¿Hay alguien que hable inglés?', 'Aquí está la dirección.'],
+  },
+}[lang];
 ---
 
-<Base lang={lang} title="Hospital / Emergency" description="Emergency numbers in Japan (119, #7119, Japan Visitor Hotline) and how to find a hospital as a visitor." path="medicine/emergency/" backHref={`/${lang}/medicine/`}>
-  <h1 class="page-title">🚨 Hospital / Emergency</h1>
-  <p class="lead">If someone is unconscious, has trouble breathing, or is badly hurt, call <strong>119</strong> now.</p>
+<Base lang={lang} title={C.title} description={C.desc} path="medicine/emergency/" backHref={`/${lang}/medicine/`}>
+  <h1 class="page-title">🚨 {C.title}</h1>
+  <p class="lead">{C.lead[0]}<strong>119</strong>{C.lead[1]}</p>
 
   <ul class="contacts">
     {contacts.map((c) => (
@@ -19,23 +113,27 @@ const mapsHospital = 'https://www.google.com/maps/search/?api=1&query=' + encode
         <a href={`tel:${c.tel}`} data-ga="call_click" data-ga-params={JSON.stringify({ number: c.number })}>
           <Phone size={22} aria-hidden="true" />
           <span class="num">{c.number}</span>
-          <span class="label">{tr(c.label, lang)}<span lang="ja">{c.label.ja}</span></span>
+          <span class="label">{tr(c.label, lang)}{lang !== 'ja' && <span lang="ja">{c.label.ja}</span>}</span>
         </a>
         <p>{tr(c.note, lang)}</p>
       </li>
     ))}
   </ul>
 
-  <h2>Find a hospital or clinic</h2>
-  <a class="map-btn" href={mapsHospital} target="_blank" rel="noopener" data-ga="map_click" data-ga-params='{"target":"hospital"}'>📍 Open hospitals near me in Google Maps</a>
-  <p class="note">Bring your passport and travel insurance details. Many clinics close in the evening and on Sundays; for night-time care, ask the hotline above.</p>
+  <h2>{C.findH}</h2>
+  <a class="map-btn" href={mapsHospital} target="_blank" rel="noopener" data-ga="map_click" data-ga-params='{"target":"hospital"}'>{C.mapBtn}</a>
+  <p class="note">{C.note}</p>
 
-  <h2>Say it in Japanese</h2>
-  <dl class="say">
-    <div><dt lang="ja">救急です。</dt><dd>It's a medical emergency. (Kyūkyū desu)</dd></div>
-    <div><dt lang="ja">英語を話せる人はいますか？</dt><dd>Is there anyone who speaks English?</dd></div>
-    <div><dt lang="ja">ここに住所があります。</dt><dd>Here is the address.</dd></div>
-  </dl>
+  {lang !== 'ja' && (
+    <>
+      <h2>{C.sayH}</h2>
+      <dl class="say">
+        <div><dt lang="ja">救急です。</dt><dd>{C.say[0]}</dd></div>
+        <div><dt lang="ja">英語を話せる人はいますか？</dt><dd>{C.say[1]}</dd></div>
+        <div><dt lang="ja">ここに住所があります。</dt><dd>{C.say[2]}</dd></div>
+      </dl>
+    </>
+  )}
 </Base>
 
 <style>

@@ -21,7 +21,7 @@ export function CardView({ lang, state, dispatch, onClose }: Props) {
   return (
     <div className="card-screen" role="dialog" aria-modal="true" aria-label="Card for the pharmacist">
       <div className="card-bar">
-        <button type="button" className="icon-btn" onClick={onClose} aria-label="Close card">
+        <button type="button" className="icon-btn" onClick={onClose} aria-label={tr(ui.closeCard, lang)}>
           <X size={28} />
         </button>
         <span className="card-bar-title" lang="ja">薬剤師・登録販売者の方へ</span>
@@ -29,7 +29,7 @@ export function CardView({ lang, state, dispatch, onClose }: Props) {
 
       <div className="card-body">
         <p className="card-intro" lang="ja">{cardIntro.ja}</p>
-        <p className="card-intro-en">{tr(cardIntro, lang)}</p>
+        {lang !== 'ja' && <p className="card-intro-en">{tr(cardIntro, lang)}</p>}
 
         {groups.map((group) => {
           const chosen = group.choices.filter((c) => state.selection[group.id].includes(c.id));
@@ -41,7 +41,7 @@ export function CardView({ lang, state, dispatch, onClose }: Props) {
                 {chosen.map((c) => (
                   <li key={c.id}>
                     <span className="card-ja" lang="ja">{c.label.ja}</span>
-                    <span className="card-en">{tr(c.label, lang)}</span>
+                    {lang !== 'ja' && <span className="card-en">{tr(c.label, lang)}</span>}
                   </li>
                 ))}
               </ul>
@@ -53,7 +53,7 @@ export function CardView({ lang, state, dispatch, onClose }: Props) {
 
         <p className="card-disclaimer">
           <span lang="ja">{ui.disclaimerShort.ja}</span>
-          <span>{tr(ui.disclaimerShort, lang)}</span>
+          {lang !== 'ja' && <span>{tr(ui.disclaimerShort, lang)}</span>}
         </p>
       </div>
     </div>

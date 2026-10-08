@@ -4,18 +4,29 @@ import { langPaths, type Lang } from '../../../i18n/locales';
 import Base from '../../../layouts/Base.astro';
 import '../../../components/pharmacist/pharmacist.css';
 
-export const getStaticPaths = () => langPaths(['en']);
+export const getStaticPaths = () => langPaths();
 const lang = Astro.params.lang as Lang;
+const C = {
+  en: { title: 'Show to Pharmacist', desc: 'Tap your symptoms and show a big Japanese card to the pharmacist at a Japanese drugstore. Works offline.', lead: 'Tap what applies, then show the card to the pharmacist or registered seller (登録販売者). They can point to answer.' },
+  ja: { title: '薬剤師に見せる', desc: '症状をタップして、大きな日本語のカードを薬剤師に見せるツール。オフラインでも使えます。', lead: '当てはまるものをタップして、カードを薬剤師・登録販売者に見せてください。相手は指差しで答えられます。' },
+  'zh-tw': { title: '給藥劑師看', desc: '點選症狀，把大字日文卡片給日本藥妝店的藥劑師看。離線也能使用。', lead: '點選符合的項目，再把卡片給藥劑師或登錄販賣者（登録販売者）看。對方可以用手指點選回答。' },
+  'zh-cn': { title: '给药剂师看', desc: '点选症状，把大字日文卡片给日本药妆店的药剂师看。离线也能使用。', lead: '点选符合的项目，再把卡片给药剂师或登录销售者（登録販売者）看。对方可以用手指点选回答。' },
+  ko: { title: '약사에게 보여주기', desc: '증상을 누르고 큰 일본어 카드를 일본 드러그스토어 약사에게 보여주세요. 오프라인에서도 작동합니다.', lead: '해당하는 것을 누른 뒤 카드를 약사나 등록판매자(登録販売者)에게 보여주세요. 상대는 손가락으로 가리켜 답할 수 있습니다.' },
+  de: { title: 'Dem Apotheker zeigen', desc: 'Tippen Sie Ihre Beschwerden an und zeigen Sie dem Apotheker in einer japanischen Drogerie eine große Karte auf Japanisch. Funktioniert offline.', lead: 'Tippen Sie an, was zutrifft, und zeigen Sie die Karte dem Apotheker oder dem registrierten Verkäufer (登録販売者). Er kann zum Antworten auf die Karte zeigen.' },
+  fr: { title: 'Montrer au pharmacien', desc: 'Touchez vos symptômes et montrez une grande carte en japonais au pharmacien d’une droguerie japonaise. Fonctionne hors ligne.', lead: 'Touchez ce qui vous concerne, puis montrez la carte au pharmacien ou au vendeur agréé (登録販売者). Il peut répondre en pointant du doigt.' },
+  it: { title: 'Mostra al farmacista', desc: 'Tocca i tuoi sintomi e mostra una grande scheda in giapponese al farmacista di un drugstore giapponese. Funziona offline.', lead: 'Tocca ciò che ti riguarda, poi mostra la scheda al farmacista o al venditore registrato (登録販売者). Potrà rispondere indicando con il dito.' },
+  es: { title: 'Mostrar al farmacéutico', desc: 'Toque sus síntomas y muestre una tarjeta grande en japonés al farmacéutico de una droguería japonesa. Funciona sin conexión.', lead: 'Toque lo que corresponda y muestre la tarjeta al farmacéutico o al vendedor registrado (登録販売者). Podrá responder señalando con el dedo.' },
+}[lang];
 ---
 
 <Base
   lang={lang}
-  title="Show to Pharmacist"
-  description="Tap your symptoms and show a big Japanese card to the pharmacist at a Japanese drugstore. Works offline."
+  title={C.title}
+  description={C.desc}
   path="medicine/pharmacist/" backHref={`/${lang}/medicine/`}
 >
-  <h1 class="page-title">🗣️ Show to Pharmacist</h1>
-  <p class="lead">Tap what applies, then show the card to the pharmacist or registered seller (登録販売者). They can point to answer.</p>
+  <h1 class="page-title">🗣️ {C.title}</h1>
+  <p class="lead">{C.lead}</p>
   <PharmacistApp client:load lang={lang} />
 </Base>
 

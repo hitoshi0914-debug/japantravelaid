@@ -1,6 +1,7 @@
 import type { Dispatch } from 'react';
 import { pharmacistPhrases } from '../../data/pharmacist';
 import { tr, type AnyLang } from '../../i18n/locales';
+import { ui } from '../../i18n/ui';
 import type { Action, CardState } from './state';
 
 interface Props {
@@ -20,7 +21,7 @@ export function AnswerPanel({ lang, state, dispatch }: Props) {
     const reply = focused.replies?.find((r) => r.id === state.reply);
     return (
       <section className="answer answer--focused" aria-live="polite">
-        <p className="answer-q-en">{focused.en}</p>
+        {lang !== 'ja' && <p className="answer-q-en">{tr(focused, lang)}</p>}
         <p className="answer-q-ja" lang="ja">{focused.ja}</p>
 
         {focused.replies && !reply && (
@@ -42,7 +43,7 @@ export function AnswerPanel({ lang, state, dispatch }: Props) {
         )}
 
         <button type="button" className="btn-ghost" onClick={() => dispatch({ type: 'focus', phrase: null })}>
-          ← <span lang="ja">質問一覧に戻る</span> / All questions
+          ← <span lang="ja">質問一覧に戻る</span>{lang !== 'ja' && <> / {tr(ui.allQuestions, lang)}</>}
         </button>
       </section>
     );
@@ -51,8 +52,8 @@ export function AnswerPanel({ lang, state, dispatch }: Props) {
   return (
     <section className="answer">
       <h2>
-        <span lang="ja">薬剤師の方：指差しでお答えください</span>
-        <span className="answer-h-en">Pharmacist: point to answer</span>
+        <span lang="ja">{ui.pointToAnswer.ja}</span>
+        {lang !== 'ja' && <span className="answer-h-en">{tr(ui.pointToAnswer, lang)}</span>}
       </h2>
       <div className="answer-grid">
         {pharmacistPhrases.map((p) => (

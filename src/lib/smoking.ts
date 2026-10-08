@@ -101,11 +101,11 @@ export function routeUrl(to: { lat: number; lng: number }, from?: [number, numbe
 }
 
 /** サイトの言語コード（URL の zh-tw など）→ 喫煙所データの言語コード。 */
-export const spotLang = (l: Lang): SpotLang => (l === 'zh-tw' ? 'zh-Hant' : l === 'zh-cn' ? 'zh-Hans' : l);
-/** 喫煙所データの言語コード → サイトの言語コード。 */
-export const siteLang = (l: SpotLang): Lang => (l === 'zh-Hant' ? 'zh-tw' : l === 'zh-Hans' ? 'zh-cn' : l);
+// データに名前・住所があるのは英・日・中・韓だけなので、ドイツ語などは英語（ローマ字）を使う。
+export const spotLang = (l: Lang): SpotLang =>
+  l === 'zh-tw' ? 'zh-Hant' : l === 'zh-cn' ? 'zh-Hans' : l === 'ja' || l === 'ko' ? l : 'en';
 
-/** 地名の表示。日本語・中国語は漢字、英語・韓国語はローマ字。 */
+/** 地名の表示。日本語・中国語は漢字、ほかはローマ字。 */
 const kanjiArea = (lang: Lang) => lang === 'ja' || lang === 'zh-tw' || lang === 'zh-cn';
 export const areaName = (a: Area, lang: Lang) => (kanjiArea(lang) ? `${a.city}（${a.pref}）` : `${a.city_en}, ${a.pref_en}`);
 export const cityName = (a: Area, lang: Lang) => (kanjiArea(lang) ? a.city : a.city_en);

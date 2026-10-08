@@ -1,5 +1,5 @@
 ---
-// 運営者情報・免責事項（5言語）。市販薬ガイドの免責は日本語の正式文も必ず残す。
+// 運営者情報・免責事項（9言語）。市販薬ガイドの免責は日本語の正式文も必ず残す。
 import { langPaths, tr, type Lang } from '../../i18n/locales';
 import { ui } from '../../i18n/ui';
 import Base from '../../layouts/Base.astro';
@@ -94,6 +94,74 @@ const C = {
       '응급 상황에서는 119에 전화하세요.',
     ],
     contact: '연락처',
+  },
+  de: {
+    intro: `${name} ist eine Sammlung einfacher Tools für Japan-Reisende: eine Suche nach Raucherbereichen und ein Drogerie- und Notfall-Ratgeber. Die Website ist unabhängig und steht in keiner Verbindung zu Pharmaunternehmen, Drogerien, Tabakunternehmen oder Behörden.`,
+    smokingH: 'Raucherbereich-Suche',
+    smoking: [
+      'Die Daten zu Raucherbereichen stammen von den Mitwirkenden von OpenStreetMap (ODbL), aus offenen Daten der Kommunen sowie aus Beiträgen von Nutzern, die wir vor der Veröffentlichung prüfen. Sie können unvollständig oder veraltet sein.',
+      'Die Regeln unterscheiden sich je nach Gegend und können sich ändern. Beachten Sie immer die Schilder vor Ort.',
+      'Restaurants, Bars und Cafés, in denen geraucht werden darf, werden nicht aufgeführt.',
+    ],
+    medH: 'Medikamenten-Ratgeber: keine medizinische Beratung',
+    med: [
+      'Diese Website stellt keine Diagnosen, verschreibt nichts und empfiehlt keine Medikamente.',
+      'Die Angaben zu Produkten und Wirkstoffen sind Übersetzungen öffentlich zugänglicher Informationen aus Packungsbeilagen. Sie können unvollständig oder veraltet sein.',
+      'Fragen Sie vor dem Kauf oder der Einnahme von Medikamenten immer einen Apotheker, einen registrierten Verkäufer (Tōroku hanbaisha) oder einen Arzt und befolgen Sie die Packungsbeilage.',
+      'Rufen Sie im Notfall die 119 an.',
+    ],
+    contact: 'Kontakt',
+  },
+  fr: {
+    intro: `${name} est un ensemble d'outils simples pour les visiteurs au Japon : un localisateur d'espaces fumeurs et un guide des pharmacies et des urgences. C'est un site indépendant, sans lien avec aucun laboratoire pharmaceutique, aucune pharmacie, aucun fabricant de tabac ni aucun organisme public.`,
+    smokingH: "Localisateur d'espaces fumeurs",
+    smoking: [
+      "Les données sur les espaces fumeurs proviennent des contributeurs d'OpenStreetMap (ODbL), des données ouvertes des municipalités et de contributions d'utilisateurs que nous vérifions avant publication. Elles peuvent être incomplètes ou obsolètes.",
+      'Les règles varient selon les endroits et peuvent changer. Respectez toujours la signalisation sur place.',
+      'Les restaurants, bars et cafés où il est permis de fumer ne sont pas répertoriés.',
+    ],
+    medH: "Guide des médicaments : ceci n'est pas un avis médical",
+    med: [
+      "Ce site ne pose aucun diagnostic, ne prescrit et ne recommande aucun médicament.",
+      'Les informations sur les produits et les principes actifs sont une traduction des informations publiques figurant dans les notices. Elles peuvent être incomplètes ou obsolètes.',
+      "Demandez toujours conseil à un pharmacien, à un vendeur agréé (tōroku hanbaisha) ou à un médecin avant d'acheter ou de prendre un médicament, et suivez la notice.",
+      'En cas d\'urgence, appelez le 119.',
+    ],
+    contact: 'Contact',
+  },
+  it: {
+    intro: `${name} è una raccolta di strumenti semplici per chi visita il Giappone: una ricerca delle aree fumatori e una guida a farmacie ed emergenze. È un sito indipendente, non affiliato ad aziende farmaceutiche, farmacie, produttori di tabacco o enti pubblici.`,
+    smokingH: 'Ricerca aree fumatori',
+    smoking: [
+      "I dati sulle aree fumatori provengono dai contributori di OpenStreetMap (ODbL), dai dati aperti dei comuni e da segnalazioni degli utenti che verifichiamo prima di pubblicarle. Possono essere incompleti o non aggiornati.",
+      'Le regole variano da zona a zona e possono cambiare. Rispetta sempre la segnaletica sul posto.',
+      'Ristoranti, bar e caffè in cui è consentito fumare non sono elencati.',
+    ],
+    medH: 'Guida ai farmaci: non è un consiglio medico',
+    med: [
+      'Questo sito non fa diagnosi, non prescrive e non consiglia alcun farmaco.',
+      'Le informazioni su prodotti e principi attivi sono una traduzione delle informazioni pubbliche dei foglietti illustrativi. Possono essere incomplete o non aggiornate.',
+      "Prima di acquistare o assumere un farmaco chiedi sempre a un farmacista, a un venditore abilitato (tōroku hanbaisha) o a un medico, e segui il foglietto illustrativo.",
+      'In caso di emergenza chiama il 119.',
+    ],
+    contact: 'Contatti',
+  },
+  es: {
+    intro: `${name} es un conjunto de herramientas sencillas para quienes visitan Japón: un buscador de zonas para fumar y una guía de farmacias y emergencias. Es un sitio independiente y no está vinculado a ninguna farmacéutica, farmacia, tabacalera ni organismo público.`,
+    smokingH: 'Buscador de zonas para fumar',
+    smoking: [
+      'Los datos de las zonas para fumar proceden de los colaboradores de OpenStreetMap (ODbL), de datos abiertos municipales y de aportaciones de usuarios que revisamos antes de publicarlas. Pueden estar incompletos o desactualizados.',
+      'Las normas varían según la zona y pueden cambiar. Respeta siempre la señalización del lugar.',
+      'No se incluyen restaurantes, bares ni cafeterías donde se permite fumar.',
+    ],
+    medH: 'Guía de medicamentos: no es consejo médico',
+    med: [
+      'Este sitio no diagnostica, no receta ni recomienda ningún medicamento.',
+      'La información sobre productos y principios activos es una traducción de la información pública de los prospectos. Puede estar incompleta o desactualizada.',
+      'Antes de comprar o tomar un medicamento, consulta siempre a un farmacéutico, a un vendedor registrado (tōroku hanbaisha) o a un médico, y sigue el prospecto.',
+      'En caso de emergencia, llama al 119.',
+    ],
+    contact: 'Contacto',
   },
 }[lang];
 const title = tr(ui.about, lang);

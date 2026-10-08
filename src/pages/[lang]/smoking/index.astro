@@ -1,7 +1,7 @@
 ---
 // 喫煙所ファインダー: 全画面の地図アプリなので共通レイアウト（Base）は使わず、計測・PWA の部品だけ入れる。
 // 地図画面には広告を置かない（ユーザー決定 2026-10-07）。広告は地域ページ（[area].astro）に出す。
-// 画面と5言語の文言は SmokingFinder.tsx の中。言語ごとにページがある（/en/・/ja/・/zh-tw/・/zh-cn/・/ko/）。
+// 画面と各言語の文言は SmokingFinder.tsx の中。言語ごとにページがある（/en/・/ja/・/ko/・/zh-tw/・/zh-cn/・/de/・/fr/・/it/・/es/）。
 import Analytics from '../../../components/Analytics.astro';
 import ConsentBanner from '../../../components/ConsentBanner.astro';
 import SmokingFinder from '../../../components/smoking/SmokingFinder';
@@ -13,11 +13,15 @@ export const getStaticPaths = () => langPaths();
 const lang = Astro.params.lang as Lang;
 const url = (code: string) => new URL(`/${code}/smoking/`, Astro.site).href;
 const meta = {
-  en: { title: 'Smoking Area Finder: public smoking areas near you in Japan', description: 'Find the nearest public smoking areas in Japan on a map. English, 繁中, 简中, 한국어, 日本語.' },
+  en: { title: 'Smoking Area Finder: public smoking areas near you in Japan', description: 'Find the nearest public smoking areas in Japan on a map. English, 日本語, 한국어, 繁中, 简中, Deutsch, Français, Italiano, Español.' },
   ja: { title: '喫煙所ファインダー｜近くの公衆喫煙所を地図で探す', description: '現在地から近い公衆喫煙所・駅や商業施設の喫煙所を地図で探せます。紙巻きOK・加熱式のみの区別つき。' },
   'zh-tw': { title: '吸菸區搜尋｜在地圖上找到日本附近的公共吸菸區', description: '依目前位置，在地圖上找出日本附近的公共吸菸區及車站、商業設施的吸菸室。標示可吸紙菸或僅限加熱菸。' },
   'zh-cn': { title: '吸烟区查找｜在地图上找到日本附近的公共吸烟区', description: '根据当前位置，在地图上找出日本附近的公共吸烟区及车站、商业设施的吸烟室。标注可吸卷烟或仅限加热烟。' },
   ko: { title: '흡연구역 찾기｜일본 내 주변 공공 흡연구역 지도', description: '현재 위치에서 가까운 일본의 공공 흡연구역과 역·상업시설 흡연실을 지도로 찾아보세요. 일반 담배 가능/가열식 전용 구분.' },
+  de: { title: 'Raucherbereich-Finder: öffentliche Raucherbereiche in deiner Nähe in Japan', description: 'Finde die nächsten öffentlichen Raucherbereiche in Japan auf der Karte – mit Angabe, ob Zigaretten erlaubt sind oder nur Tabakerhitzer.' },
+  fr: { title: 'Trouver un espace fumeurs : les espaces fumeurs publics près de vous au Japon', description: 'Trouvez sur une carte les espaces fumeurs publics les plus proches au Japon, avec la distinction cigarettes autorisées / tabac chauffé uniquement.' },
+  it: { title: 'Trova aree fumatori: le aree fumatori pubbliche vicino a te in Giappone', description: 'Trova sulla mappa le aree fumatori pubbliche più vicine in Giappone, con l’indicazione sigarette consentite / solo tabacco riscaldato.' },
+  es: { title: 'Buscador de zonas de fumadores: zonas públicas para fumar cerca de ti en Japón', description: 'Encuentra en el mapa las zonas públicas para fumar más cercanas en Japón, indicando si se permiten cigarrillos o solo tabaco calentado.' },
 }[lang];
 ---
 

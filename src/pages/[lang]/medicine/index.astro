@@ -5,12 +5,23 @@ import { langPaths, tr, type Lang } from '../../../i18n/locales';
 import { ui } from '../../../i18n/ui';
 import Base from '../../../layouts/Base.astro';
 
-export const getStaticPaths = () => langPaths(['en']);
+export const getStaticPaths = () => langPaths();
 const lang = Astro.params.lang as Lang;
+const C = {
+  en: { title: 'Medicine & Emergency', desc: 'Point-and-show card for Japanese drugstores, medicine box kanji, and emergency numbers for visitors to Japan.' },
+  ja: { title: '市販薬・救急', desc: '訪日客が日本のドラッグストアで使う指差しカード、薬の箱の言葉、救急の電話番号。' },
+  'zh-tw': { title: '藥品・急救', desc: '在日本藥妝店使用的指示卡、藥盒上的日文字詞，以及急救電話。' },
+  'zh-cn': { title: '药品・急救', desc: '在日本药妆店使用的指示卡、药盒上的日文词语，以及急救电话。' },
+  ko: { title: '의약품・응급', desc: '일본 드러그스토어에서 쓰는 손가락 카드, 약 상자의 일본어, 응급 전화번호.' },
+  de: { title: 'Medikamente & Notfall', desc: 'Zeigekarte für japanische Drogerien, Wörter auf Medikamentenpackungen und Notrufnummern für Japan-Reisende.' },
+  fr: { title: 'Médicaments & urgences', desc: 'Carte à montrer dans les drogueries japonaises, mots sur les boîtes de médicaments et numéros d’urgence pour les visiteurs au Japon.' },
+  it: { title: 'Farmaci & emergenze', desc: 'Scheda da indicare nei drugstore giapponesi, parole sulle confezioni dei farmaci e numeri di emergenza per chi visita il Giappone.' },
+  es: { title: 'Medicamentos y urgencias', desc: 'Tarjeta para señalar en las droguerías japonesas, palabras de las cajas de medicamentos y números de emergencia para visitantes de Japón.' },
+}[lang];
 ---
 
-<Base lang={lang} title="Medicine & Emergency" description="Point-and-show card for Japanese drugstores, medicine box kanji, and emergency numbers for visitors to Japan." path="medicine/">
-  <h1 class="section-title">💊 Medicine & Emergency</h1>
+<Base lang={lang} title={C.title} description={C.desc} path="medicine/">
+  <h1 class="section-title">💊 {C.title}</h1>
   <p class="tagline">{tr(ui.tagline, lang)}</p>
   <TileGrid lang={lang} />
 </Base>

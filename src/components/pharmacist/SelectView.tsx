@@ -1,6 +1,7 @@
 import type { Dispatch } from 'react';
 import { groups } from '../../data/pharmacist';
 import { tr, type AnyLang } from '../../i18n/locales';
+import { ui } from '../../i18n/ui';
 import { hasAnything, type Action, type CardState } from './state';
 
 interface Props {
@@ -20,8 +21,8 @@ export function SelectView({ lang, state, dispatch }: Props) {
         <fieldset className="group" key={group.id}>
           <legend>
             {tr(group.title, lang)}
-            <span className="legend-ja" lang="ja">{group.title.ja}</span>
-            {group.id === 'symptoms' && <span className="required">required</span>}
+            {lang !== 'ja' && <span className="legend-ja" lang="ja">{group.title.ja}</span>}
+            {group.id === 'symptoms' && <span className="required">{tr(ui.required, lang)}</span>}
           </legend>
           <div className="chips">
             {group.choices.map((choice) => {
@@ -37,7 +38,7 @@ export function SelectView({ lang, state, dispatch }: Props) {
                   <span className="chip-icon" aria-hidden="true">{choice.pictogram}</span>
                   <span className="chip-text">
                     <span>{tr(choice.label, lang)}</span>
-                    <span className="chip-ja" lang="ja">{choice.label.ja}</span>
+                    {lang !== 'ja' && <span className="chip-ja" lang="ja">{choice.label.ja}</span>}
                   </span>
                 </button>
               );
@@ -49,7 +50,7 @@ export function SelectView({ lang, state, dispatch }: Props) {
       <div className="select-actions">
         {hasAnything(state.selection) && (
           <button type="button" className="btn-ghost" onClick={() => dispatch({ type: 'reset' })}>
-            Clear
+            {tr(ui.clear, lang)}
           </button>
         )}
         <button
@@ -59,7 +60,7 @@ export function SelectView({ lang, state, dispatch }: Props) {
           onClick={() => dispatch({ type: 'show-card' })}
           data-ga="show_card"
         >
-          {ready ? `Show card (${count})` : 'Pick at least one symptom'}
+          {ready ? `${tr(ui.showCard, lang)} (${count})` : tr(ui.pickSymptom, lang)}
         </button>
       </div>
     </div>
