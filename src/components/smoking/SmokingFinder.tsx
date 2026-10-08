@@ -226,6 +226,77 @@ function MapController({ center, spots, focus }: { center: [number, number]; spo
   return null;
 }
 
+// 背景地図: OpenFreeMap（無料・API キー不要・商用可）のベクター地図。地名をその画面の言語で出せる
+// （日本語画面は日本語、ほかは英語のローマ字表記）。CARTO は 2026-10 から API キー必須になった。
+// 地図の部品は重いので、開始画面のあとで読み込む。WebGL が使えない端末は国土地理院の淡色地図（日本語のみ）にする。
+const OSM_CREDIT = '喫煙所 &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+const GSI_PALE = 'https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png';
+
+/** 地名ラベルの式。name を使うラベルだけ差し替える（道路番号などはそのまま）。 */
+function labelExpr(lang: LangCode): import('maplibre-gl').ExpressionSpecification {
+  return lang === 'ja'
+    ? ['coalesce', ['get', 'name:ja'], ['get', 'name']]
+    : ['coalesce', ['get', 'name:en'], ['get', 'name_en'], ['get', 'name:latin'], ['get', 'name']];
+}
+
+function Basemap({ lang }: { lang: LangCode }) {
+  const map = useMap();
+  const [gl, setGl] = useState<import('maplibre-gl').Map | null>(null);
+
+  useEffect(() => {
+    let layer: L.Layer | null = null;
+    let cancelled = false;
+    const fallback = () => {
+      if (cancelled) return;
+      layer = L.tileLayer(GSI_PALE, {
+        maxNativeZoom: 18,
+        maxZoom: 20,
+        attribution: `<a href="https://maps.gsi.go.jp/development/ichiran.html">国土地理院</a> | ${OSM_CREDIT}`,
+      }).addTo(map);
+    };
+    Promise.all([import('maplibre-gl'), import('@maplibre/maplibre-gl-leaflet'), import('maplibre-gl/dist/maplibre-gl.css')])
+      .then(([, plugin]) => {
+        if (cancelled) return;
+        try {
+          const vector = plugin.maplibreGL({ style: 'https://tiles.openfreemap.org/styles/liberty' });
+          // プラグインは出典を Leaflet に渡さないので、レイヤーの出典として自分で付ける
+          vector.getAttribution = () => `<a href="https://openfreemap.org">OpenFreeMap</a> &copy; <a href="https://www.openmaptiles.org/">OpenMapTiles</a> | ${OSM_CREDIT}`;
+          vector.addTo(map);
+          layer = vector;
+          const glMap = vector.getMaplibreMap();
+          // スタイルが読めない（OpenFreeMap の障害など）ときは国土地理院の地図に切り替える
+          glMap.once('error', () => {
+            if (cancelled || glMap.isStyleLoaded()) return;
+            map.removeLayer(vector);
+            fallback();
+          });
+          setGl(glMap);
+        } catch {
+          fallback();
+        }
+      })
+      .catch(fallback);
+    return () => {
+      cancelled = true;
+      if (layer) map.removeLayer(layer);
+    };
+  }, [map]);
+
+  useEffect(() => {
+    if (!gl) return;
+    const apply = () => {
+      for (const l of gl.getStyle()?.layers ?? []) {
+        const field = l.type === 'symbol' ? l.layout?.['text-field'] : undefined;
+        if (field && JSON.stringify(field).includes('name')) gl.setLayoutProperty(l.id, 'text-field', labelExpr(lang));
+      }
+    };
+    if (gl.isStyleLoaded()) apply();
+    else gl.once('load', apply);
+  }, [gl, lang]);
+
+  return null;
+}
+
 // ---------- 本体 ----------
 
 type GeoState = 'idle' | 'locating' | 'ok' | 'denied' | 'unsupported';
@@ -393,13 +464,7 @@ export default function SmokingFinder({ pageLang }: Props) {
       {/* 地図 */}
       <div className="relative h-[45dvh] shrink-0 md:order-2 md:h-auto md:flex-1">
         <MapContainer center={origin} zoom={15} className="h-full w-full" zoomControl={false}>
-          {/* 国土地理院の淡色地図（API キー不要・出典表示で商用利用可）。CARTO は 2026-10 から API キー必須になった */}
-          <TileLayer
-            url="https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png"
-            attribution='<a href="https://maps.gsi.go.jp/development/ichiran.html">国土地理院</a> | 喫煙所 &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            maxNativeZoom={18}
-            maxZoom={20}
-          />
+          <Basemap lang={lang} />
           <MapController center={origin} spots={nearest} focus={focus} />
           {position && (
             <CircleMarker center={position} radius={8} pathOptions={{ color: '#fff', weight: 3, fillColor: '#2563eb', fillOpacity: 1 }} />

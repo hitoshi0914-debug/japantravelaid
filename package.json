@@ -14,10 +14,12 @@
   "dependencies": {
     "@astrojs/react": "^7.0.1",
     "@lucide/astro": "^1.52.0",
+    "@maplibre/maplibre-gl-leaflet": "^0.1.4",
     "@tailwindcss/vite": "^4.3.3",
     "astro": "^7.3.5",
     "leaflet": "^1.9.4",
     "lucide-react": "^1.52.0",
+    "maplibre-gl": "^5.24.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "react-leaflet": "^5.0.0",
