@@ -580,8 +580,8 @@ export default function SmokingFinder({ pageLang }: Props) {
                           )}
                         </div>
                       )}
-                      {/* 報告リンクは選んだカードにだけ出す */}
-                      {active && reportUrl(s.id) && (
+                      {/* 報告リンクは全カードに小さく出す（選んだときだけだと見つけられなかった） */}
+                      {reportUrl(s.id) && (
                         <a
                           href={reportUrl(s.id)!}
                           target="_blank"
