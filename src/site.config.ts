@@ -17,7 +17,7 @@ export const siteConfig = {
    * 喫煙所の「閉鎖・間違いを報告」に使う Google フォームの「事前入力した URL」。スポット ID の欄に SPOT_ID と入れたもの
    * （scripts/smoking/create_report_form.gs を実行すると実行ログに出る）。空のあいだは報告リンクを出さない。
    */
-  smokingReportFormUrl: '',
+  smokingReportFormUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSefLzHWrz7NgyfW2WRHLZ2kvho_I4Ys9bynWN9lYPb1MhTqZA/viewform?usp=pp_url&entry.1105871521=SPOT_ID',
   /** 連絡先（about・プライバシーポリシーに出す）。 */
   contactEmail: '',
 };
