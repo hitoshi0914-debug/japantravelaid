@@ -24,6 +24,8 @@ const LANGS: { code: LangCode; label: string }[] = [
 
 const T = {
   en: {
+    about: ['Public smoking areas, plus smoking rooms in stations and shopping centers', 'Restaurants and bars are not included', 'Shows “Cigarettes OK” or “Heated tobacco only” where known'],
+    start: 'Find smoking areas near me',
     title: 'Smoking Area Finder',
     locate: 'Find near me',
     locating: 'Getting your location…',
@@ -49,6 +51,8 @@ const T = {
     report: 'Report closed / wrong info',
   },
   'zh-Hant': {
+    about: ['公共吸菸區，以及車站、商業設施內的吸菸室', '不包含餐廳、酒吧', '已知的地點會標示「可吸紙菸」或「僅限加熱菸」'],
+    start: '搜尋附近的吸菸區',
     title: '吸菸區搜尋',
     locate: '搜尋附近',
     locating: '正在取得位置…',
@@ -74,6 +78,8 @@ const T = {
     report: '回報已關閉／資訊有誤',
   },
   'zh-Hans': {
+    about: ['公共吸烟区，以及车站、商业设施内的吸烟室', '不包含餐厅、酒吧', '已知的地点会标注“可吸卷烟”或“仅限加热烟”'],
+    start: '查找附近的吸烟区',
     title: '吸烟区查找',
     locate: '查找附近',
     locating: '正在获取位置…',
@@ -99,6 +105,8 @@ const T = {
     report: '报告已关闭／信息有误',
   },
   ko: {
+    about: ['공공 흡연구역과 역·상업시설 안의 흡연실', '음식점·바는 포함하지 않습니다', '알 수 있는 곳은 「일반 담배 가능」「가열식 담배 전용」을 표시합니다'],
+    start: '내 주변 흡연구역 찾기',
     title: '흡연구역 찾기',
     locate: '내 주변 찾기',
     locating: '위치를 확인하는 중…',
@@ -124,6 +132,8 @@ const T = {
     report: '폐쇄·정보 오류 신고',
   },
   ja: {
+    about: ['公衆喫煙所と、駅・商業施設の喫煙所', '飲食店は載せていません', '紙巻きOK・加熱式のみが分かる場所は表示します'],
+    start: '近くの喫煙所を探す',
     title: '喫煙所ファインダー',
     locate: '現在地から探す',
     locating: '現在地を取得中…',
@@ -235,6 +245,8 @@ export default function SmokingFinder({ pageLang }: Props) {
   const [position, setPosition] = useState<[number, number] | null>(null);
   const [geo, setGeo] = useState<GeoState>('idle');
   const [focusId, setFocusId] = useState<string | null>(null);
+  // 最初はトップ（名前・説明・言語・探すボタン）だけ。ボタンを押すか ?spot= で来たら地図を出す。
+  const [started, setStarted] = useState(false);
   const [online, setOnline] = useState(true);
   const t = T[lang];
 
@@ -248,7 +260,7 @@ export default function SmokingFinder({ pageLang }: Props) {
     addEventListener('online', on);
     addEventListener('offline', off);
     loadSpots();
-    locate();
+    if (spotParam) setStarted(true);
     return () => {
       removeEventListener('online', on);
       removeEventListener('offline', off);
@@ -318,6 +330,64 @@ export default function SmokingFinder({ pageLang }: Props) {
 
   const focus = nearest.find((s) => s.id === focusId) ?? null;
 
+  const langSelect = (
+    <label className="flex shrink-0 items-center gap-1 rounded-full bg-slate-100 py-1 pr-1 pl-2 text-xs text-slate-700">
+      <Languages className="h-3.5 w-3.5" aria-hidden />
+      <select
+        value={lang}
+        onChange={(e) => switchLang(e.target.value as LangCode)}
+        aria-label="Language"
+        className="bg-transparent font-medium outline-none"
+      >
+        {LANGS.map((l) => (
+          <option key={l.code} value={l.code}>
+            {l.label}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+
+  function start() {
+    setStarted(true);
+    locate();
+  }
+
+  if (!started) {
+    return (
+      <div className="flex min-h-dvh flex-col bg-white px-5 pt-4 pb-8 text-slate-900">
+        <div className="flex items-center justify-between">
+          <a href={`/${pageLang}/`} aria-label={t.home} title={t.home} className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 text-slate-700">
+            <Home className="h-4 w-4" />
+          </a>
+          {langSelect}
+        </div>
+        <div className="flex flex-1 flex-col justify-center">
+          <p className="text-5xl" aria-hidden>🚬</p>
+          <h1 className="mt-3 text-3xl leading-tight font-bold">{t.title}</h1>
+          <ul className="mt-4 space-y-1.5 text-sm text-slate-600">
+            {t.about.map((line) => (
+              <li key={line} className="flex gap-2">
+                <span className="text-teal-700">✓</span>
+                {line}
+              </li>
+            ))}
+          </ul>
+          <button
+            onClick={start}
+            className="mt-8 flex w-full items-center justify-center gap-2 rounded-2xl bg-teal-700 py-4 text-lg font-bold text-white shadow-lg active:scale-[0.98]"
+          >
+            <LocateFixed className="h-5 w-5" /> {t.start}
+          </button>
+          <a href={`/${pageFor(lang)}/smoking/areas/`} className="mt-4 text-center text-sm font-semibold text-teal-800 underline">
+            {t.byArea}
+          </a>
+        </div>
+        <p className="text-center text-[11px] text-slate-400">© OpenStreetMap contributors</p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-dvh flex-col bg-white text-slate-900 md:flex-row">
       {/* 地図 */}
@@ -370,21 +440,7 @@ export default function SmokingFinder({ pageLang }: Props) {
               <Home className="h-4 w-4" />
             </a>
             <h1 className="min-w-0 flex-1 truncate text-base font-bold">{t.title}</h1>
-            <label className="flex shrink-0 items-center gap-1 rounded-full bg-slate-100 py-1 pr-1 pl-2 text-xs text-slate-700">
-              <Languages className="h-3.5 w-3.5" aria-hidden />
-              <select
-                value={lang}
-                onChange={(e) => switchLang(e.target.value as LangCode)}
-                aria-label="Language"
-                className="bg-transparent font-medium outline-none"
-              >
-                {LANGS.map((l) => (
-                  <option key={l.code} value={l.code}>
-                    {l.label}
-                  </option>
-                ))}
-              </select>
-            </label>
+            {langSelect}
           </div>
           <button
             onClick={() => setCigOnly((v) => !v)}
