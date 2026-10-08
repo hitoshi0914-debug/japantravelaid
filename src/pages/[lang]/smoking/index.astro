@@ -26,6 +26,7 @@ const ja = lang === 'ja';
     <meta name="description" content={ja ? '現在地から近い公衆喫煙所・駅や商業施設の喫煙所を地図で探せます。紙巻きOK・加熱式のみの区別つき。' : 'Find the nearest public smoking areas in Japan on a map. English, 繁中, 简中, 한국어, 日本語.'} />
     <link rel="canonical" href={url(lang)} />
     {locales.filter((l) => l.code === 'en' || l.code === 'ja').map((l) => <link rel="alternate" hreflang={l.hreflang} href={url(l.code)} />)}
+    <link rel="alternate" hreflang="x-default" href={url('en')} />
     <meta name="theme-color" content="#0f766e" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="manifest" href="/manifest.webmanifest" />

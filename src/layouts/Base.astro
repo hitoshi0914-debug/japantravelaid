@@ -42,7 +42,7 @@ const alternates = locales.filter((l) => langsForPath(path).includes(l.code));
     <link rel="canonical" href={url(lang)} />
     {noindex
       ? <meta name="robots" content="noindex, follow" />
-      : alternates.map((l) => <link rel="alternate" hreflang={l.hreflang} href={url(l.code)} />)}
+      : [...alternates.map((l) => <link rel="alternate" hreflang={l.hreflang} href={url(l.code)} />), <link rel="alternate" hreflang="x-default" href={url('en')} />]}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="apple-touch-icon" href="/icons/icon-192.png" />

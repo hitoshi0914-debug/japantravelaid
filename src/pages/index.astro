@@ -1,5 +1,5 @@
 ---
-// ルート（/）はブラウザの言語で振り分ける。日本語のブラウザは /ja/、それ以外は /en/。
+// ルート（/）は英語版へ。サイトのメイン言語は英語（2026-10-08 ユーザー決定）。日本語は各ページの言語切替から。
 import AdSense from '../components/AdSense.astro';
 import { locales } from '../i18n/locales';
 import { siteConfig } from '../site.config';
@@ -18,7 +18,7 @@ import { siteConfig } from '../site.config';
     {siteConfig.bingSiteVerification && <meta name="msvalidate.01" content={siteConfig.bingSiteVerification} />}
     <link rel="manifest" href="/manifest.webmanifest" />
     <script is:inline>
-      location.replace(/^ja\b/i.test(navigator.language || '') ? '/ja/' : '/en/');
+      location.replace('/en/');
     </script>
     <noscript><meta http-equiv="refresh" content="0; url=/en/" /></noscript>
   </head>
