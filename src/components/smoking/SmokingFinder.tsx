@@ -328,10 +328,11 @@ export default function SmokingFinder({ pageLang }: Props) {
       {/* 地図 */}
       <div className="relative h-[45dvh] shrink-0 md:order-2 md:h-auto md:flex-1">
         <MapContainer center={origin} zoom={15} className="h-full w-full" zoomControl={false}>
+          {/* 国土地理院の淡色地図（API キー不要・出典表示で商用利用可）。CARTO は 2026-10 から API キー必須になった */}
           <TileLayer
-            url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-            subdomains="abcd"
+            url="https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png"
+            attribution='<a href="https://maps.gsi.go.jp/development/ichiran.html">国土地理院</a> | 喫煙所 &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            maxNativeZoom={18}
             maxZoom={20}
           />
           <MapController center={origin} spots={nearest} focus={focus} />
