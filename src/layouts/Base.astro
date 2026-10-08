@@ -58,6 +58,16 @@ const alternates = locales.filter((l) => langsForPath(path).includes(l.code));
       <div class="brand-row">
         {backHref && <a class="back" href={backHref} aria-label={tr(ui.back, lang)}>←</a>}
         <a class="brand" href={`/${lang}/`}>🧭 {siteName}</a>
+        {/* 言語切替: このページがある言語だけ。選ぶと同じページの別言語へ移動する */}
+        {alternates.length > 1 && (
+          <label class="lang-switch">
+            <span class="sr-only">{tr(ui.language, lang)}</span>
+            🌐
+            <select data-lang-switch aria-label={tr(ui.language, lang)}>
+              {alternates.map((l) => <option value={`/${l.code}/${path}`} selected={l.code === lang}>{l.label}</option>)}
+            </select>
+          </label>
+        )}
       </div>
       <EmergencyBar lang={lang} />
     </header>
@@ -72,6 +82,9 @@ const alternates = locales.filter((l) => langsForPath(path).includes(l.code));
     </footer>
     <ConsentBanner lang={lang} />
     <script>
+      document.querySelector<HTMLSelectElement>('[data-lang-switch]')?.addEventListener('change', (e) => {
+        location.href = (e.target as HTMLSelectElement).value;
+      });
       // PWA: 2回目以降は電波がなくても開けるように、サービスワーカーを登録する。
       if ('serviceWorker' in navigator && location.hostname !== 'localhost') {
         addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
@@ -89,6 +102,9 @@ const alternates = locales.filter((l) => langsForPath(path).includes(l.code));
     padding-top: env(safe-area-inset-top);
   }
   .brand-row { display: flex; align-items: center; gap: 8px; min-height: 44px; }
+  .lang-switch { margin-left: auto; display: flex; align-items: center; gap: 2px; padding: 4px 8px; border-radius: 999px; background: var(--surface); border: 1px solid var(--border); font-size: 0.8rem; }
+  .lang-switch select { border: 0; background: transparent; color: var(--text); font: inherit; font-weight: 700; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .brand { font-weight: 800; color: var(--text); text-decoration: none; font-size: 0.95rem; }
   .back {
     display: grid; place-items: center;

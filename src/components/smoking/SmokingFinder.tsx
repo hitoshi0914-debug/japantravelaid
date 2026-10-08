@@ -4,7 +4,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { CircleMarker, MapContainer, Marker, TileLayer, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { Clock, Flag, Gem, Home, Medal, Plus, Languages, List, LocateFixed, MapPin, Navigation, RefreshCw, WifiOff } from 'lucide-react';
-import { contributionCounts, localized, rankFor, reportUrl, routeUrl, submitUrl, type RankId, type Spot, type SpotLang, type SpotsFile } from '../../lib/smoking';
+import type { Lang } from '../../i18n/locales';
+import { contributionCounts, localized, rankFor, reportUrl, routeUrl, siteLang, spotLang, submitUrl, type RankId, type Spot, type SpotLang, type SpotsFile } from '../../lib/smoking';
 
 // ---------- データ型（scripts/smoking/SCHEMA.md・src/lib/smoking.ts） ----------
 
@@ -190,25 +191,11 @@ const T = {
   },
 } satisfies Record<LangCode, unknown>;
 
-// サイトのページ（/en/smoking/・/ja/smoking/）がある言語。それ以外（中国語・韓国語）は /en/ のページの中で切り替える。
-type PageLang = 'en' | 'ja';
-const PAGE_LANGS: readonly LangCode[] = ['en', 'ja'];
+// サイトのページの言語（URL の /en/・/ja/・/zh-tw/・/zh-cn/・/ko/）。言語ごとにページがあり、画面の言語はページの言語。
+type PageLang = Lang;
 
-/** 最初に表示する言語。/ja/ のページなら日本語。/en/ のページなら、前回選んだ言語かブラウザの言語（日本語は除く）。 */
-function initialLang(pageLang: PageLang): LangCode {
-  if (pageLang === 'ja') return 'ja';
-  try {
-    const saved = localStorage.getItem('lang') as LangCode | null;
-    if (saved && saved in T && saved !== 'ja') return saved;
-  } catch {}
-  const nav = (navigator.language || 'en').toLowerCase();
-  if (nav.startsWith('ko')) return 'ko';
-  if (nav.startsWith('zh')) return /tw|hk|mo|hant/.test(nav) ? 'zh-Hant' : 'zh-Hans';
-  return 'en';
-}
-
-/** その言語を表示するページ（日本語は /ja/、それ以外は /en/）。 */
-const pageFor = (l: LangCode): PageLang => (l === 'ja' ? 'ja' : 'en');
+/** その言語を表示するページの言語コード。 */
+const pageFor = (l: LangCode): PageLang => siteLang(l);
 
 // ---------- 距離 ----------
 
@@ -377,7 +364,7 @@ interface Props {
 }
 
 export default function SmokingFinder({ pageLang }: Props) {
-  const [lang, setLang] = useState<LangCode>(pageLang);
+  const lang: LangCode = spotLang(pageLang);
   const [cigOnly, setCigOnly] = useState(false);
   // 地域ページの「地図で見る」（?spot=ID）から来たら、その喫煙所を中心にして選んでおく。
   const [anchor, setAnchor] = useState<[number, number] | null>(null);
@@ -392,7 +379,6 @@ export default function SmokingFinder({ pageLang }: Props) {
   const t = T[lang];
 
   useEffect(() => {
-    setLang(initialLang(pageLang));
     const spotParam = new URLSearchParams(location.search).get('spot');
     if (spotParam) setFocusId(spotParam);
     setOnline(navigator.onLine);
@@ -408,13 +394,6 @@ export default function SmokingFinder({ pageLang }: Props) {
     };
   }, []);
 
-  useEffect(() => {
-    document.documentElement.lang = lang;
-    try {
-      localStorage.setItem('lang', lang);
-    } catch {}
-  }, [lang]);
-
   function loadSpots() {
     setLoadError(false);
     // オフライン時は Service Worker がキャッシュから返す
@@ -429,16 +408,9 @@ export default function SmokingFinder({ pageLang }: Props) {
       .catch(() => setLoadError(true));
   }
 
-  // 言語の切り替え。日本語と他言語の間はページ（URL）ごと移動する。
+  // 言語の切り替え。その言語のページ（URL）へ移動する。
   function switchLang(l: LangCode) {
-    try {
-      localStorage.setItem('lang', l);
-    } catch {}
-    if (pageFor(l) !== pageLang) {
-      location.href = `/${pageFor(l)}/smoking/${location.search}`;
-      return;
-    }
-    setLang(l);
+    if (l !== lang) location.href = `/${pageFor(l)}/smoking/${location.search}`;
   }
 
   function locate() {

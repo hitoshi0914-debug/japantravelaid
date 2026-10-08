@@ -1,29 +1,114 @@
 ---
-import { langPaths, type Lang } from '../../i18n/locales';
+// プライバシーポリシー（5言語）。計測・広告の項目は設定（site.config）があるときだけ出す。
+import { langPaths, tr, type Lang } from '../../i18n/locales';
+import { ui } from '../../i18n/ui';
 import Base from '../../layouts/Base.astro';
 import { adsenseClient } from '../../lib/adsense';
 import { siteConfig } from '../../site.config';
 
 export const getStaticPaths = () => langPaths();
 const lang = Astro.params.lang as Lang;
+
+const C = {
+  en: {
+    locH: 'Your location',
+    loc: 'The smoking area finder uses your location only in your browser to sort nearby spots. It is not sent to us. If you open the "Add a spot" form, your coordinates are filled in so you can send them.',
+    savedH: 'What you select',
+    saved: 'Your language and the symptoms you tap on the pharmacist card are saved only in your own browser (localStorage). They are never sent to us.',
+    formsH: 'Reports and new spots',
+    forms: 'Reports and new spots are sent with Google Forms. Your nickname (if you enter one) and approved spots are shown on this site. Please do not enter your real name or other personal information.',
+    gaH: 'Analytics',
+    ga: 'We use Google Analytics to understand how the site is used (pages viewed, buttons tapped). You can decline in the cookie banner.',
+    adsH: 'Advertising',
+    ads: 'We use Google AdSense. Google and its partners may use cookies to show ads based on your visits to this and other sites. You can opt out of personalised ads at',
+    adsLink: 'Google Ad Settings',
+    mapsH: 'Links to Google Maps',
+    maps: 'Direction buttons open Google Maps. Your location is shared with Google only if you allow it there.',
+  },
+  ja: {
+    locH: '位置情報',
+    loc: '喫煙所ファインダーは、近い順に並べるためにだけ、お使いのブラウザの中で位置情報を使います。運営者には送られません。「喫煙所を追加」のフォームを開くと、送信用に緯度経度が入力されます。',
+    savedH: '選んだ内容',
+    saved: '表示言語や、薬剤師カードで選んだ症状は、お使いのブラウザの中（localStorage）にだけ保存され、運営者には送られません。',
+    formsH: '報告・喫煙所の追加',
+    forms: '報告と喫煙所の追加は Google フォームで受け付けます。入力したニックネームと承認した喫煙所はサイトに表示されます。本名などの個人情報は入力しないでください。',
+    gaH: 'アクセス解析',
+    ga: 'サイトの利用状況（見られたページ、押されたボタン）を知るために Google アナリティクスを使っています。Cookie のバナーで拒否できます。',
+    adsH: '広告',
+    ads: 'Google AdSense を利用しています。Google などの配信事業者は Cookie を使い、このサイトや他サイトへのアクセス情報にもとづいて広告を表示することがあります。パーソナライズ広告は次のページで無効にできます:',
+    adsLink: 'Google 広告設定',
+    mapsH: 'Google マップへのリンク',
+    maps: 'ルート案内のボタンは Google マップを開きます。位置情報が Google に送られるのは、Google マップ側で許可した場合だけです。',
+  },
+  'zh-tw': {
+    locH: '位置資訊',
+    loc: '吸菸區搜尋只會在您的瀏覽器中使用位置資訊來排序附近地點，不會傳送給我們。開啟「新增吸菸區」表單時，會自動填入經緯度以便您送出。',
+    savedH: '您選擇的內容',
+    saved: '顯示語言及您在藥劑師卡片上選擇的症狀，只會儲存在您自己的瀏覽器（localStorage）中，不會傳送給我們。',
+    formsH: '回報與新增吸菸區',
+    forms: '回報與新增吸菸區透過 Google 表單送出。您填寫的暱稱與經核准的地點會顯示在本站。請勿填寫真實姓名等個人資料。',
+    gaH: '流量分析',
+    ga: '我們使用 Google Analytics 了解網站的使用情況（瀏覽的頁面、點擊的按鈕）。您可以在 Cookie 橫幅中拒絕。',
+    adsH: '廣告',
+    ads: '本站使用 Google AdSense。Google 及其合作夥伴可能使用 Cookie，依據您造訪本站及其他網站的紀錄顯示廣告。您可以在此關閉個人化廣告：',
+    adsLink: 'Google 廣告設定',
+    mapsH: 'Google 地圖連結',
+    maps: '路線按鈕會開啟 Google 地圖。只有在您於 Google 地圖允許時，位置資訊才會分享給 Google。',
+  },
+  'zh-cn': {
+    locH: '位置信息',
+    loc: '吸烟区查找只会在您的浏览器中使用位置信息来排序附近地点，不会发送给我们。打开“添加吸烟区”表单时，会自动填入经纬度以便您提交。',
+    savedH: '您选择的内容',
+    saved: '显示语言及您在药剂师卡片上选择的症状，只会保存在您自己的浏览器（localStorage）中，不会发送给我们。',
+    formsH: '报告与添加吸烟区',
+    forms: '报告与添加吸烟区通过 Google 表单提交。您填写的昵称与经批准的地点会显示在本站。请勿填写真实姓名等个人信息。',
+    gaH: '流量分析',
+    ga: '我们使用 Google Analytics 了解网站的使用情况（浏览的页面、点击的按钮）。您可以在 Cookie 横幅中拒绝。',
+    adsH: '广告',
+    ads: '本站使用 Google AdSense。Google 及其合作伙伴可能使用 Cookie，根据您访问本站及其他网站的记录显示广告。您可以在此关闭个性化广告：',
+    adsLink: 'Google 广告设置',
+    mapsH: 'Google 地图链接',
+    maps: '路线按钮会打开 Google 地图。只有在您于 Google 地图允许时，位置信息才会分享给 Google。',
+  },
+  ko: {
+    locH: '위치 정보',
+    loc: '흡연구역 찾기는 가까운 순으로 정렬하기 위해 브라우저 안에서만 위치 정보를 사용하며, 운영자에게 보내지 않습니다. 「흡연구역 추가」 양식을 열면 보내실 수 있도록 위도·경도가 입력됩니다.',
+    savedH: '선택한 내용',
+    saved: '표시 언어와 약사 카드에서 고른 증상은 사용자의 브라우저(localStorage)에만 저장되며 운영자에게 보내지 않습니다.',
+    formsH: '제보와 흡연구역 추가',
+    forms: '제보와 흡연구역 추가는 Google 설문지로 받습니다. 입력한 닉네임과 승인된 장소는 사이트에 표시됩니다. 실명 등 개인정보는 입력하지 마세요.',
+    gaH: '이용 분석',
+    ga: '사이트 이용 현황(본 페이지, 누른 버튼)을 파악하기 위해 Google 애널리틱스를 사용합니다. 쿠키 배너에서 거부할 수 있습니다.',
+    adsH: '광고',
+    ads: 'Google AdSense를 사용합니다. Google과 파트너는 쿠키를 사용해 이 사이트와 다른 사이트 방문 기록을 바탕으로 광고를 표시할 수 있습니다. 맞춤 광고는 다음에서 끌 수 있습니다:',
+    adsLink: 'Google 광고 설정',
+    mapsH: 'Google 지도 링크',
+    maps: '길찾기 버튼은 Google 지도를 엽니다. Google 지도에서 허용한 경우에만 위치 정보가 Google에 공유됩니다.',
+  },
+}[lang];
+const title = tr(ui.privacy, lang);
 ---
 
-<Base lang={lang} title="Privacy policy" path="privacy/">
-  <h1>Privacy policy</h1>
-  <h2>What you select</h2>
-  <p>Symptoms and conditions you tap on the pharmacist card are saved only in your own browser (localStorage) so the card works offline. They are never sent to us.</p>
+<Base lang={lang} title={title} path="privacy/">
+  <h1>{title}</h1>
+  <h2>{C.locH}</h2>
+  <p>{C.loc}</p>
+  <h2>{C.savedH}</h2>
+  <p>{C.saved}</p>
+  <h2>{C.formsH}</h2>
+  <p>{C.forms}</p>
   {siteConfig.gaMeasurementId && (
     <>
-      <h2>Analytics</h2>
-      <p>We use Google Analytics to understand how the site is used (pages viewed, buttons tapped). It does not include what you selected on the card. You can decline in the cookie banner.</p>
+      <h2>{C.gaH}</h2>
+      <p>{C.ga}</p>
     </>
   )}
   {adsenseClient && (
     <>
-      <h2>Advertising</h2>
-      <p>We use Google AdSense. Google and its partners may use cookies to show ads based on your visits to this and other sites. You can opt out of personalised ads at <a href="https://adssettings.google.com/" rel="noopener">Google Ad Settings</a>.</p>
+      <h2>{C.adsH}</h2>
+      <p>{C.ads} <a href="https://adssettings.google.com/" rel="noopener">{C.adsLink}</a></p>
     </>
   )}
-  <h2>Links to Google Maps</h2>
-  <p>Map buttons open Google Maps. Your location is shared with Google only if you allow it there.</p>
+  <h2>{C.mapsH}</h2>
+  <p>{C.maps}</p>
 </Base>

@@ -1,26 +1,120 @@
 ---
-import { langPaths, type Lang } from '../../i18n/locales';
+// 運営者情報・免責事項（5言語）。市販薬ガイドの免責は日本語の正式文も必ず残す。
+import { langPaths, tr, type Lang } from '../../i18n/locales';
+import { ui } from '../../i18n/ui';
 import Base from '../../layouts/Base.astro';
 import { siteConfig } from '../../site.config';
 
 export const getStaticPaths = () => langPaths();
 const lang = Astro.params.lang as Lang;
+const name = siteConfig.siteName;
+
+const C = {
+  en: {
+    intro: `${name} is a set of simple tools for visitors to Japan: a smoking area finder and a drugstore & emergency guide. It is an independent site and is not affiliated with any pharmaceutical company, drugstore, tobacco company or government body.`,
+    smokingH: 'Smoking area finder',
+    smoking: [
+      'Smoking area data comes from OpenStreetMap contributors (ODbL), municipal open data and posts from users that we check before publishing. It may be incomplete or out of date.',
+      'Rules differ by area and may change. Always follow the signs on site.',
+      'Restaurants, bars and cafés that allow smoking are not listed.',
+    ],
+    medH: 'Medicine guide: not medical advice',
+    med: [
+      'This site does not diagnose, prescribe or recommend any medicine.',
+      'Product and ingredient information is a translation of publicly available package-insert information. It may be incomplete or out of date.',
+      'Always ask a pharmacist, registered seller or doctor before buying or taking medicine, and follow the package insert.',
+      'In an emergency, call 119.',
+    ],
+    contact: 'Contact',
+  },
+  ja: {
+    intro: `${name} は、訪日旅行者向けのシンプルなツール集です（喫煙所ファインダー、ドラッグストア・救急ガイド）。個人が運営する独立したサイトで、製薬会社・ドラッグストア・たばこ会社・行政機関とは関係ありません。`,
+    smokingH: '喫煙所ファインダー',
+    smoking: [
+      '喫煙所のデータは OpenStreetMap の協力者（ODbL）、自治体のオープンデータ、確認済みの利用者からの投稿をもとにしています。内容が不完全・古い場合があります。',
+      'ルールは地域によって違い、変わることがあります。必ず現地の表示に従ってください。',
+      '喫煙できる飲食店は掲載していません。',
+    ],
+    medH: '市販薬ガイド（医療行為ではありません）',
+    med: [
+      '本サイトは診断・処方・医薬品の推奨を行いません。',
+      '製品・成分の情報は、添付文書等の公知情報の翻訳です。不完全・古い場合があります。',
+      '医薬品の購入・使用は、必ず薬剤師・登録販売者・医師にご相談のうえ、添付文書に従ってください。',
+      '緊急時は 119 に電話してください。',
+    ],
+    contact: '連絡先',
+  },
+  'zh-tw': {
+    intro: `${name} 是為訪日旅客提供的簡單工具集：吸菸區搜尋，以及藥妝店與急救指南。本站為獨立網站，與任何製藥公司、藥妝店、菸草公司或政府機關無關。`,
+    smokingH: '吸菸區搜尋',
+    smoking: [
+      '吸菸區資料來自 OpenStreetMap 貢獻者（ODbL）、地方政府開放資料，以及經我們確認後刊登的使用者投稿，可能不完整或已過時。',
+      '各地規定不同且可能變更，請務必遵守現場標示。',
+      '可吸菸的餐廳、酒吧、咖啡廳不在刊登範圍內。',
+    ],
+    medH: '藥品指南：並非醫療建議',
+    med: [
+      '本站不提供診斷、處方或任何藥品推薦。',
+      '產品與成分資訊翻譯自公開的藥品說明書，可能不完整或已過時。',
+      '購買或服用藥品前，請務必諮詢藥劑師、登錄販賣者或醫師，並遵照說明書。',
+      '緊急情況請撥打 119。',
+    ],
+    contact: '聯絡方式',
+  },
+  'zh-cn': {
+    intro: `${name} 是为访日游客提供的简单工具集：吸烟区查找，以及药妆店与急救指南。本站为独立网站，与任何制药公司、药妆店、烟草公司或政府机关无关。`,
+    smokingH: '吸烟区查找',
+    smoking: [
+      '吸烟区数据来自 OpenStreetMap 贡献者（ODbL）、地方政府开放数据，以及经我们确认后发布的用户投稿，可能不完整或已过时。',
+      '各地规定不同且可能变更，请务必遵守现场标识。',
+      '可吸烟的餐厅、酒吧、咖啡馆不在收录范围内。',
+    ],
+    medH: '药品指南：并非医疗建议',
+    med: [
+      '本站不提供诊断、处方或任何药品推荐。',
+      '产品与成分信息翻译自公开的药品说明书，可能不完整或已过时。',
+      '购买或服用药品前，请务必咨询药剂师、登录销售者或医生，并遵照说明书。',
+      '紧急情况请拨打 119。',
+    ],
+    contact: '联系方式',
+  },
+  ko: {
+    intro: `${name}는 일본을 찾는 여행자를 위한 간단한 도구 모음입니다(흡연구역 찾기, 드러그스토어·응급 가이드). 개인이 운영하는 독립 사이트이며, 제약회사·드러그스토어·담배회사·행정기관과 관계가 없습니다.`,
+    smokingH: '흡연구역 찾기',
+    smoking: [
+      '흡연구역 데이터는 OpenStreetMap 기여자(ODbL), 지자체 공개 데이터, 확인을 거친 이용자 제보를 바탕으로 합니다. 불완전하거나 오래된 정보일 수 있습니다.',
+      '규칙은 지역마다 다르고 바뀔 수 있습니다. 반드시 현장 안내를 따르세요.',
+      '흡연 가능한 음식점·바·카페는 싣지 않습니다.',
+    ],
+    medH: '의약품 가이드: 의료 조언이 아닙니다',
+    med: [
+      '이 사이트는 진단·처방·의약품 추천을 하지 않습니다.',
+      '제품·성분 정보는 공개된 첨부 문서를 번역한 것으로, 불완전하거나 오래되었을 수 있습니다.',
+      '의약품을 사거나 복용하기 전에 반드시 약사·등록판매자·의사와 상담하고 첨부 문서를 따르세요.',
+      '응급 상황에서는 119에 전화하세요.',
+    ],
+    contact: '연락처',
+  },
+}[lang];
+const title = tr(ui.about, lang);
 ---
 
-<Base lang={lang} title="About & disclaimer" path="about/">
-  <h1>About & disclaimer</h1>
-  <p>{siteConfig.siteName} helps visitors to Japan communicate at drugstores and find emergency help. It is an independent site and is not affiliated with any pharmaceutical company, drugstore or government body.</p>
+<Base lang={lang} title={title} path="about/">
+  <h1>{title}</h1>
+  <p>{C.intro}</p>
 
-  <h2>This is not medical advice</h2>
-  <ul>
-    <li>This site does not diagnose, prescribe or recommend any medicine.</li>
-    <li>Product and ingredient information is a translation of publicly available package-insert information. It may be incomplete or out of date.</li>
-    <li>Always ask a pharmacist, registered seller or doctor before buying or taking medicine, and follow the package insert.</li>
-    <li>In an emergency, call 119.</li>
-  </ul>
+  <h2>{C.smokingH}</h2>
+  <ul>{C.smoking.map((t) => <li>{t}</li>)}</ul>
 
-  <h2 lang="ja">免責事項</h2>
-  <p lang="ja">本サイトは訪日外国人が薬局・ドラッグストアで薬剤師・登録販売者に相談するためのコミュニケーション補助ツールです。診断・処方・医薬品の推奨は行いません。掲載情報は添付文書等の公知情報の翻訳であり、正確性・最新性を保証しません。医薬品の購入・使用は必ず薬剤師・登録販売者・医師の判断に従ってください。</p>
+  <h2>{C.medH}</h2>
+  <ul>{C.med.map((t) => <li>{t}</li>)}</ul>
 
-  {siteConfig.contactEmail && <p>Contact: <a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a></p>}
+  {lang !== 'ja' && (
+    <>
+      <h2 lang="ja">免責事項</h2>
+      <p lang="ja">本サイトは訪日外国人が薬局・ドラッグストアで薬剤師・登録販売者に相談するためのコミュニケーション補助ツールです。診断・処方・医薬品の推奨は行いません。掲載情報は添付文書等の公知情報の翻訳であり、正確性・最新性を保証しません。医薬品の購入・使用は必ず薬剤師・登録販売者・医師の判断に従ってください。</p>
+    </>
+  )}
+
+  {siteConfig.contactEmail && <p>{C.contact}: <a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a></p>}
 </Base>

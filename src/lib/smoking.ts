@@ -1,5 +1,6 @@
 // 喫煙所データ（public/smoking/spots.json、形式は scripts/smoking/SCHEMA.md）の型と、
 // 地図（SmokingFinder.tsx）と地域ページ（Astro）で共通に使う処理。
+import type { Lang } from '../i18n/locales';
 import { siteConfig } from '../site.config';
 
 export type SpotLang = 'en' | 'zh-Hant' | 'zh-Hans' | 'ko' | 'ja';
@@ -99,7 +100,16 @@ export function routeUrl(to: { lat: number; lng: number }, from?: [number, numbe
   return `https://www.google.com/maps/dir/?${p}`;
 }
 
-export const areaName = (a: Area, lang: 'en' | 'ja') => (lang === 'ja' ? `${a.city}（${a.pref}）` : `${a.city_en}, ${a.pref_en}`);
+/** サイトの言語コード（URL の zh-tw など）→ 喫煙所データの言語コード。 */
+export const spotLang = (l: Lang): SpotLang => (l === 'zh-tw' ? 'zh-Hant' : l === 'zh-cn' ? 'zh-Hans' : l);
+/** 喫煙所データの言語コード → サイトの言語コード。 */
+export const siteLang = (l: SpotLang): Lang => (l === 'zh-Hant' ? 'zh-tw' : l === 'zh-Hans' ? 'zh-cn' : l);
+
+/** 地名の表示。日本語・中国語は漢字、英語・韓国語はローマ字。 */
+const kanjiArea = (lang: Lang) => lang === 'ja' || lang === 'zh-tw' || lang === 'zh-cn';
+export const areaName = (a: Area, lang: Lang) => (kanjiArea(lang) ? `${a.city}（${a.pref}）` : `${a.city_en}, ${a.pref_en}`);
+export const cityName = (a: Area, lang: Lang) => (kanjiArea(lang) ? a.city : a.city_en);
+export const prefName = (a: Area, lang: Lang) => (kanjiArea(lang) ? a.pref : a.pref_en);
 
 /** 地域ごとにまとめる（ビルド時に Astro から使う）。 */
 export function groupByArea(spots: Spot[]): { area: Area; spots: Spot[] }[] {

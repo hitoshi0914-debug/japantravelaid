@@ -4,9 +4,10 @@ export const locales = [
   { code: 'en', label: 'English', hreflang: 'en' },
   // 日本語: 喫煙所ファインダーは日本人の利用も多いので生成する（2026-10-07 ユーザー決定）。市販薬ガイドは英語だけ（tools.ts の langs）。
   { code: 'ja', label: '日本語', hreflang: 'ja' },
-  // { code: 'zh-cn', label: '简体中文', hreflang: 'zh-Hans' },
-  // { code: 'zh-tw', label: '繁體中文', hreflang: 'zh-Hant' },
-  // { code: 'ko', label: '한국어', hreflang: 'ko' },
+  // 中国語・韓国語: 全ページ多言語化（2026-10-08 ユーザー決定。基本は英語）。市販薬ガイドは英語だけのまま。
+  { code: 'zh-tw', label: '繁體中文', hreflang: 'zh-Hant' },
+  { code: 'zh-cn', label: '简体中文', hreflang: 'zh-Hans' },
+  { code: 'ko', label: '한국어', hreflang: 'ko' },
 ] as const;
 
 export type Lang = (typeof locales)[number]['code'];

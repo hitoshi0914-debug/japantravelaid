@@ -4,53 +4,88 @@
 // 件数が少ない地域は noindex・サイトマップ外（MIN_INDEXABLE_SPOTS）。
 import { langPaths, type Lang } from '../../../i18n/locales';
 import Base from '../../../layouts/Base.astro';
-import { areaName, contributionCounts, localized, MIN_INDEXABLE_SPOTS, rankFor, reportUrl, routeUrl, type Spot } from '../../../lib/smoking';
+import { areaName, cityName, contributionCounts, localized, spotLang, MIN_INDEXABLE_SPOTS, rankFor, reportUrl, routeUrl, type Spot } from '../../../lib/smoking';
 import { loadSpots, spotAreas } from '../../../lib/smokingData';
 
 export function getStaticPaths() {
-  return langPaths(['en', 'ja']).flatMap(({ params }) =>
+  return langPaths().flatMap(({ params }) =>
     spotAreas().map((g) => ({ params: { lang: params.lang, area: g.area.slug }, props: g })),
   );
 }
 
 const { area, spots } = Astro.props;
-const lang = Astro.params.lang as Lang as 'en' | 'ja';
-const ja = lang === 'ja';
+const lang = Astro.params.lang as Lang;
 const name = areaName(area, lang);
 const updated = loadSpots().generated_at.slice(0, 10);
 // 投稿者のランクは全国の投稿数で決める
 const counts = contributionCounts(loadSpots().spots);
 const indexable = spots.length >= MIN_INDEXABLE_SPOTS;
 
+const n = spots.length;
+const city = cityName(area, lang);
 const L = {
-  title: ja ? `${area.city}の喫煙所一覧（${spots.length}か所）` : `Smoking areas in ${name} (${spots.length})`,
-  description: ja
-    ? `${area.pref}${area.city}の公衆喫煙所・駅や商業施設の喫煙所 ${spots.length} か所。紙巻きOK・加熱式のみの区別、利用時間、地図とルート案内つき。`
-    : `${spots.length} public smoking areas in ${name}, Japan, with cigarette / heated-tobacco info, hours, map and walking directions.`,
-  lead: ja
-    ? '路上喫煙が禁止されている地域が多いので、指定の喫煙所をご利用ください。情報は変わることがあるため、現地の表示に従ってください。'
-    : 'Smoking on the street is banned in many areas of Japan, and fines may apply. Please use designated smoking areas and follow the signs on site, as details may change.',
-  map: ja ? '地図で見る' : 'Show on map',
-  route: ja ? 'ルート案内' : 'Directions',
-  report: ja ? '閉鎖・間違いを報告' : 'Report closed / wrong info',
-  hours: ja ? '利用時間' : 'Hours',
-  allAreas: ja ? 'ほかの地域から探す' : 'Browse other areas',
-  nearMe: ja ? '現在地から近い喫煙所を探す' : 'Find smoking areas near me',
-  updated: ja ? 'データ更新' : 'Data updated',
-  types: ja
-    ? { outdoor: '屋外', booth: 'ブース', indoor: '屋内', unknown: '喫煙所' }
-    : { outdoor: 'Outdoor', booth: 'Booth', indoor: 'Indoor', unknown: 'Smoking area' },
-  tobacco: ja
-    ? { any: '紙巻きOK', heated_only: '加熱式のみ', unknown: '紙巻き/加熱式 不明' }
-    : { any: 'Cigarettes OK', heated_only: 'Heated tobacco only', unknown: 'Tobacco type unknown' },
-  customers: ja ? '利用者限定' : 'Customers only',
-  unnamed: ja ? '喫煙所' : 'Smoking area',
-  addedBy: (n: string) => (ja ? `${n} さんが追加` : `Added by ${n}`),
-  ranks: ja
-    ? { bronze: '🥉 ブロンズ', silver: '🥈 シルバー', gold: '🥇 ゴールド', platinum: '🏅 プラチナ', diamond: '💎 ダイヤ' }
-    : { bronze: '🥉 Bronze', silver: '🥈 Silver', gold: '🥇 Gold', platinum: '🏅 Platinum', diamond: '💎 Diamond' },
-};
-const spotName = (s: Spot) => localized(s.name, lang) ?? L.unnamed;
+  en: {
+    title: `Smoking areas in ${name} (${n})`,
+    description: `${n} public smoking areas in ${name}, Japan, with cigarette / heated-tobacco info, hours, map and walking directions.`,
+    lead: 'Smoking on the street is banned in many areas of Japan, and fines may apply. Please use designated smoking areas and follow the signs on site, as details may change.',
+    map: 'Show on map', route: 'Directions', report: 'Report closed / wrong info', hours: 'Hours',
+    allAreas: 'Browse other areas', nearMe: 'Find smoking areas near me', updated: 'Data updated',
+    types: { outdoor: 'Outdoor', booth: 'Booth', indoor: 'Indoor', unknown: 'Smoking area' },
+    tobacco: { any: 'Cigarettes OK', heated_only: 'Heated tobacco only', unknown: 'Tobacco type unknown' },
+    customers: 'Customers only', unnamed: 'Smoking area',
+    addedBy: (x: string) => `Added by ${x}`,
+    ranks: { bronze: '🥉 Bronze', silver: '🥈 Silver', gold: '🥇 Gold', platinum: '🏅 Platinum', diamond: '💎 Diamond' },
+  },
+  ja: {
+    title: `${area.city}の喫煙所一覧（${n}か所）`,
+    description: `${area.pref}${area.city}の公衆喫煙所・駅や商業施設の喫煙所 ${n} か所。紙巻きOK・加熱式のみの区別、利用時間、地図とルート案内つき。`,
+    lead: '路上喫煙が禁止されている地域が多いので、指定の喫煙所をご利用ください。情報は変わることがあるため、現地の表示に従ってください。',
+    map: '地図で見る', route: 'ルート案内', report: '閉鎖・間違いを報告', hours: '利用時間',
+    allAreas: 'ほかの地域から探す', nearMe: '現在地から近い喫煙所を探す', updated: 'データ更新',
+    types: { outdoor: '屋外', booth: 'ブース', indoor: '屋内', unknown: '喫煙所' },
+    tobacco: { any: '紙巻きOK', heated_only: '加熱式のみ', unknown: '紙巻き/加熱式 不明' },
+    customers: '利用者限定', unnamed: '喫煙所',
+    addedBy: (x: string) => `${x} さんが追加`,
+    ranks: { bronze: '🥉 ブロンズ', silver: '🥈 シルバー', gold: '🥇 ゴールド', platinum: '🏅 プラチナ', diamond: '💎 ダイヤ' },
+  },
+  'zh-tw': {
+    title: `${city}的吸菸區（${n} 處）`,
+    description: `日本${area.pref}${area.city}的公共吸菸區及車站、商業設施吸菸室共 ${n} 處，附可吸紙菸／僅限加熱菸、開放時間、地圖與路線。`,
+    lead: '日本許多地區禁止在路上吸菸，違者可能被罰款。請使用指定的吸菸區，資訊可能變更，請以現場標示為準。',
+    map: '在地圖上查看', route: '路線導航', report: '回報已關閉／資訊有誤', hours: '開放時間',
+    allAreas: '搜尋其他地區', nearMe: '搜尋我附近的吸菸區', updated: '資料更新',
+    types: { outdoor: '戶外', booth: '吸菸室', indoor: '室內', unknown: '吸菸區' },
+    tobacco: { any: '可吸紙菸', heated_only: '僅限加熱菸', unknown: '菸品類型不明' },
+    customers: '限顧客使用', unnamed: '吸菸區',
+    addedBy: (x: string) => `由 ${x} 新增`,
+    ranks: { bronze: '🥉 銅牌', silver: '🥈 銀牌', gold: '🥇 金牌', platinum: '🏅 白金', diamond: '💎 鑽石' },
+  },
+  'zh-cn': {
+    title: `${city}的吸烟区（${n} 处）`,
+    description: `日本${area.pref}${area.city}的公共吸烟区及车站、商业设施吸烟室共 ${n} 处，附可吸卷烟／仅限加热烟、开放时间、地图与路线。`,
+    lead: '日本许多地区禁止在路上吸烟，违者可能被罚款。请使用指定的吸烟区，信息可能变更，请以现场标识为准。',
+    map: '在地图上查看', route: '路线导航', report: '报告已关闭／信息有误', hours: '开放时间',
+    allAreas: '查找其他地区', nearMe: '查找我附近的吸烟区', updated: '数据更新',
+    types: { outdoor: '户外', booth: '吸烟室', indoor: '室内', unknown: '吸烟区' },
+    tobacco: { any: '可吸卷烟', heated_only: '仅限加热烟', unknown: '烟草类型不明' },
+    customers: '仅限顾客', unnamed: '吸烟区',
+    addedBy: (x: string) => `由 ${x} 添加`,
+    ranks: { bronze: '🥉 铜牌', silver: '🥈 银牌', gold: '🥇 金牌', platinum: '🏅 白金', diamond: '💎 钻石' },
+  },
+  ko: {
+    title: `${city} 흡연구역 (${n}곳)`,
+    description: `일본 ${name}의 공공 흡연구역과 역·상업시설 흡연실 ${n}곳. 일반 담배 가능/가열식 전용 구분, 이용 시간, 지도와 길찾기 제공.`,
+    lead: '일본의 많은 지역에서 길거리 흡연이 금지되어 있고 과태료가 부과될 수 있습니다. 지정된 흡연구역을 이용하시고, 정보가 바뀔 수 있으니 현장 안내를 따라 주세요.',
+    map: '지도에서 보기', route: '길찾기', report: '폐쇄·정보 오류 신고', hours: '이용 시간',
+    allAreas: '다른 지역 찾기', nearMe: '내 주변 흡연구역 찾기', updated: '데이터 갱신',
+    types: { outdoor: '실외', booth: '부스', indoor: '실내', unknown: '흡연구역' },
+    tobacco: { any: '일반 담배 가능', heated_only: '가열식 담배 전용', unknown: '담배 종류 불명' },
+    customers: '이용객 전용', unnamed: '흡연구역',
+    addedBy: (x: string) => `${x} 님이 추가`,
+    ranks: { bronze: '🥉 브론즈', silver: '🥈 실버', gold: '🥇 골드', platinum: '🏅 플래티넘', diamond: '💎 다이아' },
+  },
+}[lang];
+const spotName = (s: Spot) => localized(s.name, spotLang(lang)) ?? L.unnamed;
 ---
 
 <Base lang={lang} title={L.title} description={L.description} path={`smoking/${area.slug}/`} backHref={`/${lang}/smoking/areas/`} noindex={!indexable}>
@@ -61,7 +96,7 @@ const spotName = (s: Spot) => localized(s.name, lang) ?? L.unnamed;
   <ol class="spots">
     {spots.map((s) => {
       const report = reportUrl(s.id);
-      const address = localized(s.address, lang);
+      const address = localized(s.address, spotLang(lang));
       return (
         <li class="spot">
           <h2>{spotName(s)}</h2>
