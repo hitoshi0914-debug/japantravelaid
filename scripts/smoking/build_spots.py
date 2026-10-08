@@ -31,12 +31,18 @@ import io
 import json
 import math
 import sys
+import time
 import urllib.parse
 import urllib.request
 from datetime import date, datetime, timezone
 from pathlib import Path
 
-OVERPASS_URL = "https://overpass-api.de/api/interpreter"
+# 公開 Overpass サーバーは混むと 504 を返すので、順に試す（同じ OSM データの別サーバー）。
+OVERPASS_URLS = [
+    "https://overpass-api.de/api/interpreter",
+    "https://overpass.private.coffee/api/interpreter",
+    "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
+]
 # 日本全土の喫煙所。way（エリアとして描かれた喫煙所）は中心点を使う。
 OVERPASS_QUERY = """
 [out:json][timeout:180];
@@ -168,10 +174,22 @@ def blank_spot() -> dict:
 
 def fetch_overpass() -> dict:
     data = urllib.parse.urlencode({"data": OVERPASS_QUERY}).encode()
-    req = urllib.request.Request(OVERPASS_URL, data=data, headers={"User-Agent": USER_AGENT})
-    log("Overpass API から取得中…（数十秒かかることがあります）")
-    with urllib.request.urlopen(req, timeout=240) as res:
-        return json.load(res)
+    errors = []
+    for attempt in range(2):
+        for url in OVERPASS_URLS:
+            log(f"Overpass API から取得中…（{url}、数十秒かかることがあります）")
+            try:
+                req = urllib.request.Request(url, data=data, headers={"User-Agent": USER_AGENT})
+                with urllib.request.urlopen(req, timeout=240) as res:
+                    payload = json.load(res)
+                if payload.get("elements"):
+                    return payload
+                errors.append(f"{url}: 0 件")
+            except Exception as e:  # 混雑（429/504）・タイムアウトは次のサーバーへ
+                errors.append(f"{url}: {e}")
+                log(f"  失敗: {e}")
+        time.sleep(30)
+    raise RuntimeError("Overpass API から取得できませんでした: " + " / ".join(errors))
 
 
 def osm_type(tags: dict) -> str:
