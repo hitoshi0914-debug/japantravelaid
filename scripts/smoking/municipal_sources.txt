@@ -1,0 +1,7 @@
+# 自治体の公衆喫煙所データ（GitHub Actions の「Update smoking data」が毎週読む）。
+# 1行に1つ、「区名=CSV か JSON の URL」。区名は taito・shinjuku などのスラッグか、市区町村コード（13106）。
+# 東京都オープンデータカタログ https://catalog.data.metro.tokyo.lg.jp/ で「喫煙所」を検索して、CSV の URL を貼る。
+# 列名が合わない区は、build_spots.py の MUNICIPAL_SOURCES に列の対応を足す。
+#
+# 例:
+# taito=https://www.opendata.metro.tokyo.lg.jp/taito/xxxx/smoking.csv

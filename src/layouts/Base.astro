@@ -1,0 +1,109 @@
+---
+import AdSense from '../components/AdSense.astro';
+import Analytics from '../components/Analytics.astro';
+import ConsentBanner from '../components/ConsentBanner.astro';
+import Disclaimer from '../components/Disclaimer.astro';
+import EmergencyBar from '../components/EmergencyBar.astro';
+import { langsForPath } from '../data/tools';
+import { getLocale, locales, tr, type Lang } from '../i18n/locales';
+import { ui } from '../i18n/ui';
+import { siteConfig } from '../site.config';
+import '../styles/global.css';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description?: string;
+  /** 言語の後ろのパス（例: "pharmacist/"）。トップは空文字。 */
+  path: string;
+  /** 「←」の行き先。省略時はサイトのトップ（トップ自身では出さない）。 */
+  backHref?: string;
+  noindex?: boolean;
+}
+
+const { lang, title, description = tr(ui.tagline, lang), path, backHref = path === '' ? undefined : `/${lang}/`, noindex = false } = Astro.props;
+const siteName = siteConfig.siteName;
+const fullTitle = title === siteName ? title : `${title} | ${siteName}`;
+const url = (code: string) => new URL(`/${code}/${path}`, Astro.site).href;
+const alternates = locales.filter((l) => langsForPath(path).includes(l.code));
+---
+
+<!doctype html>
+<html lang={getLocale(lang).hreflang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <Analytics />
+    <AdSense />
+    {siteConfig.googleSiteVerification && <meta name="google-site-verification" content={siteConfig.googleSiteVerification} />}
+    {siteConfig.bingSiteVerification && <meta name="msvalidate.01" content={siteConfig.bingSiteVerification} />}
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={url(lang)} />
+    {noindex
+      ? <meta name="robots" content="noindex, follow" />
+      : alternates.map((l) => <link rel="alternate" hreflang={l.hreflang} href={url(l.code)} />)}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+    <meta name="theme-color" content="#0b7a55" />
+    <slot name="head" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={url(lang)} />
+  </head>
+  <body>
+    <header class="container site-header">
+      <div class="brand-row">
+        {backHref && <a class="back" href={backHref} aria-label={tr(ui.back, lang)}>←</a>}
+        <a class="brand" href={`/${lang}/`}>🧭 {siteName}</a>
+      </div>
+      <EmergencyBar lang={lang} />
+    </header>
+    <main class="container">
+      <slot />
+      {/* 医療の免責表示は市販薬・救急ガイドの全ページに出す */}
+      {path.startsWith('medicine/') && <Disclaimer lang={lang} />}
+    </main>
+    <footer class="container site-footer">
+      <a href={`/${lang}/about/`}>{tr(ui.about, lang)}</a>
+      <a href={`/${lang}/privacy/`}>{tr(ui.privacy, lang)}</a>
+    </footer>
+    <ConsentBanner lang={lang} />
+    <script>
+      // PWA: 2回目以降は電波がなくても開けるように、サービスワーカーを登録する。
+      if ('serviceWorker' in navigator && location.hostname !== 'localhost') {
+        addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+      }
+    </script>
+  </body>
+</html>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--bg);
+    padding-top: env(safe-area-inset-top);
+  }
+  .brand-row { display: flex; align-items: center; gap: 8px; min-height: 44px; }
+  .brand { font-weight: 800; color: var(--text); text-decoration: none; font-size: 0.95rem; }
+  .back {
+    display: grid; place-items: center;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    text-decoration: none;
+    font-size: 1.2rem;
+  }
+  .site-footer {
+    display: flex; gap: 16px; flex-wrap: wrap;
+    margin-top: 24px;
+    padding-bottom: calc(32px + env(safe-area-inset-bottom));
+    font-size: 0.85rem;
+  }
+</style>

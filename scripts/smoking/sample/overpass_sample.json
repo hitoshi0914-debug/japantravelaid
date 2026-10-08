@@ -1,0 +1,10 @@
+{"elements":[
+{"type":"node","id":900000101,"lat":35.69010,"lon":139.70260,"tags":{"amenity":"smoking_area","name":"【サンプル】喫茶 けむり（飲食店・除外される）"}},
+{"type":"node","id":900000102,"lat":35.69150,"lon":139.69970,"tags":{"amenity":"smoking_area","name":"【サンプル】新宿 加熱式専用ブース","name:en":"[Sample] Shinjuku Heated-Tobacco Booth","heated_tobacco":"only","shelter":"yes"}},
+{"type":"node","id":900000001,"lat":35.71240,"lon":139.77690,"tags":{"amenity":"smoking_area","name:en":"Ueno Smoking Spot","opening_hours":"07:00-22:00"}},
+{"type":"node","id":900000002,"lat":35.69080,"lon":139.70050,"tags":{"amenity":"smoking_area","name":"【サンプル】新宿駅東口 喫煙所","name:en":"[Sample] Shinjuku East Exit Smoking Area","location":"outdoor"}},
+{"type":"way","id":900000003,"center":{"lat":35.65870,"lon":139.70150},"tags":{"amenity":"smoking_area","name":"【サンプル】渋谷 喫煙所","shelter":"yes","access":"yes"}},
+{"type":"node","id":900000004,"lat":34.70250,"lon":135.49590,"tags":{"amenity":"smoking_area","name":"【サンプル】大阪駅 喫煙所","name:en":"[Sample] Osaka Sta. Smoking Area","indoor":"yes","access":"customers"}},
+{"type":"node","id":900000005,"lat":35.68120,"lon":139.76710,"tags":{"amenity":"smoking_area","name:en":"[Sample] Tokyo Sta. Yaesu Smoking Area"}},
+{"type":"node","id":900000006,"lat":48.85,"lon":2.35,"tags":{"amenity":"smoking_area","name":"outside Japan"}}
+]}

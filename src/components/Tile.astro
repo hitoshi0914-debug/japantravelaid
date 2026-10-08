@@ -1,0 +1,49 @@
+---
+// TOP のピクトグラム・タイル1枚。文字を読まなくても分かるよう、ピクトグラムを最大に。
+import type { Tile } from '../data/categories';
+import { tr, type Lang } from '../i18n/locales';
+
+interface Props {
+  tile: Tile;
+  lang: Lang;
+}
+const { tile, lang } = Astro.props;
+// そのツールにこの言語のページがなければ英語版へ。
+const hrefLang = !tile.langs || tile.langs.includes(lang) ? lang : 'en';
+---
+
+<a class:list={['tile', `tile--${tile.kind}`]} href={`/${hrefLang}/${tile.path}`} data-ga="tile_click" data-ga-params={JSON.stringify({ tile: tile.id })}>
+  {tile.icon
+    ? <img class="tile-pict" src={tile.icon} alt="" width="56" height="56" />
+    : <span class="tile-pict" aria-hidden="true">{tile.pictogram}</span>}
+  <span class="tile-label">{tr(tile.label, lang)}</span>
+  {lang !== 'ja' && <span class="tile-ja" lang="ja">{tile.label.ja}</span>}
+</a>
+
+<style>
+  .tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    aspect-ratio: 1 / 1;
+    padding: 12px 8px;
+    border-radius: var(--radius);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    text-align: center;
+    text-decoration: none;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+    transition: transform 0.08s;
+  }
+  .tile:active { transform: scale(0.97); }
+  .tile-pict { font-size: 3.2rem; line-height: 1; }
+  img.tile-pict { width: 56px; height: 56px; }
+  .tile-label { font-weight: 800; font-size: 1rem; line-height: 1.2; }
+  .tile-ja { font-size: 0.72rem; color: var(--muted); }
+  /* 主機能（指差しカード）は緑、救急は赤で目立たせる */
+  :global(.tile-grid) > .tile--tool:nth-child(2) { background: var(--accent-soft); border-color: var(--accent); }
+  .tile--emergency { background: var(--danger-soft); border-color: var(--danger); }
+</style>

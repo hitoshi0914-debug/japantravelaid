@@ -1,0 +1,79 @@
+---
+// カテゴリページ（頭痛・風邪など）: 箱の言葉の早見表 ＋ 主な成分名の対訳 ＋ 指差しカードへの近道。
+// 薬の推奨はしない。カタログ（src/data/medicines.ts）が埋まったら、ここに品目一覧を出す。
+import { tiles } from '../../../../data/categories';
+import { categoryInfo, commonWords } from '../../../../data/kanji';
+import { medicines } from '../../../../data/medicines';
+import { locales, tr, type Lang } from '../../../../i18n/locales';
+import Base from '../../../../layouts/Base.astro';
+
+export function getStaticPaths() {
+  return locales.filter((l) => l.code === 'en').flatMap((l) =>
+    tiles.filter((t) => t.kind === 'category').map((tile) => ({ params: { lang: l.code, slug: tile.id }, props: { tile } })),
+  );
+}
+
+const { tile } = Astro.props;
+const lang = Astro.params.lang as Lang;
+const info = categoryInfo[tile.id];
+const items = medicines.filter((m) => m.category === tile.id);
+const cardLink = `/${lang}/medicine/pharmacist/?s=${(tile.symptoms ?? []).join(',')}`;
+---
+
+<Base lang={lang} title={tr(tile.label, lang)} description={tr(info.intro, lang)} path={`medicine/category/${tile.id}/`} backHref={`/${lang}/medicine/`}>
+  <h1 class="page-title"><span aria-hidden="true">{tile.pictogram}</span> {tr(tile.label, lang)}</h1>
+  <p class="lead">{tr(info.intro, lang)}</p>
+
+  <a class="cta" href={cardLink} data-ga="category_to_card" data-ga-params={JSON.stringify({ category: tile.id })}>
+    🗣️ Ask the pharmacist with a card →
+  </a>
+
+  <h2>Words on the box</h2>
+  <dl class="words">
+    {info.words.map((w) => (
+      <div><dt lang="ja">{w.ja}</dt><dd><span class="reading">{w.reading}</span>{tr(w.meaning, lang)}</dd></div>
+    ))}
+  </dl>
+
+  <h2>Common ingredient names</h2>
+  <p class="note">Names are shown in katakana on the box. This list only translates names; it does not say which product suits you.</p>
+  <dl class="words">
+    {info.ingredients.map((w) => (
+      <div><dt lang="ja">{w.ja}</dt><dd><span class="reading">{w.reading}</span>{tr(w.meaning, lang)}</dd></div>
+    ))}
+  </dl>
+
+  {items.length > 0 && (
+    <>
+      <h2>Products</h2>
+      <ul>{items.map((m) => <li>{m.name.en} <span lang="ja">{m.name.ja}</span></li>)}</ul>
+    </>
+  )}
+
+  <details class="common">
+    <summary>Words on every medicine box</summary>
+    <dl class="words">
+      {commonWords.map((w) => (
+        <div><dt lang="ja">{w.ja}</dt><dd><span class="reading">{w.reading}</span>{tr(w.meaning, lang)}</dd></div>
+      ))}
+    </dl>
+  </details>
+</Base>
+
+<style>
+  .page-title { font-size: 1.4rem; margin: 8px 0 4px; }
+  .lead, .note { color: var(--muted); font-size: 0.9rem; }
+  h2 { font-size: 1.1rem; margin: 24px 0 8px; }
+  .cta {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 56px; border-radius: var(--radius);
+    background: var(--accent); color: #fff; font-weight: 800; text-decoration: none;
+  }
+  .words { display: grid; gap: 6px; margin: 0; }
+  .words div { display: grid; grid-template-columns: 9.5em 1fr; gap: 8px; align-items: center; padding: 10px 12px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); }
+  .words dt { font-size: 1.15rem; font-weight: 800; overflow-wrap: anywhere; }
+  .words dd { margin: 0; font-size: 0.9rem; }
+  .reading { display: block; font-size: 0.75rem; color: var(--muted); }
+  .common { margin-top: 24px; }
+  .common summary { min-height: var(--tap); display: flex; align-items: center; font-weight: 700; cursor: pointer; }
+</style>

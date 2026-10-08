@@ -1,0 +1,44 @@
+---
+// 喫煙所ファインダー: 全画面の地図アプリなので共通レイアウト（Base）は使わず、計測・PWA の部品だけ入れる。
+// 地図画面には広告を置かない（ユーザー決定 2026-10-07）。広告は地域ページ（[area].astro）に出す。
+// 画面と5言語の文言は SmokingFinder.tsx の中。日本語は /ja/smoking/、英中韓は /en/smoking/ の中で切り替える。
+import Analytics from '../../../components/Analytics.astro';
+import ConsentBanner from '../../../components/ConsentBanner.astro';
+import SmokingFinder from '../../../components/smoking/SmokingFinder';
+import { langPaths, locales, type Lang } from '../../../i18n/locales';
+import { siteConfig } from '../../../site.config';
+import '../../../styles/smoking.css';
+
+export const getStaticPaths = () => langPaths(['en', 'ja']);
+const lang = Astro.params.lang as Lang;
+const url = (code: string) => new URL(`/${code}/smoking/`, Astro.site).href;
+const ja = lang === 'ja';
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <Analytics />
+    {siteConfig.googleSiteVerification && <meta name="google-site-verification" content={siteConfig.googleSiteVerification} />}
+    <title>{ja ? '喫煙所ファインダー｜近くの公衆喫煙所を地図で探す' : 'Smoking Area Finder: public smoking areas near you in Japan'} | {siteConfig.siteName}</title>
+    <meta name="description" content={ja ? '現在地から近い公衆喫煙所・駅や商業施設の喫煙所を地図で探せます。紙巻きOK・加熱式のみの区別つき。' : 'Find the nearest public smoking areas in Japan on a map. English, 繁中, 简中, 한국어, 日本語.'} />
+    <link rel="canonical" href={url(lang)} />
+    {locales.filter((l) => l.code === 'en' || l.code === 'ja').map((l) => <link rel="alternate" hreflang={l.hreflang} href={url(l.code)} />)}
+    <meta name="theme-color" content="#0f766e" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="preload" href="/smoking/spots.json" as="fetch" crossorigin />
+  </head>
+  <body>
+    <!-- Leaflet は window が必要なのでブラウザでだけ描画する -->
+    <SmokingFinder client:only="react" pageLang={lang as 'en' | 'ja'} />
+    <ConsentBanner lang={lang} />
+    <script>
+      if ('serviceWorker' in navigator && location.hostname !== 'localhost') {
+        addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+      }
+    </script>
+  </body>
+</html>

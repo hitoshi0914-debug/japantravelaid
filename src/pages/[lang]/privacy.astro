@@ -1,0 +1,29 @@
+---
+import { langPaths, type Lang } from '../../i18n/locales';
+import Base from '../../layouts/Base.astro';
+import { adsenseClient } from '../../lib/adsense';
+import { siteConfig } from '../../site.config';
+
+export const getStaticPaths = () => langPaths();
+const lang = Astro.params.lang as Lang;
+---
+
+<Base lang={lang} title="Privacy policy" path="privacy/">
+  <h1>Privacy policy</h1>
+  <h2>What you select</h2>
+  <p>Symptoms and conditions you tap on the pharmacist card are saved only in your own browser (localStorage) so the card works offline. They are never sent to us.</p>
+  {siteConfig.gaMeasurementId && (
+    <>
+      <h2>Analytics</h2>
+      <p>We use Google Analytics to understand how the site is used (pages viewed, buttons tapped). It does not include what you selected on the card. You can decline in the cookie banner.</p>
+    </>
+  )}
+  {adsenseClient && (
+    <>
+      <h2>Advertising</h2>
+      <p>We use Google AdSense. Google and its partners may use cookies to show ads based on your visits to this and other sites. You can opt out of personalised ads at <a href="https://adssettings.google.com/" rel="noopener">Google Ad Settings</a>.</p>
+    </>
+  )}
+  <h2>Links to Google Maps</h2>
+  <p>Map buttons open Google Maps. Your location is shared with Google only if you allow it there.</p>
+</Base>

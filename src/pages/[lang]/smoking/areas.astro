@@ -1,0 +1,40 @@
+---
+// 地域一覧（/en/smoking/areas/）。都道府県ごとに、喫煙所がある市区町村と件数を並べる。
+import { langPaths, type Lang } from '../../../i18n/locales';
+import Base from '../../../layouts/Base.astro';
+import { areaName } from '../../../lib/smoking';
+import { spotAreas } from '../../../lib/smokingData';
+
+export const getStaticPaths = () => langPaths(['en', 'ja']);
+const lang = Astro.params.lang as Lang as 'en' | 'ja';
+const ja = lang === 'ja';
+
+const byPref = new Map<string, ReturnType<typeof spotAreas>>();
+for (const g of spotAreas()) {
+  const key = ja ? g.area.pref : g.area.pref_en;
+  byPref.set(key, [...(byPref.get(key) ?? []), g]);
+}
+const title = ja ? '地域から喫煙所を探す' : 'Smoking areas in Japan by city';
+---
+
+<Base lang={lang} title={title} description={ja ? '全国の公衆喫煙所を市区町村ごとに探せます。' : 'Browse public smoking areas in Japan by city and ward.'} path="smoking/areas/" backHref={`/${lang}/smoking/`}>
+  <h1 class="page-title">🚬 {title}</h1>
+  {[...byPref].map(([pref, groups]) => (
+    <section>
+      <h2>{pref}</h2>
+      <ul>
+        {groups.map((g) => (
+          <li><a href={`/${lang}/smoking/${g.area.slug}/`}>{ja ? g.area.city : areaName(g.area, 'en').split(',')[0]}</a> <span>({g.spots.length})</span></li>
+        ))}
+      </ul>
+    </section>
+  ))}
+</Base>
+
+<style>
+  .page-title { font-size: 1.35rem; margin: 8px 0 12px; }
+  h2 { font-size: 1rem; margin: 18px 0 6px; }
+  ul { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+  li a { display: inline-flex; align-items: center; min-height: 40px; font-weight: 700; }
+  li span { font-size: 0.8rem; color: var(--muted); }
+</style>

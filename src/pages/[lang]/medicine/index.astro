@@ -1,0 +1,21 @@
+---
+// 市販薬・救急ガイドのトップ: 緊急帯（レイアウト）＋ ピクトグラム・グリッド。3タップ以内にどの画面にも届く。
+import TileGrid from '../../../components/TileGrid.astro';
+import { langPaths, tr, type Lang } from '../../../i18n/locales';
+import { ui } from '../../../i18n/ui';
+import Base from '../../../layouts/Base.astro';
+
+export const getStaticPaths = () => langPaths(['en']);
+const lang = Astro.params.lang as Lang;
+---
+
+<Base lang={lang} title="Medicine & Emergency" description="Point-and-show card for Japanese drugstores, medicine box kanji, and emergency numbers for visitors to Japan." path="medicine/">
+  <h1 class="section-title">💊 Medicine & Emergency</h1>
+  <p class="tagline">{tr(ui.tagline, lang)}</p>
+  <TileGrid lang={lang} />
+</Base>
+
+<style>
+  .section-title { font-size: 1.3rem; margin: 8px 0 0; }
+  .tagline { margin: 8px 0 16px; color: var(--muted); font-size: 0.9rem; }
+</style>

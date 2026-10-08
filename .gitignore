@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.astro/
+.wrangler/
+__pycache__/
+scripts/*.log
+.env
+.env.*
+scripts/smoking/cache/

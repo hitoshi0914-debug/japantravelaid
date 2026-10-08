@@ -1,0 +1,8 @@
+/* 喫煙所ファインダーのページだけが読み込む（Tailwind のリセットを他のページに広げないため）。 */
+@import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
+
+html, body { height: 100%; }
+
+/* 共通の同意バナー（ConsentBanner.astro）が使う色。 */
+:root { --border: #d9dee5; --surface: #fff; --text: #111418; --accent: #0f766e; --radius: 16px; }

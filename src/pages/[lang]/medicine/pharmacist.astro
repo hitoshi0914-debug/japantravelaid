@@ -1,0 +1,25 @@
+---
+import PharmacistApp from '../../../components/pharmacist/PharmacistApp';
+import { langPaths, type Lang } from '../../../i18n/locales';
+import Base from '../../../layouts/Base.astro';
+import '../../../components/pharmacist/pharmacist.css';
+
+export const getStaticPaths = () => langPaths(['en']);
+const lang = Astro.params.lang as Lang;
+---
+
+<Base
+  lang={lang}
+  title="Show to Pharmacist"
+  description="Tap your symptoms and show a big Japanese card to the pharmacist at a Japanese drugstore. Works offline."
+  path="medicine/pharmacist/" backHref={`/${lang}/medicine/`}
+>
+  <h1 class="page-title">🗣️ Show to Pharmacist</h1>
+  <p class="lead">Tap what applies, then show the card to the pharmacist or registered seller (登録販売者). They can point to answer.</p>
+  <PharmacistApp client:load lang={lang} />
+</Base>
+
+<style>
+  .page-title { font-size: 1.4rem; margin: 8px 0 4px; }
+  .lead { margin: 0 0 16px; color: var(--muted); font-size: 0.9rem; }
+</style>

@@ -1,0 +1,99 @@
+---
+// 計測への同意バナー。GA を使うときだけ、まだ選んでいない人に表示する。
+import { tr, type Lang } from '../i18n/locales';
+import { ui } from '../i18n/ui';
+import { adsenseClient } from '../lib/adsense';
+import { siteConfig } from '../site.config';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+---
+
+{siteConfig.gaMeasurementId && (
+  <div class="consent" id="consent" hidden>
+    <p>
+      {tr(adsenseClient ? ui.consentTextAds : ui.consentText, lang)}
+      <a href={`/${lang}/privacy/`}>{tr(ui.privacy, lang)}</a>
+    </p>
+    <div class="consent-actions">
+      <button type="button" data-consent="denied">{tr(ui.consentDecline, lang)}</button>
+      <button type="button" class="primary" data-consent="granted">{tr(ui.consentAccept, lang)}</button>
+    </div>
+  </div>
+)}
+
+<script>
+  const banner = document.getElementById('consent');
+  if (banner) {
+    let choice: string | null = null;
+    try {
+      choice = localStorage.getItem('otc-consent');
+    } catch {}
+    if (!choice) banner.hidden = false;
+
+    banner.addEventListener('click', (event) => {
+      const value = (event.target as HTMLElement).closest('button')?.dataset.consent;
+      if (!value) return;
+      try {
+        localStorage.setItem('otc-consent', value);
+      } catch {}
+      // 「拒否」は計測も広告の Cookie も止める。「同意」は計測だけ（EU などの広告の同意は AdSense の同意バナーで取る）。
+      const update: Record<string, string> = { analytics_storage: value };
+      if (value === 'denied') Object.assign(update, { ad_storage: value, ad_user_data: value, ad_personalization: value });
+      (window as any).gtag?.('consent', 'update', update);
+      banner.hidden = true;
+    });
+  }
+</script>
+
+<style>
+  .consent {
+    position: fixed;
+    inset: auto 16px 16px;
+    z-index: 50;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 1.25rem;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: 0 10px 30px rgb(0 0 0 / 0.5);
+    font-size: 0.9rem;
+  }
+  .consent[hidden] {
+    display: none;
+  }
+  .consent p {
+    flex: 1 1 18rem;
+    margin: 0;
+  }
+  .consent a {
+    margin-left: 0.4rem;
+  }
+  .consent-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+  button {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+    cursor: pointer;
+  }
+  button.primary {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: #fff;
+  }
+</style>

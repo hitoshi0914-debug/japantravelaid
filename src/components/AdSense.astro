@@ -1,0 +1,12 @@
+---
+// Google AdSense（src/site.config.ts に adsensePublisherId を書いたときだけ出力する）。
+// 審査用の確認コードと、合格後の自動広告を兼ねる。広告の位置・量は AdSense の管理画面（自動広告）で決める。
+import { adsenseClient } from '../lib/adsense';
+---
+
+{adsenseClient && (
+  <>
+    <meta name="google-adsense-account" content={adsenseClient} />
+    <script is:inline async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClient}`} crossorigin="anonymous"></script>
+  </>
+)}

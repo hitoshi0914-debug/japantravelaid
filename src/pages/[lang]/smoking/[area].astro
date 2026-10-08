@@ -1,0 +1,100 @@
+---
+// 地域ごとの喫煙所一覧（例: /en/smoking/tokyo-taito/）。spots.json から自動で作る。
+// 検索流入（「台東区 喫煙所」など）の入口で、AdSense の広告はこのページに出る（地図画面には出さない）。
+// 件数が少ない地域は noindex・サイトマップ外（MIN_INDEXABLE_SPOTS）。
+import { langPaths, type Lang } from '../../../i18n/locales';
+import Base from '../../../layouts/Base.astro';
+import { areaName, localized, MIN_INDEXABLE_SPOTS, reportUrl, routeUrl, type Spot } from '../../../lib/smoking';
+import { loadSpots, spotAreas } from '../../../lib/smokingData';
+
+export function getStaticPaths() {
+  return langPaths(['en', 'ja']).flatMap(({ params }) =>
+    spotAreas().map((g) => ({ params: { lang: params.lang, area: g.area.slug }, props: g })),
+  );
+}
+
+const { area, spots } = Astro.props;
+const lang = Astro.params.lang as Lang as 'en' | 'ja';
+const ja = lang === 'ja';
+const name = areaName(area, lang);
+const updated = loadSpots().generated_at.slice(0, 10);
+const indexable = spots.length >= MIN_INDEXABLE_SPOTS;
+
+const L = {
+  title: ja ? `${area.city}の喫煙所一覧（${spots.length}か所）` : `Smoking areas in ${name} (${spots.length})`,
+  description: ja
+    ? `${area.pref}${area.city}の公衆喫煙所・駅や商業施設の喫煙所 ${spots.length} か所。紙巻きOK・加熱式のみの区別、利用時間、地図とルート案内つき。`
+    : `${spots.length} public smoking areas in ${name}, Japan, with cigarette / heated-tobacco info, hours, map and walking directions.`,
+  lead: ja
+    ? '路上喫煙が禁止されている地域が多いので、指定の喫煙所をご利用ください。情報は変わることがあるため、現地の表示に従ってください。'
+    : 'Smoking on the street is banned in many areas of Japan, and fines may apply. Please use designated smoking areas and follow the signs on site, as details may change.',
+  map: ja ? '地図で見る' : 'Show on map',
+  route: ja ? 'ルート案内' : 'Directions',
+  report: ja ? '閉鎖・間違いを報告' : 'Report closed / wrong info',
+  hours: ja ? '利用時間' : 'Hours',
+  allAreas: ja ? 'ほかの地域から探す' : 'Browse other areas',
+  nearMe: ja ? '現在地から近い喫煙所を探す' : 'Find smoking areas near me',
+  updated: ja ? 'データ更新' : 'Data updated',
+  types: ja
+    ? { outdoor: '屋外', booth: 'ブース', indoor: '屋内', unknown: '喫煙所' }
+    : { outdoor: 'Outdoor', booth: 'Booth', indoor: 'Indoor', unknown: 'Smoking area' },
+  tobacco: ja
+    ? { any: '紙巻きOK', heated_only: '加熱式のみ', unknown: '紙巻き/加熱式 不明' }
+    : { any: 'Cigarettes OK', heated_only: 'Heated tobacco only', unknown: 'Tobacco type unknown' },
+  customers: ja ? '利用者限定' : 'Customers only',
+  unnamed: ja ? '喫煙所' : 'Smoking area',
+};
+const spotName = (s: Spot) => localized(s.name, lang) ?? L.unnamed;
+---
+
+<Base lang={lang} title={L.title} description={L.description} path={`smoking/${area.slug}/`} backHref={`/${lang}/smoking/areas/`} noindex={!indexable}>
+  <h1 class="page-title">🚬 {L.title}</h1>
+  <p class="lead">{L.lead}</p>
+  <a class="cta" href={`/${lang}/smoking/`}>📍 {L.nearMe}</a>
+
+  <ol class="spots">
+    {spots.map((s) => {
+      const report = reportUrl(s.id);
+      const address = localized(s.address, lang);
+      return (
+        <li class="spot">
+          <h2>{spotName(s)}</h2>
+          {address && <p class="addr">{address}</p>}
+          <p class="tags">
+            <span>{L.types[s.type]}</span>
+            <span class:list={['tob', `tob--${s.tobacco}`]}>{L.tobacco[s.tobacco]}</span>
+            {s.access === 'customers' && <span class="cust">{L.customers}</span>}
+            {s.hours && <span>🕒 {L.hours}: {s.hours}</span>}
+          </p>
+          <p class="actions">
+            <a href={`/${lang}/smoking/?spot=${encodeURIComponent(s.id)}`}>{L.map}</a>
+            <a href={routeUrl(s)} target="_blank" rel="noopener" data-ga="smoking_route">{L.route}</a>
+            {report && <a class="report" href={report} target="_blank" rel="noopener" data-ga="smoking_report">{L.report}</a>}
+          </p>
+        </li>
+      );
+    })}
+  </ol>
+
+  <p class="more"><a href={`/${lang}/smoking/areas/`}>{L.allAreas} →</a></p>
+  <p class="credit">{L.updated}: {updated} · © OpenStreetMap contributors (ODbL) · Geolonia 住所データ (CC BY 4.0)</p>
+</Base>
+
+<style>
+  .page-title { font-size: 1.35rem; margin: 8px 0 4px; }
+  .lead { color: var(--muted); font-size: 0.88rem; }
+  .cta { display: flex; align-items: center; justify-content: center; min-height: 52px; margin: 12px 0 16px; border-radius: var(--radius); background: #0f766e; color: #fff; font-weight: 800; text-decoration: none; }
+  .spots { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .spot { padding: 12px 14px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); }
+  .spot h2 { margin: 0; font-size: 1.02rem; }
+  .addr { margin: 2px 0 0; font-size: 0.8rem; color: var(--muted); }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; font-size: 0.75rem; }
+  .tags span { padding: 2px 8px; border-radius: 6px; background: var(--bg); }
+  .tob--any { background: #ccfbf1 !important; color: #134e4a; }
+  .tob--heated_only { background: #ede9fe !important; color: #4c1d95; }
+  .cust { background: #fde68a !important; color: #451a03; font-weight: 700; }
+  .actions { display: flex; flex-wrap: wrap; gap: 14px; margin: 0; font-size: 0.85rem; font-weight: 700; }
+  .actions .report { font-weight: 400; font-size: 0.75rem; color: var(--muted); }
+  .more { margin-top: 20px; font-weight: 700; }
+  .credit { font-size: 0.7rem; color: var(--muted); }
+</style>

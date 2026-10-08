@@ -1,0 +1,24 @@
+---
+// サイトのトップ: 緊急帯（レイアウト）＋ ツールの大きなアイコン。ツールが増えたら src/data/tools.ts に足す。
+import Tile from '../../components/Tile.astro';
+import { tools } from '../../data/tools';
+import { langPaths, tr, type Lang } from '../../i18n/locales';
+import { ui } from '../../i18n/ui';
+import Base from '../../layouts/Base.astro';
+import { siteConfig } from '../../site.config';
+
+export const getStaticPaths = () => langPaths();
+const lang = Astro.params.lang as Lang;
+---
+
+<Base lang={lang} title={siteConfig.siteName} description={tr(ui.siteTagline, lang)} path="">
+  <p class="tagline">{tr(ui.siteTagline, lang)}</p>
+  <nav class="tools" aria-label="Tools">
+    {tools.map((tool) => <Tile tile={tool} lang={lang} />)}
+  </nav>
+</Base>
+
+<style>
+  .tagline { margin: 8px 0 16px; color: var(--muted); font-size: 0.9rem; }
+  .tools { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+</style>

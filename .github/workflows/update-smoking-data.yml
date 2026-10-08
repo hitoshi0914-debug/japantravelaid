@@ -1,0 +1,76 @@
+# 喫煙所データ（public/smoking/spots.json）を毎週作り直して、変わっていれば commit して公開する。
+# OSM（Overpass API）と scripts/smoking/municipal_sources.txt の自治体データから作る。
+# 手動で今すぐ更新したいときは Actions タブ > Update smoking data > Run workflow。
+# 必要な設定は Deploy と同じ（Secrets の CLOUDFLARE_API_TOKEN）。
+name: Update smoking data
+
+on:
+  schedule:
+    - cron: '0 18 * * 0' # 毎週月曜 3:00（日本時間）
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/cache@v4
+        with:
+          path: scripts/smoking/cache
+          key: geolonia-${{ github.run_id }}
+          restore-keys: geolonia-
+
+      - name: Build spots.json
+        run: |
+          args=()
+          while IFS= read -r line; do
+            line="${line%%#*}"; line="$(echo "$line" | xargs)"
+            [ -n "$line" ] && args+=(--municipal "$line")
+          done < scripts/smoking/municipal_sources.txt
+          old=$(python3 -c "import json;print(len(json.load(open('public/smoking/spots.json'))['spots']))")
+          python3 scripts/smoking/build_spots.py --save-overpass scripts/smoking/cache/overpass.json "${args[@]}" --out /tmp/spots.json
+          new=$(python3 -c "import json;d=json.load(open('/tmp/spots.json'));print(len(d['spots']) if any(s['id']=='osm' for s in d['sources']) else 0)")
+          echo "spots: $old -> $new"
+          # OSM の取得に失敗した・件数が半分以下に減ったときは、壊れたデータで上書きしない
+          if [ "$new" -eq 0 ] || [ "$new" -lt $((old / 2)) ]; then echo "::error::spots.json の件数が異常（$old → $new）なので更新しません"; exit 1; fi
+          cp /tmp/spots.json public/smoking/spots.json
+
+      - name: Commit if changed
+        id: commit
+        run: |
+          # generated_at だけの変化は無視する
+          same=$(python3 -c "
+          import json, subprocess
+          old = json.loads(subprocess.run(['git', 'show', 'HEAD:public/smoking/spots.json'], capture_output=True, text=True).stdout)
+          new = json.load(open('public/smoking/spots.json'))
+          old.pop('generated_at'); new.pop('generated_at')
+          print(old == new)")
+          if [ "$same" = "True" ]; then echo "changed=false" >> "$GITHUB_OUTPUT"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898299+github-actions[bot]@users.noreply.github.com"
+          git add public/smoking/spots.json
+          git commit -m "Update smoking data"
+          git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      # GITHUB_TOKEN の push では Deploy が動かないので、ここで公開する。
+      - if: steps.commit.outputs.changed == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - if: steps.commit.outputs.changed == 'true'
+        run: npm ci && npm run deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: cc2d7d905379f8bfe3810ba800cac21c

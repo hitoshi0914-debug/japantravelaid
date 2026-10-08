@@ -1,0 +1,46 @@
+---
+// ヘッダー直下の緊急帯。どのページでも最上部に出し、ワンタップで電話をかけられる。
+import { Phone } from '@lucide/astro';
+import { contacts } from '../data/emergency';
+import { tr, type Lang } from '../i18n/locales';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const shown = contacts.filter((c) => c.id === 'ambulance' || c.id === '7119');
+---
+
+<div class="emergency-bar" role="region" aria-label="Emergency numbers">
+  {shown.map((c) => (
+    <a class:list={['em-call', { urgent: c.urgent }]} href={`tel:${c.tel}`} data-ga="call_click" data-ga-params={JSON.stringify({ number: c.number })}>
+      <Phone size={18} aria-hidden="true" />
+      <strong>{c.number}</strong>
+      <span>{tr(c.label, lang)}</span>
+    </a>
+  ))}
+</div>
+
+<style>
+  .emergency-bar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 8px 0;
+  }
+  .em-call {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-height: var(--tap);
+    padding: 0 12px;
+    border-radius: 12px;
+    background: var(--warn-soft);
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.8rem;
+    line-height: 1.15;
+  }
+  .em-call strong { font-size: 1.15rem; }
+  .em-call.urgent { background: var(--danger); color: #fff; }
+</style>

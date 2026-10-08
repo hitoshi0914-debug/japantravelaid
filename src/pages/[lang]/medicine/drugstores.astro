@@ -1,0 +1,54 @@
+---
+// 周辺のドラッグストア: Google マップの検索 URL を開くだけ（API キー不要・Google のデータは転載しない）。
+import { langPaths, type Lang } from '../../../i18n/locales';
+import Base from '../../../layouts/Base.astro';
+
+export const getStaticPaths = () => langPaths(['en']);
+const lang = Astro.params.lang as Lang;
+const maps = (q: string) => 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q);
+---
+
+<Base lang={lang} title="Nearby Drugstores" description="Find a drugstore near you in Japan, and know the difference between a drugstore and a prescription-only pharmacy." path="medicine/drugstores/" backHref={`/${lang}/medicine/`}>
+  <h1 class="page-title">📍 Nearby Drugstores</h1>
+
+  <a class="map-btn" href={maps('ドラッグストア')} target="_blank" rel="noopener" data-ga="map_click" data-ga-params='{"target":"drugstore"}'>
+    Open drugstores near me <span lang="ja">ドラッグストア</span>
+  </a>
+  <a class="map-btn map-btn--sub" href={maps('drugstore open now')} target="_blank" rel="noopener" data-ga="map_click" data-ga-params='{"target":"drugstore_open"}'>
+    Open now (late-night)
+  </a>
+
+  <h2>Two kinds of shops</h2>
+  <div class="kinds">
+    <div class="kind ok">
+      <p class="kind-ja" lang="ja">ドラッグストア</p>
+      <p><strong>Drugstore</strong> — sells over-the-counter medicine. Big chains have long hours.</p>
+    </div>
+    <div class="kind no">
+      <p class="kind-ja" lang="ja">調剤薬局 / 処方箋受付</p>
+      <p><strong>Prescription pharmacy</strong> — mainly fills doctors' prescriptions. Often has few or no OTC products.</p>
+    </div>
+  </div>
+
+  <h2>Good to know</h2>
+  <ul class="tips">
+    <li><strong lang="ja">第1類医薬品</strong> (Class 1, e.g. some stronger pain relievers) can only be sold while a <strong>pharmacist</strong> is on duty. At night you may not be able to buy them.</li>
+    <li>Other OTC medicines can be sold by a <strong>registered seller</strong> (<span lang="ja">登録販売者</span>).</li>
+    <li>Many drugstores offer <strong>tax-free</strong> shopping with your passport.</li>
+  </ul>
+</Base>
+
+<style>
+  .page-title { font-size: 1.4rem; margin: 8px 0 12px; }
+  h2 { font-size: 1.1rem; margin: 24px 0 8px; }
+  .map-btn { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 56px; margin-bottom: 8px; border-radius: var(--radius); background: var(--accent); color: #fff; font-weight: 800; text-decoration: none; }
+  .map-btn--sub { background: var(--surface); color: var(--accent); border: 2px solid var(--accent); }
+  .kinds { display: grid; gap: 8px; }
+  .kind { padding: 12px; border-radius: var(--radius); border: 2px solid; background: var(--surface); }
+  .kind p { margin: 0; font-size: 0.9rem; }
+  .kind.ok { border-color: var(--accent); }
+  .kind.no { border-color: var(--border); }
+  .kind-ja { font-size: 1.3rem !important; font-weight: 900; }
+  .tips { padding-left: 1.2em; font-size: 0.92rem; }
+  .tips li { margin-bottom: 8px; }
+</style>

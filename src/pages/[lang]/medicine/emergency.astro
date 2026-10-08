@@ -1,0 +1,58 @@
+---
+import { Phone } from '@lucide/astro';
+import { contacts } from '../../../data/emergency';
+import { langPaths, tr, type Lang } from '../../../i18n/locales';
+import Base from '../../../layouts/Base.astro';
+
+export const getStaticPaths = () => langPaths(['en']);
+const lang = Astro.params.lang as Lang;
+const mapsHospital = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('hospital English speaking');
+---
+
+<Base lang={lang} title="Hospital / Emergency" description="Emergency numbers in Japan (119, #7119, Japan Visitor Hotline) and how to find a hospital as a visitor." path="medicine/emergency/" backHref={`/${lang}/medicine/`}>
+  <h1 class="page-title">🚨 Hospital / Emergency</h1>
+  <p class="lead">If someone is unconscious, has trouble breathing, or is badly hurt, call <strong>119</strong> now.</p>
+
+  <ul class="contacts">
+    {contacts.map((c) => (
+      <li class:list={{ urgent: c.urgent }}>
+        <a href={`tel:${c.tel}`} data-ga="call_click" data-ga-params={JSON.stringify({ number: c.number })}>
+          <Phone size={22} aria-hidden="true" />
+          <span class="num">{c.number}</span>
+          <span class="label">{tr(c.label, lang)}<span lang="ja">{c.label.ja}</span></span>
+        </a>
+        <p>{tr(c.note, lang)}</p>
+      </li>
+    ))}
+  </ul>
+
+  <h2>Find a hospital or clinic</h2>
+  <a class="map-btn" href={mapsHospital} target="_blank" rel="noopener" data-ga="map_click" data-ga-params='{"target":"hospital"}'>📍 Open hospitals near me in Google Maps</a>
+  <p class="note">Bring your passport and travel insurance details. Many clinics close in the evening and on Sundays; for night-time care, ask the hotline above.</p>
+
+  <h2>Say it in Japanese</h2>
+  <dl class="say">
+    <div><dt lang="ja">救急です。</dt><dd>It's a medical emergency. (Kyūkyū desu)</dd></div>
+    <div><dt lang="ja">英語を話せる人はいますか？</dt><dd>Is there anyone who speaks English?</dd></div>
+    <div><dt lang="ja">ここに住所があります。</dt><dd>Here is the address.</dd></div>
+  </dl>
+</Base>
+
+<style>
+  .page-title { font-size: 1.4rem; margin: 8px 0 4px; }
+  .lead, .note { color: var(--muted); font-size: 0.9rem; }
+  h2 { font-size: 1.1rem; margin: 24px 0 8px; }
+  .contacts { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .contacts li { padding: 12px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); }
+  .contacts li.urgent { border: 2px solid var(--danger); background: var(--danger-soft); }
+  .contacts a { display: flex; align-items: center; gap: 10px; min-height: var(--tap); color: var(--text); text-decoration: none; }
+  .num { font-size: 1.6rem; font-weight: 900; }
+  .label { display: flex; flex-direction: column; font-weight: 700; line-height: 1.2; }
+  .label span { font-weight: 400; font-size: 0.75rem; color: var(--muted); }
+  .contacts p { margin: 6px 0 0; font-size: 0.85rem; color: var(--muted); }
+  .map-btn { display: flex; align-items: center; justify-content: center; min-height: 56px; border-radius: var(--radius); background: var(--accent); color: #fff; font-weight: 800; text-decoration: none; text-align: center; padding: 0 12px; }
+  .say { display: grid; gap: 6px; margin: 0; }
+  .say div { padding: 10px 12px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); }
+  .say dt { font-size: 1.3rem; font-weight: 800; }
+  .say dd { margin: 0; font-size: 0.85rem; color: var(--muted); }
+</style>

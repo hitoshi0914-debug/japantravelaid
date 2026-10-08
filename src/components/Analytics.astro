@@ -1,0 +1,52 @@
+---
+// Google Analytics 4（src/site.config.ts に測定 ID を書いたときだけ出力する）。
+// Consent Mode v2: EU・英国・スイスなどは同意するまで計測用 Cookie を使わない。
+// それ以外の地域は既定で計測し（AdSense の広告 Cookie も）、バナーで「拒否」されたら止める。
+import { siteConfig } from '../site.config';
+
+const gaId = siteConfig.gaMeasurementId;
+const consentRequiredRegions = [
+  'AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV',
+  'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE', 'IS', 'LI', 'NO', 'GB', 'CH',
+];
+---
+
+{gaId && (
+  <>
+    <script is:inline define:vars={{ gaId, consentRequiredRegions }}>
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function () {
+        window.dataLayer.push(arguments);
+      };
+      var choice = null;
+      try {
+        choice = localStorage.getItem('otc-consent');
+      } catch (e) {}
+      // 広告（AdSense）の Cookie: EU・英国・スイスは拒否のままにし、同意は AdSense の
+      // 「プライバシーとメッセージ」（Google 認定の同意バナー）に任せる。それ以外の地域は、
+      // サイトのバナーで「拒否」されるまで使う。
+      function all(value) {
+        return { ad_storage: value, ad_user_data: value, ad_personalization: value, analytics_storage: value };
+      }
+      gtag('consent', 'default', Object.assign(all('denied'), {
+        analytics_storage: choice === 'granted' ? 'granted' : 'denied',
+        region: consentRequiredRegions,
+      }));
+      gtag('consent', 'default', all(choice === 'denied' ? 'denied' : 'granted'));
+      gtag('js', new Date());
+      gtag('config', gaId);
+      // data-ga="イベント名" と data-ga-params='{"bar_name": ...}' を付けたリンクのクリックを送る
+      // （地図ボタン map_click、公式リンク official_link_click）。
+      document.addEventListener('click', function (e) {
+        var el = e.target instanceof Element ? e.target.closest('[data-ga]') : null;
+        if (!el) return;
+        var params = {};
+        try {
+          params = JSON.parse(el.getAttribute('data-ga-params') || '{}');
+        } catch (err) {}
+        gtag('event', el.getAttribute('data-ga'), params);
+      });
+    </script>
+    <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}></script>
+  </>
+)}

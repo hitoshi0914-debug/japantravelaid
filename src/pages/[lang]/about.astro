@@ -1,0 +1,26 @@
+---
+import { langPaths, type Lang } from '../../i18n/locales';
+import Base from '../../layouts/Base.astro';
+import { siteConfig } from '../../site.config';
+
+export const getStaticPaths = () => langPaths();
+const lang = Astro.params.lang as Lang;
+---
+
+<Base lang={lang} title="About & disclaimer" path="about/">
+  <h1>About & disclaimer</h1>
+  <p>{siteConfig.siteName} helps visitors to Japan communicate at drugstores and find emergency help. It is an independent site and is not affiliated with any pharmaceutical company, drugstore or government body.</p>
+
+  <h2>This is not medical advice</h2>
+  <ul>
+    <li>This site does not diagnose, prescribe or recommend any medicine.</li>
+    <li>Product and ingredient information is a translation of publicly available package-insert information. It may be incomplete or out of date.</li>
+    <li>Always ask a pharmacist, registered seller or doctor before buying or taking medicine, and follow the package insert.</li>
+    <li>In an emergency, call 119.</li>
+  </ul>
+
+  <h2 lang="ja">免責事項</h2>
+  <p lang="ja">本サイトは訪日外国人が薬局・ドラッグストアで薬剤師・登録販売者に相談するためのコミュニケーション補助ツールです。診断・処方・医薬品の推奨は行いません。掲載情報は添付文書等の公知情報の翻訳であり、正確性・最新性を保証しません。医薬品の購入・使用は必ず薬剤師・登録販売者・医師の判断に従ってください。</p>
+
+  {siteConfig.contactEmail && <p>Contact: <a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a></p>}
+</Base>

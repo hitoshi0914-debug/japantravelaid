@@ -1,0 +1,28 @@
+---
+// ルート（/）はブラウザの言語で振り分ける。日本語のブラウザは /ja/、それ以外は /en/。
+import AdSense from '../components/AdSense.astro';
+import { locales } from '../i18n/locales';
+import { siteConfig } from '../site.config';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{siteConfig.siteName}</title>
+    <meta name="robots" content="noindex, follow" />
+    <!-- AdSense・Search Console の確認はドメインのトップを見るので、ここにも入れる。 -->
+    <AdSense />
+    {siteConfig.googleSiteVerification && <meta name="google-site-verification" content={siteConfig.googleSiteVerification} />}
+    {siteConfig.bingSiteVerification && <meta name="msvalidate.01" content={siteConfig.bingSiteVerification} />}
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <script is:inline>
+      location.replace(/^ja\b/i.test(navigator.language || '') ? '/ja/' : '/en/');
+    </script>
+    <noscript><meta http-equiv="refresh" content="0; url=/en/" /></noscript>
+  </head>
+  <body>
+    <ul>{locales.map((l) => <li><a href={`/${l.code}/`}>{l.label}</a></li>)}</ul>
+  </body>
+</html>
