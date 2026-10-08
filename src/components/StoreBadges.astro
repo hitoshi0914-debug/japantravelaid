@@ -1,0 +1,37 @@
+---
+// 全ページの下の「アプリをダウンロード」。site.config の appStoreUrl・googlePlayUrl を書いたストアだけ出す。
+import { tr, type Lang } from '../i18n/locales';
+import { ui } from '../i18n/ui';
+import { siteConfig } from '../site.config';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const { appStoreUrl, googlePlayUrl } = siteConfig;
+---
+
+{(appStoreUrl || googlePlayUrl) && (
+  <section class="store-badges" aria-label={tr(ui.getApp, lang)}>
+    <p>{tr(ui.getApp, lang)}</p>
+    <div class="row">
+      {appStoreUrl && (
+        <a href={appStoreUrl} rel="noopener" data-ga="store_click" data-ga-params='{"store":"app_store"}'>
+          <img src="/badges/app-store.svg" alt="Download on the App Store" height="44" />
+        </a>
+      )}
+      {googlePlayUrl && (
+        <a href={googlePlayUrl} rel="noopener" data-ga="store_click" data-ga-params='{"store":"google_play"}'>
+          <img src="/badges/google-play.png" alt="Get it on Google Play" height="44" />
+        </a>
+      )}
+    </div>
+  </section>
+)}
+
+<style>
+  .store-badges { margin-top: 24px; text-align: center; }
+  .store-badges p { margin: 0 0 8px; font-weight: 700; font-size: 0.9rem; }
+  .row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .row img { height: 44px; width: auto; display: block; }
+</style>

@@ -9,3 +9,4 @@
 - 喫煙所: 地図画面に広告を置かない（広告は地域ページ）。喫煙可の飲食店は載せない。地域ページは3件未満なら noindex（2026-10-07 ユーザー決定）
 - 喫煙所ファインダー: 文言は `src/components/smoking/SmokingFinder.tsx` の `T`（9言語）。データは `public/smoking/spots.json` を `scripts/smoking/build_spots.py` で生成（手で編集しない）。OSM の出典表示を必ず残す
 - 喫煙所のユーザー投稿: 「喫煙所を追加」Google フォーム → 回答シートで「承認」にチェック → Apps Script ウェブアプリ（`scripts/smoking/create_submit_form.gs`）が承認分を JSON で返し、毎週のデータ更新で取り込む。投稿者はニックネームと投稿数のランク（ブロンズ〜ダイヤ）で表示（2026-10-08 ユーザー決定）
+- スマホアプリ化を予定（2026-10-08 ユーザー）。ストアのダウンロードボタンは `src/components/StoreBadges.astro`（全ページの下）。`site.config.ts` の `appStoreUrl`・`googlePlayUrl` を書いたストアだけ出る。公開前にバッジを出さない（Apple・Google の規約）。iOS は審査ガイドライン 1.4.3（たばこ）・4.2（ウェブの包み直しだけのアプリ）に注意

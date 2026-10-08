@@ -4,6 +4,7 @@ import Analytics from '../components/Analytics.astro';
 import ConsentBanner from '../components/ConsentBanner.astro';
 import Disclaimer from '../components/Disclaimer.astro';
 import EmergencyBar from '../components/EmergencyBar.astro';
+import StoreBadges from '../components/StoreBadges.astro';
 import { langsForPath } from '../data/tools';
 import { getLocale, locales, tr, type Lang } from '../i18n/locales';
 import { ui } from '../i18n/ui';
@@ -76,6 +77,7 @@ const alternates = locales.filter((l) => langsForPath(path).includes(l.code));
       {/* 医療の免責表示は市販薬・救急ガイドの全ページに出す */}
       {path.startsWith('medicine/') && <Disclaimer lang={lang} />}
     </main>
+    <div class="container"><StoreBadges lang={lang} /></div>
     <footer class="container site-footer">
       <a href={`/${lang}/about/`}>{tr(ui.about, lang)}</a>
       <a href={`/${lang}/privacy/`}>{tr(ui.privacy, lang)}</a>

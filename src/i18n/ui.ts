@@ -3,8 +3,15 @@ import type { Localized } from './locales';
 // 画面の決まり文句。ja は「店員に見せる」ときにだけ使う。
 export const ui = {
   siteTagline: {
-    en: 'Simple, offline-ready tools for getting around Japan. Tap an icon to start.',
-    ja: '訪日旅行者向けの、オフラインでも使えるお助けツール集です。', 'zh-tw': '簡單好用、離線也能開的日本旅遊小工具。點選圖示開始。', 'zh-cn': '简单好用、离线也能打开的日本旅行小工具。点击图标开始。', ko: '오프라인에서도 쓸 수 있는 간단한 일본 여행 도우미입니다. 아이콘을 눌러 시작하세요.', de: 'Einfache, offline nutzbare Helfer für Ihre Reise durch Japan. Tippen Sie auf ein Symbol, um zu starten.', fr: 'Des outils simples, utilisables hors ligne, pour voyager au Japon. Touchez une icône pour commencer.', it: 'Strumenti semplici, utilizzabili anche offline, per muoverti in Giappone. Tocca un\'icona per iniziare.', es: 'Herramientas sencillas, que funcionan sin conexión, para moverte por Japón. Toca un icono para empezar.'
+    en: 'Free help for travelers in Japan: find nearby smoking areas, show a Japanese card at drugstores, and keep emergency numbers at hand. Works offline.',
+    ja: '訪日旅行者のための無料ツール。近くの喫煙所探し、ドラッグストアで見せる日本語カード、救急の電話番号。オフラインでも使えます。',
+    'zh-tw': '給日本旅客的免費工具：搜尋附近的吸菸區、在藥妝店出示日文卡片、查詢急救電話。離線也能使用。',
+    'zh-cn': '给日本游客的免费工具：查找附近的吸烟区、在药妆店出示日文卡片、查询急救电话。离线也能使用。',
+    ko: '일본 여행자를 위한 무료 도구: 가까운 흡연구역 찾기, 드러그스토어에서 보여줄 일본어 카드, 응급 전화번호. 오프라인에서도 쓸 수 있어요.',
+    de: 'Kostenlose Hilfe für Japan-Reisende: Raucherbereiche in der Nähe finden, in der Drogerie eine japanische Karte zeigen und Notrufnummern griffbereit haben. Funktioniert auch offline.',
+    fr: "Des outils gratuits pour voyager au Japon : trouver un espace fumeurs proche, montrer une carte en japonais en pharmacie et garder les numéros d'urgence sous la main. Fonctionne hors ligne.",
+    it: 'Strumenti gratuiti per chi viaggia in Giappone: trova le aree fumatori vicine, mostra una scheda in giapponese in farmacia e tieni a portata di mano i numeri di emergenza. Funziona anche offline.',
+    es: 'Herramientas gratuitas para viajar por Japón: encuentra zonas para fumar cercanas, muestra una tarjeta en japonés en la farmacia y ten a mano los números de emergencia. Funciona sin conexión.',
   },
   tagline: {
     en: 'Point, show, and get help at Japanese drugstores and hospitals.',
@@ -38,5 +45,6 @@ export const ui = {
   showCard: { en: 'Show card', ja: 'カードを表示', 'zh-tw': '顯示卡片', 'zh-cn': '显示卡片', ko: '카드 보기', de: 'Karte zeigen', fr: 'Afficher la carte', it: 'Mostra la scheda', es: 'Mostrar tarjeta' },
   pickSymptom: { en: 'Pick at least one symptom', ja: '症状を1つ以上選んでください', 'zh-tw': '請至少選擇一個症狀', 'zh-cn': '请至少选择一个症状', ko: '증상을 하나 이상 고르세요', de: 'Wählen Sie mindestens ein Symptom', fr: 'Choisissez au moins un symptôme', it: 'Scegli almeno un sintomo', es: 'Elige al menos un síntoma' },
   closeCard: { en: 'Close card', ja: 'カードを閉じる', 'zh-tw': '關閉卡片', 'zh-cn': '关闭卡片', ko: '카드 닫기', de: 'Karte schließen', fr: 'Fermer la carte', it: 'Chiudi la scheda', es: 'Cerrar tarjeta' },
+  getApp: { en: 'Get the app', ja: 'アプリをダウンロード', 'zh-tw': '下載 App', 'zh-cn': '下载 App', ko: '앱 다운로드', de: 'App herunterladen', fr: "Télécharger l'app", it: "Scarica l'app", es: 'Descarga la app' },
   language: { en: 'Language', ja: '言語', 'zh-tw': '語言', 'zh-cn': '语言', ko: '언어', de: 'Sprache', fr: 'Langue', it: 'Lingua', es: 'Idioma' },
 } satisfies Record<string, Localized>;

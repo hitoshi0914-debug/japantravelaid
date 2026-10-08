@@ -23,6 +23,13 @@ export const siteConfig = {
    * （scripts/smoking/create_submit_form.gs を実行すると実行ログに出る）。空のあいだは追加ボタンを出さない。
    */
   smokingSubmitFormUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSehC0d8OxepcvWQDFfGghY3IfTDDp1N8v0tnzOcdVz9Nt08rQ/viewform?usp=pp_url&entry.1866195325=LAT&entry.1852076158=LNG',
+  /**
+   * スマホアプリのストアの URL。公開されたら書く。書いたストアのダウンロードボタンだけが全ページの下に出る（空のあいだは出さない）。
+   * ボタンの画像は各社の公式バッジを public/badges/ に置く（App Store: app-store.svg、Google Play: google-play.png）。
+   * Apple・Google とも、アプリが公開される前にバッジを出すことは認めていない。
+   */
+  appStoreUrl: '',
+  googlePlayUrl: '',
   /** 連絡先（about・プライバシーポリシーに出す）。 */
   contactEmail: '',
 };

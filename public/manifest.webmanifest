@@ -1,7 +1,7 @@
 {
   "name": "Japan Travel Aid",
   "short_name": "Travel Aid",
-  "description": "Offline-ready tools for visitors to Japan: drugstore card, emergency numbers, smoking areas.",
+  "description": "Free help for travelers in Japan: nearby smoking areas, a Japanese card for drugstores, and emergency numbers. Works offline.",
   "start_url": "/en/",
   "scope": "/",
   "display": "standalone",
