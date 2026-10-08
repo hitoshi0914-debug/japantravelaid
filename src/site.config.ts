@@ -3,7 +3,7 @@
 export const siteConfig = {
   siteName: 'Japan Travel Aid',
   /** Google Analytics 4 の測定 ID（例: 'G-ABC123XYZ'）。このサイト用に新しいプロパティを作る。 */
-  gaMeasurementId: '',
+  gaMeasurementId: 'G-GW8TF28R2E',
   /** Google Search Console の「HTML タグ」の content の値だけ。 */
   googleSiteVerification: '',
   /** Bing Webmaster Tools の「HTML Meta Tag」の content の値だけ。 */
