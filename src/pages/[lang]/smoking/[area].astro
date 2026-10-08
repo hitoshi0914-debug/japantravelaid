@@ -4,7 +4,7 @@
 // 件数が少ない地域は noindex・サイトマップ外（MIN_INDEXABLE_SPOTS）。
 import { langPaths, type Lang } from '../../../i18n/locales';
 import Base from '../../../layouts/Base.astro';
-import { areaName, localized, MIN_INDEXABLE_SPOTS, reportUrl, routeUrl, type Spot } from '../../../lib/smoking';
+import { areaName, contributionCounts, localized, MIN_INDEXABLE_SPOTS, rankFor, reportUrl, routeUrl, type Spot } from '../../../lib/smoking';
 import { loadSpots, spotAreas } from '../../../lib/smokingData';
 
 export function getStaticPaths() {
@@ -18,6 +18,8 @@ const lang = Astro.params.lang as Lang as 'en' | 'ja';
 const ja = lang === 'ja';
 const name = areaName(area, lang);
 const updated = loadSpots().generated_at.slice(0, 10);
+// 投稿者のランクは全国の投稿数で決める
+const counts = contributionCounts(loadSpots().spots);
 const indexable = spots.length >= MIN_INDEXABLE_SPOTS;
 
 const L = {
@@ -43,6 +45,10 @@ const L = {
     : { any: 'Cigarettes OK', heated_only: 'Heated tobacco only', unknown: 'Tobacco type unknown' },
   customers: ja ? '利用者限定' : 'Customers only',
   unnamed: ja ? '喫煙所' : 'Smoking area',
+  addedBy: (n: string) => (ja ? `${n} さんが追加` : `Added by ${n}`),
+  ranks: ja
+    ? { bronze: '🥉 ブロンズ', silver: '🥈 シルバー', gold: '🥇 ゴールド', platinum: '🏅 プラチナ', diamond: '💎 ダイヤ' }
+    : { bronze: '🥉 Bronze', silver: '🥈 Silver', gold: '🥇 Gold', platinum: '🏅 Platinum', diamond: '💎 Diamond' },
 };
 const spotName = (s: Spot) => localized(s.name, lang) ?? L.unnamed;
 ---
@@ -66,6 +72,10 @@ const spotName = (s: Spot) => localized(s.name, lang) ?? L.unnamed;
             {s.access === 'customers' && <span class="cust">{L.customers}</span>}
             {s.hours && <span>🕒 {L.hours}: {s.hours}</span>}
           </p>
+          {s.added_by && (() => {
+            const rank = rankFor(counts.get(s.added_by) ?? 0);
+            return <p class="by">{L.addedBy(s.added_by)} {rank && <span class:list={['rank', `rank--${rank}`]}>{L.ranks[rank]}</span>}</p>;
+          })()}
           <p class="actions">
             <a href={`/${lang}/smoking/?spot=${encodeURIComponent(s.id)}`}>{L.map}</a>
             <a href={routeUrl(s)} target="_blank" rel="noopener" data-ga="smoking_route">{L.route}</a>
@@ -95,6 +105,13 @@ const spotName = (s: Spot) => localized(s.name, lang) ?? L.unnamed;
   .cust { background: #fde68a !important; color: #451a03; font-weight: 700; }
   .actions { display: flex; flex-wrap: wrap; gap: 14px; margin: 0; font-size: 0.85rem; font-weight: 700; }
   .actions .report { font-weight: 400; font-size: 0.75rem; color: var(--muted); }
+  .by { margin: -2px 0 8px; font-size: 0.75rem; color: var(--muted); }
+  .rank { padding: 1px 7px; border-radius: 999px; font-weight: 700; font-size: 0.68rem; }
+  .rank--bronze { background: #ffedd5; color: #9a3412; }
+  .rank--silver { background: #e2e8f0; color: #334155; }
+  .rank--gold { background: #fef9c3; color: #854d0e; }
+  .rank--platinum { background: #cffafe; color: #155e75; }
+  .rank--diamond { background: #ede9fe; color: #5b21b6; }
   .more { margin-top: 20px; font-weight: 700; }
   .credit { font-size: 0.7rem; color: var(--muted); }
 </style>

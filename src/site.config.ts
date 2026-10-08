@@ -18,6 +18,11 @@ export const siteConfig = {
    * （scripts/smoking/create_report_form.gs を実行すると実行ログに出る）。空のあいだは報告リンクを出さない。
    */
   smokingReportFormUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSefLzHWrz7NgyfW2WRHLZ2kvho_I4Ys9bynWN9lYPb1MhTqZA/viewform?usp=pp_url&entry.1105871521=SPOT_ID',
+  /**
+   * 「喫煙所を追加」の Google フォームの「事前入力した URL」。緯度・経度の欄に LAT・LNG と入れたもの
+   * （scripts/smoking/create_submit_form.gs を実行すると実行ログに出る）。空のあいだは追加ボタンを出さない。
+   */
+  smokingSubmitFormUrl: '',
   /** 連絡先（about・プライバシーポリシーに出す）。 */
   contactEmail: '',
 };

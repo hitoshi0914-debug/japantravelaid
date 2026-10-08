@@ -30,6 +30,7 @@ import csv
 import io
 import json
 import math
+import re
 import sys
 import time
 import urllib.parse
@@ -167,6 +168,7 @@ def blank_spot() -> dict:
         "updated": None,
         "tobacco": "unknown",
         "area": None,
+        "added_by": None,
     }
 
 
@@ -376,6 +378,44 @@ def merge(primary: list[dict], secondary: list[dict]) -> list[dict]:
     return out
 
 
+# ---------- ユーザー投稿（「喫煙所を追加」フォーム） ----------
+# フォームの回答シートで「承認」にチェックした行だけを、Apps Script のウェブアプリ
+# （scripts/smoking/create_submit_form.gs の doGet）が JSON で返す。その URL は scripts/smoking/community_source.txt。
+
+COMMUNITY_TYPES = {"outdoor", "booth", "indoor"}
+COMMUNITY_TOBACCO = {"any", "heated_only"}
+
+
+def from_community(src: str) -> list[dict]:
+    rows = json.loads(read_text(src))
+    out = []
+    for r in rows:
+        try:
+            lat, lng = float(r["lat"]), float(r["lng"])
+        except (KeyError, TypeError, ValueError):
+            log(f"投稿 {r.get('id')}: 緯度経度が読めないので飛ばします")
+            continue
+        if not in_japan(lat, lng):
+            log(f"投稿 {r.get('id')}: 日本の外なので飛ばします")
+            continue
+        s = blank_spot()
+        s["id"] = f"cm-{r['id']}"
+        s["lat"], s["lng"] = round(lat, 6), round(lng, 6)
+        name = (r.get("name") or "").strip()
+        if name:
+            # 投稿の言語は分からないので、日本語の文字があれば ja、なければ en として扱う
+            s["name"]["ja" if re.search(r"[\u3040-\u30ff\u4e00-\u9fff]", name) else "en"] = name
+        s["type"] = r.get("type") if r.get("type") in COMMUNITY_TYPES else "unknown"
+        s["tobacco"] = r.get("tobacco") if r.get("tobacco") in COMMUNITY_TOBACCO else "unknown"
+        s["access"] = "customers" if r.get("customers_only") is True else "public" if r.get("customers_only") is False else "unknown"
+        s["hours"] = (r.get("hours") or "").strip() or None
+        s["updated"] = (r.get("approved_at") or r.get("submitted_at") or "")[:10] or None
+        s["sources"] = [{"source": "community", "ref": str(r["id"])}]
+        s["added_by"] = (r.get("nickname") or "").strip()[:20] or None
+        out.append(s)
+    return out
+
+
 # ---------- 市区町村（area） ----------
 
 CITY_SUFFIX = {"KU": "-ku", "CHO": "-cho", "MACHI": "-machi", "MURA": "-mura", "SON": "-son"}
@@ -480,6 +520,7 @@ def main() -> int:
     ap.add_argument("--overpass-file", help="取得済みの Overpass 応答 JSON（API を呼ばない）")
     ap.add_argument("--save-overpass", help="取得した Overpass 応答をこのパスに保存する")
     ap.add_argument("--towns", help="Geolonia 住所データ latest.csv（パスか URL）。省略時はダウンロードしてキャッシュ")
+    ap.add_argument("--community", help="承認済みのユーザー投稿 JSON（Apps Script ウェブアプリの URL かパス）")
     ap.add_argument("--municipal", action="append", default=[], metavar="CODE=SRC",
                     help="自治体の喫煙所データ（市区町村コード=CSV/JSON のパスか URL）。何度でも指定できる")
     for key in MUNICIPAL_SOURCES:
@@ -528,7 +569,15 @@ def main() -> int:
         except Exception as e:  # ネットワーク不通でも自治体データだけで出力する
             log(f"OSM の取得に失敗したので自治体データだけで続けます: {e}")
 
-    spots = merge(municipal, osm)
+    community: list[dict] = []
+    if args.community:
+        # 取れないときは止める（投稿した人の喫煙所が消えないように）
+        community = from_community(args.community)
+        log(f"ユーザー投稿（承認済み）: {len(community)} 件")
+        used_sources.append({"id": "community", "name": "Japan Travel Aid users", "license": "submitted via japantravelaid.com",
+                             "url": "https://japantravelaid.com/"})
+
+    spots = merge(municipal + community, osm)
     assign_areas(spots, cities, grid)
     spots.sort(key=lambda s: (s["lat"], s["lng"]))
     used_sources.append({"id": "geolonia", "name": "Geolonia 住所データ（市区町村の判定）", "license": "CC BY 4.0",

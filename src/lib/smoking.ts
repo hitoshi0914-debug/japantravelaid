@@ -30,6 +30,8 @@ export interface Spot {
   updated: string | null;
   tobacco: Tobacco;
   area: Area | null;
+  /** ユーザー投稿で追加した人のニックネーム（承認済みの投稿だけ）。古いデータにはない。 */
+  added_by?: string | null;
 }
 
 export interface SpotsFile {
@@ -57,6 +59,38 @@ export function localized(field: Spot['name'], lang: SpotLang): string | undefin
 export function reportUrl(spotId: string): string | null {
   const url = siteConfig.smokingReportFormUrl;
   return url ? url.replace('SPOT_ID', encodeURIComponent(spotId)) : null;
+}
+
+/** 「喫煙所を追加」フォームの URL（未設定なら null）。現在地が分かれば緯度経度を入れておく。 */
+export function submitUrl(position: [number, number] | null): string | null {
+  const url = siteConfig.smokingSubmitFormUrl;
+  if (!url) return null;
+  return url
+    .replace('LAT', position ? position[0].toFixed(6) : '')
+    .replace('LNG', position ? position[1].toFixed(6) : '');
+}
+
+// 投稿した喫煙所の数（承認済み）で決まるランク。下から順に、この件数以上で上がる。
+export const RANKS = [
+  { id: 'bronze', min: 1 },
+  { id: 'silver', min: 5 },
+  { id: 'gold', min: 15 },
+  { id: 'platinum', min: 30 },
+  { id: 'diamond', min: 50 },
+] as const;
+export type RankId = (typeof RANKS)[number]['id'];
+
+/** ニックネームごとの投稿数。 */
+export function contributionCounts(spots: Spot[]): Map<string, number> {
+  const m = new Map<string, number>();
+  for (const s of spots) if (s.added_by) m.set(s.added_by, (m.get(s.added_by) ?? 0) + 1);
+  return m;
+}
+
+export function rankFor(count: number): RankId | null {
+  let r: RankId | null = null;
+  for (const x of RANKS) if (count >= x.min) r = x.id;
+  return r;
 }
 
 export function routeUrl(to: { lat: number; lng: number }, from?: [number, number] | null): string {

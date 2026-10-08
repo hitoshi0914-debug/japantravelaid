@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { CircleMarker, MapContainer, Marker, TileLayer, useMap } from 'react-leaflet';
 import L from 'leaflet';
-import { Clock, Flag, Home, Languages, List, LocateFixed, MapPin, Navigation, RefreshCw, WifiOff } from 'lucide-react';
-import { localized, reportUrl, routeUrl, type Spot, type SpotLang, type SpotsFile } from '../../lib/smoking';
+import { Clock, Flag, Gem, Home, Medal, Plus, Languages, List, LocateFixed, MapPin, Navigation, RefreshCw, WifiOff } from 'lucide-react';
+import { contributionCounts, localized, rankFor, reportUrl, routeUrl, submitUrl, type RankId, type Spot, type SpotLang, type SpotsFile } from '../../lib/smoking';
 
 // ---------- データ型（scripts/smoking/SCHEMA.md・src/lib/smoking.ts） ----------
 
@@ -24,6 +24,9 @@ const LANGS: { code: LangCode; label: string }[] = [
 
 const T = {
   en: {
+    addSpot: 'Add a spot',
+    addedBy: (n: string) => `Added by ${n}`,
+    ranks: { bronze: 'Bronze', silver: 'Silver', gold: 'Gold', platinum: 'Platinum', diamond: 'Diamond' },
     about: ['Public smoking areas, plus smoking rooms in stations and shopping centers', 'Restaurants and bars are not included', 'Shows “Cigarettes OK” or “Heated tobacco only” where known'],
     start: 'Find smoking areas near me',
     title: 'Smoking Area Finder',
@@ -51,6 +54,9 @@ const T = {
     report: 'Report closed / wrong info',
   },
   'zh-Hant': {
+    addSpot: '新增吸菸區',
+    addedBy: (n: string) => `由 ${n} 新增`,
+    ranks: { bronze: '銅牌', silver: '銀牌', gold: '金牌', platinum: '白金', diamond: '鑽石' },
     about: ['公共吸菸區，以及車站、商業設施內的吸菸室', '不包含餐廳、酒吧', '已知的地點會標示「可吸紙菸」或「僅限加熱菸」'],
     start: '搜尋附近的吸菸區',
     title: '吸菸區搜尋',
@@ -78,6 +84,9 @@ const T = {
     report: '回報已關閉／資訊有誤',
   },
   'zh-Hans': {
+    addSpot: '添加吸烟区',
+    addedBy: (n: string) => `由 ${n} 添加`,
+    ranks: { bronze: '铜牌', silver: '银牌', gold: '金牌', platinum: '白金', diamond: '钻石' },
     about: ['公共吸烟区，以及车站、商业设施内的吸烟室', '不包含餐厅、酒吧', '已知的地点会标注“可吸卷烟”或“仅限加热烟”'],
     start: '查找附近的吸烟区',
     title: '吸烟区查找',
@@ -105,6 +114,9 @@ const T = {
     report: '报告已关闭／信息有误',
   },
   ko: {
+    addSpot: '흡연구역 추가',
+    addedBy: (n: string) => `${n} 님이 추가`,
+    ranks: { bronze: '브론즈', silver: '실버', gold: '골드', platinum: '플래티넘', diamond: '다이아' },
     about: ['공공 흡연구역과 역·상업시설 안의 흡연실', '음식점·바는 포함하지 않습니다', '알 수 있는 곳은 「일반 담배 가능」「가열식 담배 전용」을 표시합니다'],
     start: '내 주변 흡연구역 찾기',
     title: '흡연구역 찾기',
@@ -132,6 +144,9 @@ const T = {
     report: '폐쇄·정보 오류 신고',
   },
   ja: {
+    addSpot: '喫煙所を追加',
+    addedBy: (n: string) => `${n} さんが追加`,
+    ranks: { bronze: 'ブロンズ', silver: 'シルバー', gold: 'ゴールド', platinum: 'プラチナ', diamond: 'ダイヤ' },
     about: ['公衆喫煙所と、駅・商業施設の喫煙所', '飲食店は載せていません', '紙巻きOK・加熱式のみが分かる場所は表示します'],
     start: '近くの喫煙所を探す',
     title: '喫煙所ファインダー',
@@ -224,6 +239,24 @@ function MapController({ center, spots, focus }: { center: [number, number]; spo
     if (focus) map.flyTo([focus.lat, focus.lng], Math.max(map.getZoom(), 17), { duration: 0.6 });
   }, [map, focus]);
   return null;
+}
+
+// 投稿者のランクのマーク（ブロンズ〜ダイヤ）
+const RANK_STYLE: Record<RankId, string> = {
+  bronze: 'bg-orange-100 text-orange-800',
+  silver: 'bg-slate-200 text-slate-700',
+  gold: 'bg-yellow-100 text-yellow-800',
+  platinum: 'bg-cyan-100 text-cyan-800',
+  diamond: 'bg-violet-100 text-violet-800',
+};
+
+function RankBadge({ rank, label }: { rank: RankId; label: string }) {
+  const Icon = rank === 'diamond' ? Gem : Medal;
+  return (
+    <span className={`inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[10px] font-bold ${RANK_STYLE[rank]}`}>
+      <Icon className="h-3 w-3" /> {label}
+    </span>
+  );
 }
 
 // 背景地図: OpenFreeMap（無料・API キー不要・商用可）のベクター地図。地名をその画面の言語で出せる
@@ -399,6 +432,9 @@ export default function SmokingFinder({ pageLang }: Props) {
       .slice(0, MAX_RESULTS);
   }, [data, origin[0], origin[1], cigOnly]);
 
+  const counts = useMemo(() => contributionCounts(data?.spots ?? []), [data]);
+  const addUrl = submitUrl(position);
+
   const focus = nearest.find((s) => s.id === focusId) ?? null;
 
   const langSelect = (
@@ -507,13 +543,27 @@ export default function SmokingFinder({ pageLang }: Props) {
             <h1 className="min-w-0 flex-1 truncate text-base font-bold">{t.title}</h1>
             {langSelect}
           </div>
-          <button
-            onClick={() => setCigOnly((v) => !v)}
-            aria-pressed={cigOnly}
-            className={`mt-2 rounded-full border px-3 py-1 text-xs font-semibold ${cigOnly ? 'border-teal-700 bg-teal-700 text-white' : 'border-slate-300 text-slate-700'}`}
-          >
-            🚬 {t.cigOnly}
-          </button>
+          <div className="mt-2 flex items-center gap-2">
+            <button
+              onClick={() => setCigOnly((v) => !v)}
+              aria-pressed={cigOnly}
+              className={`rounded-full border px-3 py-1 text-xs font-semibold ${cigOnly ? 'border-teal-700 bg-teal-700 text-white' : 'border-slate-300 text-slate-700'}`}
+            >
+              🚬 {t.cigOnly}
+            </button>
+            {/* 地図にない喫煙所の投稿（承認してから掲載）。現在地の緯度経度を入れてフォームを開く */}
+            {addUrl && (
+              <a
+                href={addUrl}
+                target="_blank"
+                rel="noopener"
+                data-ga="smoking_add"
+                className="ml-auto flex shrink-0 items-center gap-1 rounded-full bg-amber-500 px-3 py-1 text-xs font-bold text-white active:scale-95"
+              >
+                <Plus className="h-3.5 w-3.5" /> {t.addSpot}
+              </a>
+            )}
+          </div>
         </header>
 
         <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-6">
@@ -580,6 +630,14 @@ export default function SmokingFinder({ pageLang }: Props) {
                           )}
                         </div>
                       )}
+                      {s.added_by && (() => {
+                        const rank = rankFor(counts.get(s.added_by) ?? 0);
+                        return (
+                          <p className="mt-1 flex items-center gap-1.5 text-xs text-slate-600">
+                            {t.addedBy(s.added_by)} {rank && <RankBadge rank={rank} label={t.ranks[rank]} />}
+                          </p>
+                        );
+                      })()}
                       {/* 報告リンクは全カードに小さく出す（選んだときだけだと見つけられなかった） */}
                       {reportUrl(s.id) && (
                         <a

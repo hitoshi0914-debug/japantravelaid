@@ -1,5 +1,5 @@
 # 喫煙所データ（public/smoking/spots.json）を毎週作り直して、変わっていれば commit して公開する。
-# OSM（Overpass API）と scripts/smoking/municipal_sources.txt の自治体データから作る。
+# OSM（Overpass API）と scripts/smoking/municipal_sources.txt の自治体データ、承認済みのユーザー投稿（community_source.txt）から作る。
 # 手動で今すぐ更新したいときは Actions タブ > Update smoking data > Run workflow。
 # 必要な設定は Deploy と同じ（Secrets の CLOUDFLARE_API_TOKEN）。
 name: Update smoking data
@@ -37,6 +37,9 @@ jobs:
             line="${line%%#*}"; line="$(echo "$line" | xargs)"
             [ -n "$line" ] && args+=(--municipal "$line")
           done < scripts/smoking/municipal_sources.txt
+          # 承認済みのユーザー投稿（「喫煙所を追加」フォーム）
+          community=$(sed 's/#.*//' scripts/smoking/community_source.txt | xargs)
+          [ -n "$community" ] && args+=(--community "$community")
           old=$(python3 -c "import json;print(len(json.load(open('public/smoking/spots.json'))['spots']))")
           python3 scripts/smoking/build_spots.py --save-overpass scripts/smoking/cache/overpass.json "${args[@]}" --out /tmp/spots.json
           new=$(python3 -c "import json;d=json.load(open('/tmp/spots.json'));print(len(d['spots']) if any(s['id']=='osm' for s in d['sources']) else 0)")

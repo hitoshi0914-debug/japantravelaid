@@ -27,7 +27,8 @@
       "area": {                 // version 2〜。市区町村（判定できなければ null）。地域ページ /<lang>/smoking/<slug>/ に使う
         "code": "13106", "pref": "東京都", "city": "台東区",
         "pref_en": "Tokyo", "city_en": "Taito-ku", "slug": "tokyo-taito"
-      }
+      },
+      "added_by": null          // ユーザー投稿（id が cm-…、source が community）なら投稿者のニックネーム。ないときは null か項目なし
     }
   ]
 }
