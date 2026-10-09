@@ -1,41 +1,43 @@
 import { X } from 'lucide-react';
 import type { Dispatch } from 'react';
 import { useEffect } from 'react';
-import { cardIntro, groups } from '../../data/pharmacist';
 import { tr, type AnyLang } from '../../i18n/locales';
 import { ui } from '../../i18n/ui';
 import { AnswerPanel } from './AnswerPanel';
 import type { Action, CardState } from './state';
+import type { CardConfig } from './types';
 
 interface Props {
   lang: AnyLang;
+  config: CardConfig;
   state: CardState;
   dispatch: Dispatch<Action>;
   onClose: () => void;
 }
 
-// 全画面カード: 店員向けの大きな太字の日本語 ＋ 本人確認用の小さな英語。下に薬剤師の回答エリア。
-export function CardView({ lang, state, dispatch, onClose }: Props) {
+// 全画面カード: 店員向けの大きな太字の日本語 ＋ 本人確認用の小さな訳。下に店員の回答エリア。
+export function CardView({ lang, config, state, dispatch, onClose }: Props) {
   useScreenWakeLock();
 
   return (
-    <div className="card-screen" role="dialog" aria-modal="true" aria-label="Card for the pharmacist">
+    <div className="card-screen" role="dialog" aria-modal="true" aria-label={config.cardAriaLabel}>
       <div className="card-bar">
         <button type="button" className="icon-btn" onClick={onClose} aria-label={tr(ui.closeCard, lang)}>
           <X size={28} />
         </button>
-        <span className="card-bar-title" lang="ja">薬剤師・登録販売者の方へ</span>
+        <span className="card-bar-title" lang="ja">{config.cardTitle}</span>
       </div>
 
       <div className="card-body">
-        <p className="card-intro" lang="ja">{cardIntro.ja}</p>
-        {lang !== 'ja' && <p className="card-intro-en">{tr(cardIntro, lang)}</p>}
+        <p className="card-intro" lang="ja">{config.intro.ja}</p>
+        {lang !== 'ja' && <p className="card-intro-en">{tr(config.intro, lang)}</p>}
 
-        {groups.map((group) => {
-          const chosen = group.choices.filter((c) => state.selection[group.id].includes(c.id));
+        {config.groups.map((group) => {
+          const chosen = group.choices.filter((c) => (state.selection[group.id] ?? []).includes(c.id));
+          const danger = config.dangerGroups?.includes(group.id);
           if (chosen.length === 0) return null;
           return (
-            <section className={`card-section card-section--${group.id}`} key={group.id}>
+            <section className={`card-section card-section--${group.id}${danger ? ' card-section--danger' : ''}`} key={group.id}>
               <h2 lang="ja">{group.cardHeading}</h2>
               <ul>
                 {chosen.map((c) => (
@@ -49,12 +51,14 @@ export function CardView({ lang, state, dispatch, onClose }: Props) {
           );
         })}
 
-        <AnswerPanel lang={lang} state={state} dispatch={dispatch} />
+        <AnswerPanel lang={lang} config={config} state={state} dispatch={dispatch} />
 
-        <p className="card-disclaimer">
-          <span lang="ja">{ui.disclaimerShort.ja}</span>
-          {lang !== 'ja' && <span>{tr(ui.disclaimerShort, lang)}</span>}
-        </p>
+        {config.disclaimer && (
+          <p className="card-disclaimer">
+            <span lang="ja">{config.disclaimer.ja}</span>
+            {lang !== 'ja' && <span>{tr(config.disclaimer, lang)}</span>}
+          </p>
+        )}
       </div>
     </div>
   );

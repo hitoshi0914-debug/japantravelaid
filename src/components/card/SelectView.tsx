@@ -1,39 +1,40 @@
 import type { Dispatch } from 'react';
-import { groups } from '../../data/pharmacist';
 import { tr, type AnyLang } from '../../i18n/locales';
 import { ui } from '../../i18n/ui';
 import { hasAnything, type Action, type CardState } from './state';
+import type { CardConfig } from './types';
 
 interface Props {
   lang: AnyLang;
+  config: CardConfig;
   state: CardState;
   dispatch: Dispatch<Action>;
 }
 
 // 選択画面: グループごとに大きなチップをタップで選ぶ。下に固定の「カードを表示」ボタン。
-export function SelectView({ lang, state, dispatch }: Props) {
+export function SelectView({ lang, config, state, dispatch }: Props) {
   const count = Object.values(state.selection).reduce((n, ids) => n + ids.length, 0);
-  const ready = state.selection.symptoms.length > 0;
+  const ready = (state.selection[config.requiredGroup] ?? []).length > 0;
 
   return (
     <div className="select">
-      {groups.map((group) => (
+      {config.groups.map((group) => (
         <fieldset className="group" key={group.id}>
           <legend>
             {tr(group.title, lang)}
             {lang !== 'ja' && <span className="legend-ja" lang="ja">{group.title.ja}</span>}
-            {group.id === 'symptoms' && <span className="required">{tr(ui.required, lang)}</span>}
+            {group.id === config.requiredGroup && <span className="required">{tr(ui.required, lang)}</span>}
           </legend>
           <div className="chips">
             {group.choices.map((choice) => {
-              const selected = state.selection[group.id].includes(choice.id);
+              const selected = (state.selection[group.id] ?? []).includes(choice.id);
               return (
                 <button
                   type="button"
                   key={choice.id}
                   className={`chip${selected ? ' is-selected' : ''}`}
                   aria-pressed={selected}
-                  onClick={() => dispatch({ type: 'toggle', group: group.id, id: choice.id })}
+                  onClick={() => dispatch({ type: 'toggle', group: group.id, id: choice.id, single: group.single })}
                 >
                   <span className="chip-icon" aria-hidden="true">{choice.pictogram}</span>
                   <span className="chip-text">
@@ -49,7 +50,7 @@ export function SelectView({ lang, state, dispatch }: Props) {
 
       <div className="select-actions">
         {hasAnything(state.selection) && (
-          <button type="button" className="btn-ghost" onClick={() => dispatch({ type: 'reset' })}>
+          <button type="button" className="btn-ghost" onClick={() => dispatch({ type: 'reset', groups: config.groups })}>
             {tr(ui.clear, lang)}
           </button>
         )}
@@ -60,7 +61,7 @@ export function SelectView({ lang, state, dispatch }: Props) {
           onClick={() => dispatch({ type: 'show-card' })}
           data-ga="show_card"
         >
-          {ready ? `${tr(ui.showCard, lang)} (${count})` : tr(ui.pickSymptom, lang)}
+          {ready ? `${tr(ui.showCard, lang)} (${count})` : tr(config.pickPrompt, lang)}
         </button>
       </div>
     </div>

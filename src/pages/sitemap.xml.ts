@@ -8,7 +8,7 @@ import { spotAreas } from '../lib/smokingData';
 // 検索エンジン向けのサイトマップ（hreflang 付き）。そのページがある言語だけ載せる。
 // 喫煙所の地域ページは件数が MIN_INDEXABLE_SPOTS 以上のものだけ。
 export const GET: APIRoute = ({ site }) => {
-  const paths = [
+  const paths = [...new Set([
     '',
     ...tools.map((t) => t.path),
     ...tiles.map((t) => t.path),
@@ -16,7 +16,7 @@ export const GET: APIRoute = ({ site }) => {
     ...spotAreas().filter((g) => g.spots.length >= MIN_INDEXABLE_SPOTS).map((g) => `smoking/${g.area.slug}/`),
     'about/',
     'privacy/',
-  ];
+  ])];
   const url = (code: string, path: string) => new URL(`/${code}/${path}`, site).href;
   const entries = paths.flatMap((path) => {
     const langs = locales.filter((l) => langsForPath(path).includes(l.code));

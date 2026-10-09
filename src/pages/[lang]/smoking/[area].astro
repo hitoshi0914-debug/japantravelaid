@@ -186,8 +186,9 @@ const spotName = (s: Spot) => localized(s.name, spotLang(lang)) ?? L.unnamed;
   .tob--any { background: #ccfbf1 !important; color: #134e4a; }
   .tob--heated_only { background: #ede9fe !important; color: #4c1d95; }
   .cust { background: #fde68a !important; color: #451a03; font-weight: 700; }
-  .actions { display: flex; flex-wrap: wrap; gap: 14px; margin: 0; font-size: 0.85rem; font-weight: 700; }
-  .actions .report { font-weight: 400; font-size: 0.75rem; color: var(--muted); }
+  .actions { display: flex; flex-wrap: wrap; gap: 0 16px; margin: 0; font-size: 0.92rem; font-weight: 700; }
+  .actions a { display: inline-flex; align-items: center; min-height: 44px; }
+  .actions .report { font-weight: 400; font-size: 0.82rem; color: var(--muted); }
   .by { margin: -2px 0 8px; font-size: 0.75rem; color: var(--muted); }
   .rank { padding: 1px 7px; border-radius: 999px; font-weight: 700; font-size: 0.68rem; }
   .rank--bronze { background: #ffedd5; color: #9a3412; }
@@ -196,5 +197,6 @@ const spotName = (s: Spot) => localized(s.name, spotLang(lang)) ?? L.unnamed;
   .rank--platinum { background: #cffafe; color: #155e75; }
   .rank--diamond { background: #ede9fe; color: #5b21b6; }
   .more { margin-top: 20px; font-weight: 700; }
+  .more a { display: inline-flex; align-items: center; min-height: 48px; }
   .credit { font-size: 0.7rem; color: var(--muted); }
 </style>

@@ -1,0 +1,80 @@
+/* 指差しカード（薬剤師・美容室など）の共通スタイル。CardApp.tsx が読み込む。 */
+/* ---- 選択画面 ---- */
+.select { padding-bottom: 96px; }
+.group { margin: 0 0 20px; padding: 0; border: 0; }
+.group legend { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; font-weight: 800; font-size: 1.05rem; }
+.legend-ja { font-weight: 400; font-size: 0.8rem; color: var(--muted); }
+.required { margin-left: auto; font-size: 0.7rem; font-weight: 700; color: var(--accent); text-transform: uppercase; }
+.chips { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.chip {
+  display: flex; align-items: center; gap: 8px;
+  min-height: 56px; padding: 8px 10px;
+  border: 2px solid var(--border); border-radius: 14px;
+  background: var(--surface); color: var(--text);
+  font: inherit; text-align: left; cursor: pointer;
+}
+.chip.is-selected { border-color: var(--accent); background: var(--accent-soft); }
+.chip.is-selected .chip-icon::after { content: '✓'; margin-left: 2px; font-size: 0.9rem; color: var(--accent); font-weight: 900; }
+.chip-icon { font-size: 1.6rem; line-height: 1; flex: none; }
+.chip-text { display: flex; flex-direction: column; font-size: 0.88rem; font-weight: 700; line-height: 1.2; min-width: 0; }
+.chip-ja { font-weight: 400; font-size: 0.72rem; color: var(--muted); }
+.select-actions {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
+  display: flex; justify-content: center; gap: 8px;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+  background: linear-gradient(to top, var(--bg) 70%, transparent);
+}
+.select-actions .btn-primary { flex: 1; max-width: 400px; font-size: 1.05rem; }
+
+/* ---- 全画面カード ---- */
+.card-screen {
+  position: fixed; inset: 0; z-index: 100;
+  overflow-y: auto; overscroll-behavior: contain;
+  background: #fff; color: #000;
+}
+.card-bar {
+  position: sticky; top: 0;
+  display: flex; align-items: center; gap: 8px;
+  padding: calc(8px + env(safe-area-inset-top)) 12px 8px;
+  background: var(--accent); color: #fff;
+}
+.card-bar-title { font-weight: 800; font-size: 1.05rem; }
+.icon-btn { display: grid; place-items: center; width: var(--tap); height: var(--tap); border: 0; border-radius: 50%; background: rgb(255 255 255 / 0.18); color: inherit; cursor: pointer; }
+.card-body { max-width: 640px; margin: 0 auto; padding: 16px 16px calc(32px + env(safe-area-inset-bottom)); }
+.card-intro { margin: 0; font-size: 1.35rem; font-weight: 900; line-height: 1.45; white-space: pre-line; }
+.card-intro-en { margin: 4px 0 16px; font-size: 0.85rem; color: var(--muted); white-space: pre-line; }
+.card-section { margin: 0 0 14px; padding-top: 10px; border-top: 2px solid #000; }
+.card-section h2 { margin: 0 0 4px; font-size: 0.95rem; color: var(--accent); }
+.card-section ul { margin: 0; padding: 0; list-style: none; }
+.card-section li { display: flex; flex-direction: column; padding: 4px 0; }
+.card-ja { font-size: 2rem; font-weight: 900; line-height: 1.25; }   /* 店員さんが離れていても読める大きさ */
+.card-en { font-size: 0.85rem; color: var(--muted); }
+.card-section--danger { background: var(--danger-soft); margin-inline: -16px; padding-inline: 16px; padding-bottom: 8px; border-top-color: var(--danger); }
+.card-section--danger h2 { color: var(--danger); }
+.card-disclaimer { display: flex; flex-direction: column; gap: 4px; margin-top: 24px; font-size: 0.72rem; color: var(--muted); }
+
+/* ---- 店員の回答エリア ---- */
+.answer { margin-top: 20px; padding: 14px; border-radius: var(--radius); background: var(--bg); border: 2px dashed var(--accent); }
+.answer h2 { display: flex; flex-direction: column; margin: 0 0 10px; font-size: 1rem; }
+.answer-h-en { font-size: 0.75rem; font-weight: 400; color: var(--muted); }
+.answer-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.answer-btn {
+  min-height: 56px; padding: 8px;
+  border: 1px solid var(--border); border-radius: 12px;
+  background: #fff; color: #000;
+  font: inherit; font-weight: 700; font-size: 0.92rem; text-align: left; cursor: pointer;
+}
+.answer--focused { border-style: solid; background: #fff; }
+.answer-q-en { margin: 0; font-size: 1.6rem; font-weight: 900; line-height: 1.3; }
+.answer-q-ja { margin: 4px 0 14px; color: var(--muted); }
+.answer-replies { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 14px; }
+.reply-btn {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  min-height: 64px; border: 2px solid var(--accent); border-radius: 14px;
+  background: var(--accent-soft); color: #000; font: inherit; font-weight: 800; font-size: 1.05rem; cursor: pointer;
+}
+.answer-reply { display: flex; flex-direction: column; margin: 0 0 14px; font-size: 2.2rem; font-weight: 900; }
+.answer-reply-label { font-size: 0.85rem; color: var(--accent); }
+
+/* カードの画面では Cookie のバナーを上に出す（下に固定の「カードを表示」ボタンを隠さないように） */
+body:has(.select-actions) .consent { top: calc(8px + env(safe-area-inset-top)); bottom: auto; }

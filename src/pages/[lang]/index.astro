@@ -14,11 +14,20 @@ const lang = Astro.params.lang as Lang;
 <Base lang={lang} title={siteConfig.siteName} description={tr(ui.siteTagline, lang)} path="">
   <p class="tagline">{tr(ui.siteTagline, lang)}</p>
   <nav class="tools" aria-label="Tools">
-    {tools.map((tool) => <Tile tile={tool} lang={lang} />)}
+    {tools.filter((t) => !t.secondary).map((tool) => <Tile tile={tool} lang={lang} />)}
   </nav>
+  {/* 喫煙所はカードの下に小さく（2026-10-09 ユーザー決定: サイトの中心は指差しカード） */}
+  <ul class="more-tools">
+    {tools.filter((t) => t.secondary).map((t) => (
+      <li><a href={`/${lang}/${t.path}`} data-ga="tile_click" data-ga-params={JSON.stringify({ tile: t.id })}><span aria-hidden="true">{t.pictogram}</span> {tr(t.label, lang)}<small>{tr(t.hint, lang)}</small></a></li>
+    ))}
+  </ul>
 </Base>
 
 <style>
   .tagline { margin: 8px 0 16px; color: var(--muted); font-size: 0.9rem; }
   .tools { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .more-tools { list-style: none; margin: 16px 0 0; padding: 0; }
+  .more-tools a { display: flex; align-items: center; gap: 10px; min-height: 56px; padding: 0 16px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); color: var(--text); font-weight: 700; text-decoration: none; }
+  .more-tools small { margin-left: auto; font-weight: 400; font-size: 0.8rem; color: var(--muted); }
 </style>

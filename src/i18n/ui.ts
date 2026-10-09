@@ -2,16 +2,17 @@ import type { Localized } from './locales';
 
 // 画面の決まり文句。ja は「店員に見せる」ときにだけ使う。
 export const ui = {
+  // トップの説明。サイトの中心は「日本人スタッフに見せる指差しカード」（2026-10-09）。
   siteTagline: {
-    en: 'Free help for travelers in Japan: find nearby smoking areas, show a Japanese card at drugstores, and keep emergency numbers at hand. Works offline.',
-    ja: '訪日旅行者のための無料ツール。近くの喫煙所探し、ドラッグストアで見せる日本語カード、救急の電話番号。オフラインでも使えます。',
-    'zh-tw': '給日本旅客的免費工具：搜尋附近的吸菸區、在藥妝店出示日文卡片、查詢急救電話。離線也能使用。',
-    'zh-cn': '给日本游客的免费工具：查找附近的吸烟区、在药妆店出示日文卡片、查询急救电话。离线也能使用。',
-    ko: '일본 여행자를 위한 무료 도구: 가까운 흡연구역 찾기, 드러그스토어에서 보여줄 일본어 카드, 응급 전화번호. 오프라인에서도 쓸 수 있어요.',
-    de: 'Kostenlose Hilfe für Japan-Reisende: Raucherbereiche in der Nähe finden, in der Drogerie eine japanische Karte zeigen und Notrufnummern griffbereit haben. Funktioniert auch offline.',
-    fr: "Des outils gratuits pour voyager au Japon : trouver un espace fumeurs proche, montrer une carte en japonais en pharmacie et garder les numéros d'urgence sous la main. Fonctionne hors ligne.",
-    it: 'Strumenti gratuiti per chi viaggia in Giappone: trova le aree fumatori vicine, mostra una scheda in giapponese in farmacia e tieni a portata di mano i numeri di emergenza. Funziona anche offline.',
-    es: 'Herramientas gratuitas para viajar por Japón: encuentra zonas para fumar cercanas, muestra una tarjeta en japonés en la farmacia y ten a mano los números de emergencia. Funciona sin conexión.',
+    en: 'Point-and-show cards for travelers in Japan: tap what you need, then show the big Japanese card to drugstore or hair salon staff. Works offline.',
+    ja: '訪日旅行者のための指差しカード。必要なことをタップして、大きな日本語のカードをドラッグストアや美容院の店員に見せるだけ。オフラインでも使えます。',
+    'zh-tw': '給訪日旅客的指示卡：點選需要的項目，把大字日文卡片給藥妝店或美髮店的店員看就好。離線也能使用。',
+    'zh-cn': '给访日游客的指示卡：点选需要的项目，把大字日文卡片给药妆店或理发店的店员看就行。离线也能使用。',
+    ko: '일본 여행자를 위한 손가락 카드: 필요한 것을 누르고, 큰 일본어 카드를 드러그스토어나 미용실 직원에게 보여주기만 하면 돼요. 오프라인에서도 쓸 수 있어요.',
+    de: 'Zeigekarten für Japan-Reisende: Tippen Sie an, was Sie brauchen, und zeigen Sie die große japanische Karte dem Personal in Drogerie oder Friseursalon. Funktioniert auch offline.',
+    fr: "Des cartes à montrer pour voyager au Japon : touchez ce dont vous avez besoin, puis montrez la grande carte en japonais au personnel de la pharmacie ou du salon de coiffure. Fonctionne hors ligne.",
+    it: 'Schede da mostrare per chi viaggia in Giappone: tocca ciò che ti serve e mostra la grande scheda in giapponese al personale di farmacia o parrucchiere. Funziona anche offline.',
+    es: 'Tarjetas para mostrar al viajar por Japón: toca lo que necesitas y enseña la tarjeta grande en japonés al personal de la farmacia o la peluquería. Funciona sin conexión.',
   },
   tagline: {
     en: 'Point, show, and get help at Japanese drugstores and hospitals.',
