@@ -30,6 +30,11 @@ export const siteConfig = {
    */
   appStoreUrl: '',
   googlePlayUrl: '',
+  /**
+   * 寄付（Ko-fi、受け取りは会社名義の PayPal）。全ページの下と about に「応援する」ボタンを出す。空なら出さない。
+   * 地図（喫煙所ファインダー）と薬剤師カードの画面には出さない。アプリには入れない（ストアの規約でアプリ内の寄付は各社の決済が必要）。
+   */
+  donateUrl: 'https://ko-fi.com/T6R528FYGN',
   /** 連絡先（about・プライバシーポリシーに出す）。 */
   contactEmail: '',
 };

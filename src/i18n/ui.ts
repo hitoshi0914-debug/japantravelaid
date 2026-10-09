@@ -46,5 +46,17 @@ export const ui = {
   pickSymptom: { en: 'Pick at least one symptom', ja: '症状を1つ以上選んでください', 'zh-tw': '請至少選擇一個症狀', 'zh-cn': '请至少选择一个症状', ko: '증상을 하나 이상 고르세요', de: 'Wählen Sie mindestens ein Symptom', fr: 'Choisissez au moins un symptôme', it: 'Scegli almeno un sintomo', es: 'Elige al menos un síntoma' },
   closeCard: { en: 'Close card', ja: 'カードを閉じる', 'zh-tw': '關閉卡片', 'zh-cn': '关闭卡片', ko: '카드 닫기', de: 'Karte schließen', fr: 'Fermer la carte', it: 'Chiudi la scheda', es: 'Cerrar tarjeta' },
   getApp: { en: 'Get the app', ja: 'アプリをダウンロード', 'zh-tw': '下載 App', 'zh-cn': '下载 App', ko: '앱 다운로드', de: 'App herunterladen', fr: "Télécharger l'app", it: "Scarica l'app", es: 'Descarga la app' },
+  donate: { en: 'Support us with a coffee', ja: 'コーヒー1杯で応援する', 'zh-tw': '請我們喝杯咖啡', 'zh-cn': '请我们喝杯咖啡', ko: '커피 한 잔으로 응원하기', de: 'Mit einem Kaffee unterstützen', fr: 'Nous offrir un café', it: 'Offrici un caffè', es: 'Invítanos a un café' },
+  donateNote: {
+    en: 'These tools are free. If they helped you, a small tip keeps them running.',
+    ja: 'このツールは無料です。役に立ったら、少しの応援が運営の支えになります。',
+    'zh-tw': '這些工具都是免費的。如果對您有幫助，小小的支持能讓我們持續經營。',
+    'zh-cn': '这些工具都是免费的。如果对您有帮助，小小的支持能让我们持续运营。',
+    ko: '이 도구들은 무료입니다. 도움이 되셨다면 작은 응원이 운영에 힘이 됩니다.',
+    de: 'Diese Tools sind kostenlos. Wenn sie Ihnen geholfen haben, hilft ein kleiner Beitrag, sie weiter zu betreiben.',
+    fr: "Ces outils sont gratuits. S'ils vous ont aidé, un petit geste nous aide à les faire vivre.",
+    it: 'Questi strumenti sono gratuiti. Se ti sono stati utili, un piccolo contributo ci aiuta a mantenerli.',
+    es: 'Estas herramientas son gratuitas. Si te han ayudado, un pequeño aporte nos ayuda a mantenerlas.',
+  },
   language: { en: 'Language', ja: '言語', 'zh-tw': '語言', 'zh-cn': '语言', ko: '언어', de: 'Sprache', fr: 'Langue', it: 'Lingua', es: 'Idioma' },
 } satisfies Record<string, Localized>;

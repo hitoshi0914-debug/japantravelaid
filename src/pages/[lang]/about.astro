@@ -2,6 +2,7 @@
 // 運営者情報・免責事項（9言語）。市販薬ガイドの免責は日本語の正式文も必ず残す。
 import { langPaths, tr, type Lang } from '../../i18n/locales';
 import { ui } from '../../i18n/ui';
+import Donate from '../../components/Donate.astro';
 import Base from '../../layouts/Base.astro';
 import { siteConfig } from '../../site.config';
 
@@ -183,6 +184,8 @@ const title = tr(ui.about, lang);
       <p lang="ja">本サイトは訪日外国人が薬局・ドラッグストアで薬剤師・登録販売者に相談するためのコミュニケーション補助ツールです。診断・処方・医薬品の推奨は行いません。掲載情報は添付文書等の公知情報の翻訳であり、正確性・最新性を保証しません。医薬品の購入・使用は必ず薬剤師・登録販売者・医師の判断に従ってください。</p>
     </>
   )}
+
+  <Donate lang={lang} />
 
   {siteConfig.contactEmail && <p>{C.contact}: <a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a></p>}
 </Base>
