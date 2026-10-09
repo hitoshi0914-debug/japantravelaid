@@ -35,6 +35,11 @@ export const siteConfig = {
    * 地図（喫煙所ファインダー）と薬剤師カードの画面には出さない。アプリには入れない（ストアの規約でアプリ内の寄付は各社の決済が必要）。
    */
   donateUrl: 'https://ko-fi.com/T6R528FYGN',
+  /**
+   * お問い合わせの Google フォームの「事前入力した URL」。ページの欄に PAGE と入れたもの
+   * （scripts/contact/create_contact_form.gs を実行すると実行ログに出る）。全ページの下と about に出す。空のあいだは出さない。
+   */
+  contactFormUrl: '',
   /** 連絡先（about・プライバシーポリシーに出す）。 */
   contactEmail: '',
 };

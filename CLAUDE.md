@@ -13,3 +13,4 @@
 - 寄付: Ko-fi（`site.config.ts` の `donateUrl`、受け取りは会社名義の PayPal）。`src/components/Donate.astro` を全ページの下と about に出す。喫煙所の地図と指差しカード（薬剤師・美容院）の画面には出さない。アプリには入れない（2026-10-09）
 - サイトの中心は「旅行中に困ったとき日本人スタッフに見せる指差しカード集」（2026-10-09 ユーザー決定）。カードの共通部品は `src/components/card/`（薬剤師 `PharmacistApp`・美容院 `SalonApp` は設定を渡すだけ）。美容院カードは `/salon/`、データ `src/data/salon.ts`、カードだけで店の検索はしない。喫煙所はトップでカードの下に小さく出す。タップできる場所は 44〜48px 以上
 - 使い方: トップに3ステップの枠（`src/components/HowToUse.astro`）を置き、押すと実際の画面写真つきの `/[lang]/how-to-use/` へ（初めて使う人向け、2026-10-09 ユーザー）。カードの画面を変えたら `scripts/howto/make_shots.mjs` で写真（`public/howto/<言語>-<1〜6>.jpg`）を作り直す
+- お問い合わせ: Google フォーム（`scripts/contact/create_contact_form.gs` で作る。届くとオーナーの Gmail に通知）。`site.config.ts` の `contactFormUrl` を書くと全ページの下と about に「お問い合わせ」が出る。サイトにメールアドレスは出さない（2026-10-09 ユーザー）

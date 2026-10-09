@@ -27,6 +27,7 @@ export const ui = {
   back: { en: 'Back', ja: '戻る', 'zh-tw': '返回', 'zh-cn': '返回', ko: '뒤로', de: 'Zurück', fr: 'Retour', it: 'Indietro', es: 'Volver' },
   home: { en: 'Home', ja: 'ホーム', 'zh-tw': '首頁', 'zh-cn': '首页', ko: '홈', de: 'Start', fr: 'Accueil', it: 'Home', es: 'Inicio' },
   about: { en: 'About & disclaimer', ja: '運営者情報・免責事項', 'zh-tw': '關於本站・免責聲明', 'zh-cn': '关于本站・免责声明', ko: '사이트 소개・면책 사항', de: 'Über uns & Haftungsausschluss', fr: 'À propos et avertissement', it: 'Chi siamo e avvertenze', es: 'Acerca de y aviso legal' },
+  contact: { en: 'Contact', ja: 'お問い合わせ', 'zh-tw': '聯絡我們', 'zh-cn': '联系我们', ko: '문의하기', de: 'Kontakt', fr: 'Contact', it: 'Contatti', es: 'Contacto' },
   privacy: { en: 'Privacy policy', ja: 'プライバシーポリシー', 'zh-tw': '隱私權政策', 'zh-cn': '隐私政策', ko: '개인정보 처리방침', de: 'Datenschutzerklärung', fr: 'Politique de confidentialité', it: 'Informativa sulla privacy', es: 'Política de privacidad' },
   consentText: {
     en: 'We use cookies to measure how this site is used.',
