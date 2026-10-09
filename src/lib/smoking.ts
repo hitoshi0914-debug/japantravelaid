@@ -42,6 +42,31 @@ export interface SpotsFile {
   spots: Spot[];
 }
 
+/**
+ * 地域ページを作る地域（観光客が多いところだけ）。ほかの地域の喫煙所も地図には出るが、地域ページは作らない。
+ * 観光客の来ない地域のページが大量にあると、サイト全体が低品質と見られるため（2026-10-09 外部評価を受けたユーザー決定）。
+ * 地域を足すときはここに slug を書く（slug は spots.json の area.slug）。
+ */
+export const TOURIST_AREAS: ReadonlySet<string> = new Set([
+  // 東京
+  'tokyo-chiyoda', 'tokyo-chuo', 'tokyo-minato', 'tokyo-shinjuku', 'tokyo-shibuya', 'tokyo-taito', 'tokyo-sumida',
+  'tokyo-koto', 'tokyo-shinagawa', 'tokyo-meguro', 'tokyo-ota', 'tokyo-setagaya', 'tokyo-toshima',
+  // 空港・テーマパーク
+  'chiba-narita', 'chiba-urayasu',
+  // 神奈川・富士箱根
+  'kanagawa-yokohama-nishi', 'kanagawa-hakone', 'kanagawa-odawara', 'shizuoka-gotemba',
+  // 大阪・京都・奈良・兵庫
+  'osaka-osaka-kita', 'osaka-osaka-chuo', 'osaka-osaka-naniwa', 'osaka-osaka-tennoji',
+  'kyoto-kyoto-shimogyo', 'kyoto-kyoto-higashiyama', 'kyoto-kyoto-sakyo', 'kyoto-kyoto-ukyo', 'kyoto-kyoto-minami',
+  'nara-nara', 'hyogo-kobe-chuo', 'hyogo-himeji',
+  // 北海道・東北・北陸
+  'hokkaido-sapporo-chuo', 'miyagi-sendai-aoba', 'ishikawa-kanazawa',
+  // 中国・四国・九州・沖縄
+  'hiroshima-hiroshima-naka', 'hiroshima-hatsukaichi', 'ehime-matsuyama',
+  'fukuoka-fukuoka-hakata', 'fukuoka-fukuoka-chuo', 'fukuoka-dazaifu', 'kagoshima-kagoshima',
+  'okinawa-naha', 'okinawa-miyakojima',
+]);
+
 /** これ未満の件数の地域ページは検索に出さない（noindex・サイトマップ外）。薄いページ対策。 */
 export const MIN_INDEXABLE_SPOTS = 3;
 

@@ -1,10 +1,12 @@
 // 喫煙所ファインダー本体（単一コンポーネント）。
 // 現在地 → spots.json との直線距離（Haversine）→ 近い順に地図のピンとカードで表示する。
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { CircleMarker, MapContainer, Marker, TileLayer, useMap } from 'react-leaflet';
 import L from 'leaflet';
-import { Clock, Flag, Gem, Home, Medal, Plus, Languages, List, LocateFixed, MapPin, Navigation, RefreshCw, WifiOff } from 'lucide-react';
-import { locales, type Lang } from '../../i18n/locales';
+import { Clock, Flag, Gem, Medal, Phone, Plus, Languages, List, LocateFixed, MapPin, Navigation, RefreshCw, WifiOff } from 'lucide-react';
+import { contacts } from '../../data/emergency';
+import { locales, tr, type Lang } from '../../i18n/locales';
+import { siteConfig } from '../../site.config';
 import { contributionCounts, localized, rankFor, reportUrl, routeUrl, spotLang, submitUrl, type RankId, type Spot, type SpotLang, type SpotsFile } from '../../lib/smoking';
 
 // ---------- データ型（scripts/smoking/SCHEMA.md・src/lib/smoking.ts） ----------
@@ -382,7 +384,7 @@ function RankBadge({ rank, label }: { rank: RankId; label: string }) {
 
 // 「地図にない喫煙所を見つけたら教えてね」の案内（開始画面と検索結果の下）
 function AddPrompt({ t, onClick, href }: { t: (typeof T)[Lang]; onClick?: () => void; href?: string }) {
-  const cls = 'flex shrink-0 items-center gap-1 rounded-full bg-amber-500 px-3 py-1.5 text-xs font-bold text-white active:scale-95';
+  const cls = 'flex min-h-11 shrink-0 items-center gap-1 rounded-full bg-amber-500 px-4 text-sm font-bold text-white active:scale-95';
   return (
     <div className="flex items-center gap-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5 text-left">
       <div className="min-w-0 flex-1">
@@ -477,6 +479,36 @@ function Basemap({ lang }: { lang: SpotLang }) {
 
 type GeoState = 'idle' | 'locating' | 'ok' | 'denied' | 'unsupported';
 
+// サイト共通のヘッダー（Base.astro と同じ形）: サイト名・言語・119 と #7119 の帯。喫煙所だけ別サイトに見えないように。
+const CALLS = contacts.filter((c) => c.id === 'ambulance' || c.id === '7119');
+function SiteHeader({ pageLang, langSelect }: { pageLang: Lang; langSelect: ReactNode }) {
+  return (
+    <div>
+      <div className="flex min-h-14 items-center gap-2">
+        <a href={`/${pageLang}/`} className="flex min-h-11 items-center text-[0.95rem] font-extrabold text-slate-900 no-underline">
+          🧭 {siteConfig.siteName}
+        </a>
+        {langSelect}
+      </div>
+      <div className="grid grid-cols-2 gap-2 pb-2">
+        {CALLS.map((c) => (
+          <a
+            key={c.id}
+            href={`tel:${c.tel}`}
+            data-ga="call_click"
+            data-ga-params={JSON.stringify({ number: c.number })}
+            className={`flex min-h-12 items-center gap-1.5 rounded-xl px-3 text-[0.8rem] leading-tight no-underline ${c.urgent ? 'bg-[#c81e1e] text-white' : 'bg-[#fff6db] text-slate-900'}`}
+          >
+            <Phone className="h-4 w-4 shrink-0" aria-hidden />
+            <strong className="text-lg">{c.number}</strong>
+            <span>{tr(c.label, pageLang)}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 interface Props {
   /** このページの言語（/en/smoking/ なら en）。 */
   pageLang: PageLang;
@@ -567,13 +599,13 @@ export default function SmokingFinder({ pageLang }: Props) {
   const focus = nearest.find((s) => s.id === focusId) ?? null;
 
   const langSelect = (
-    <label className="flex shrink-0 items-center gap-1 rounded-full bg-slate-100 py-1 pr-1 pl-2 text-xs text-slate-700">
-      <Languages className="h-3.5 w-3.5" aria-hidden />
+    <label className="ml-auto flex min-h-11 shrink-0 items-center gap-1 rounded-full border border-slate-200 bg-white px-3 text-sm text-slate-800">
+      <Languages className="h-4 w-4" aria-hidden />
       <select
         value={pageLang}
         onChange={(e) => switchLang(e.target.value as Lang)}
         aria-label="Language"
-        className="bg-transparent font-medium outline-none"
+        className="min-h-11 bg-transparent font-bold outline-none"
       >
         {locales.map((l) => (
           <option key={l.code} value={l.code}>
@@ -605,13 +637,8 @@ export default function SmokingFinder({ pageLang }: Props) {
 
   if (!started) {
     return (
-      <div className="flex min-h-dvh flex-col bg-white px-5 pt-4 pb-8 text-slate-900">
-        <div className="flex items-center justify-between">
-          <a href={`/${pageLang}/`} aria-label={t.home} title={t.home} className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 text-slate-700">
-            <Home className="h-4 w-4" />
-          </a>
-          {langSelect}
-        </div>
+      <div className="flex min-h-dvh flex-col bg-white px-4 pt-[env(safe-area-inset-top)] pb-8 text-slate-900">
+        <SiteHeader pageLang={pageLang} langSelect={langSelect} />
         <div className="flex flex-1 flex-col justify-center">
           <p className="text-5xl" aria-hidden>🚬</p>
           <h1 className="mt-3 text-3xl leading-tight font-bold">{t.title}</h1>
@@ -629,7 +656,7 @@ export default function SmokingFinder({ pageLang }: Props) {
           >
             <LocateFixed className="h-5 w-5" /> {t.start}
           </button>
-          <a href={`/${pageLang}/smoking/areas/`} className="mt-4 text-center text-sm font-semibold text-teal-800 underline">
+          <a href={`/${pageLang}/smoking/areas/`} className="mt-2 py-3 text-center text-base font-semibold text-teal-800 underline">
             {t.byArea}
           </a>
           {addUrl && (
@@ -644,9 +671,14 @@ export default function SmokingFinder({ pageLang }: Props) {
   }
 
   return (
-    <div className="flex h-dvh flex-col bg-white text-slate-900 md:flex-row">
+    <div className="flex h-dvh flex-col bg-white text-slate-900">
+      {/* サイト共通のヘッダー（スマホでは地図の上） */}
+      <div className="shrink-0 border-b border-slate-200 px-4 pt-[env(safe-area-inset-top)]">
+        <SiteHeader pageLang={pageLang} langSelect={langSelect} />
+      </div>
+    <div className="flex min-h-0 flex-1 flex-col md:flex-row">
       {/* 地図 */}
-      <div className="relative h-[45dvh] shrink-0 md:order-2 md:h-auto md:flex-1">
+      <div className="relative h-[38dvh] shrink-0 md:order-2 md:h-auto md:flex-1">
         <MapContainer center={origin} zoom={15} className="h-full w-full" zoomControl={false}>
           <Basemap lang={lang} />
           <MapController center={origin} spots={nearest} focus={focus} />
@@ -679,23 +711,12 @@ export default function SmokingFinder({ pageLang }: Props) {
       <div className="flex min-h-0 flex-1 flex-col md:order-1 md:w-[420px] md:flex-none md:border-r md:border-slate-200">
         {/* 見出しは1行（ホーム・タイトル・言語）＋絞り込み1つだけ。地域一覧への入口はリストの下 */}
         <header className="border-b border-slate-200 px-4 py-2">
-          <div className="flex items-center gap-2">
-            <a
-              href={`/${pageLang}/`}
-              aria-label={t.home}
-              title={t.home}
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-slate-200 text-slate-700 active:scale-95"
-            >
-              <Home className="h-4 w-4" />
-            </a>
-            <h1 className="min-w-0 flex-1 truncate text-base font-bold">{t.title}</h1>
-            {langSelect}
-          </div>
+          <h1 className="truncate text-base font-bold">{t.title}</h1>
           <div className="mt-2 flex items-center gap-2">
             <button
               onClick={() => setCigOnly((v) => !v)}
               aria-pressed={cigOnly}
-              className={`rounded-full border px-3 py-1 text-xs font-semibold ${cigOnly ? 'border-teal-700 bg-teal-700 text-white' : 'border-slate-300 text-slate-700'}`}
+              className={`min-h-11 rounded-full border px-4 text-sm font-semibold ${cigOnly ? 'border-teal-700 bg-teal-700 text-white' : 'border-slate-300 text-slate-700'}`}
             >
               🚬 {t.cigOnly}
             </button>
@@ -706,7 +727,7 @@ export default function SmokingFinder({ pageLang }: Props) {
                 target="_blank"
                 rel="noopener"
                 data-ga="smoking_add"
-                className="ml-auto flex shrink-0 items-center gap-1 rounded-full bg-amber-500 px-3 py-1 text-xs font-bold text-white active:scale-95"
+                className="ml-auto flex min-h-11 shrink-0 items-center gap-1 rounded-full bg-amber-500 px-4 text-sm font-bold text-white active:scale-95"
               >
                 <Plus className="h-3.5 w-3.5" /> {t.addSpot}
               </a>
@@ -794,7 +815,7 @@ export default function SmokingFinder({ pageLang }: Props) {
                           rel="noopener"
                           onClick={(e) => e.stopPropagation()}
                           data-ga="smoking_report"
-                          className="mt-1.5 inline-flex items-center gap-1 text-[11px] text-slate-500 underline"
+                          className="mt-1 inline-flex min-h-10 items-center gap-1 text-xs text-slate-500 underline"
                         >
                           <Flag className="h-3 w-3" /> {t.report}
                         </a>
@@ -821,7 +842,7 @@ export default function SmokingFinder({ pageLang }: Props) {
               <AddPrompt t={t} href={addUrl} />
             </div>
           )}
-          <a href={`/${pageLang}/smoking/areas/`} className="mt-5 flex items-center gap-1 text-sm font-semibold text-teal-800 underline">
+          <a href={`/${pageLang}/smoking/areas/`} className="mt-4 flex min-h-11 items-center gap-1 text-base font-semibold text-teal-800 underline">
             <List className="h-4 w-4" /> {t.byArea}
           </a>
           <p className="mt-3 rounded-lg bg-slate-50 px-3 py-2 text-xs leading-relaxed text-slate-600">{t.tip}</p>
@@ -841,6 +862,7 @@ export default function SmokingFinder({ pageLang }: Props) {
           )}
         </div>
       </div>
+    </div>
     </div>
   );
 }

@@ -1,0 +1,35 @@
+---
+import SalonApp from '../../../components/salon/SalonApp';
+import { langPaths, type Lang } from '../../../i18n/locales';
+import Base from '../../../layouts/Base.astro';
+
+export const getStaticPaths = () => langPaths();
+const lang = Astro.params.lang as Lang;
+const C = {
+  en: { title: 'Show at the Hair Salon', desc: 'Tap the haircut you want — length, bangs, clipper size, color — and show a big Japanese card at a hair salon or barber in Japan. Works offline.', lead: 'Tap what you want, then show the card to the stylist or barber. They can point to a question in Japanese, and you tap your answer.' },
+  ja: { title: '美容室・床屋で見せる', desc: '切る長さ・前髪・バリカンの長さ・カラーをタップして、大きな日本語のカードを美容師・理容師に見せるツール。オフラインでも使えます。', lead: '希望をタップして、カードを美容師・理容師に見せてください。相手は日本語の質問を指差し、こちらはタップで答えられます。' },
+  ko: { title: '미용실에서 보여주기', desc: '자를 길이, 앞머리, 바리캉 길이, 염색을 누르고 큰 일본어 카드를 일본 미용실·이발소 직원에게 보여주세요. 오프라인에서도 작동합니다.', lead: '원하는 것을 누른 뒤 카드를 미용사나 이발사에게 보여주세요. 상대가 일본어 질문을 가리키면 눌러서 답할 수 있습니다.' },
+  'zh-tw': { title: '給美髮師看', desc: '點選要剪的長度、瀏海、電剪長度、染髮顏色，把大字日文卡片給日本美髮店或理髮店的人員看。離線也能使用。', lead: '點選您的需求，再把卡片給美髮師或理髮師看。對方用手指點日文問題，您點選回答即可。' },
+  'zh-cn': { title: '给理发师看', desc: '点选要剪的长度、刘海、电推子长度、染发颜色，把大字日文卡片给日本美发店或理发店的人员看。离线也能使用。', lead: '点选您的需求，再把卡片给美发师或理发师看。对方用手指点日文问题，您点选回答即可。' },
+  de: { title: 'Beim Friseur zeigen', desc: 'Tippen Sie Ihren Wunschschnitt an – Länge, Pony, Maschinenaufsatz, Farbe – und zeigen Sie beim Friseur oder Barbier in Japan eine große Karte auf Japanisch. Funktioniert offline.', lead: 'Tippen Sie an, was Sie möchten, und zeigen Sie die Karte dem Friseur. Er kann auf eine Frage auf Japanisch zeigen, und Sie tippen Ihre Antwort an.' },
+  fr: { title: 'Montrer chez le coiffeur', desc: 'Touchez la coupe voulue — longueur, frange, sabot de tondeuse, couleur — et montrez une grande carte en japonais chez un coiffeur ou un barbier au Japon. Fonctionne hors ligne.', lead: 'Touchez ce que vous voulez, puis montrez la carte au coiffeur. Il peut pointer une question en japonais, et vous touchez votre réponse.' },
+  it: { title: 'Mostra al parrucchiere', desc: 'Tocca il taglio che vuoi — lunghezza, frangia, misura della macchinetta, colore — e mostra una grande scheda in giapponese dal parrucchiere o dal barbiere in Giappone. Funziona offline.', lead: 'Tocca ciò che desideri, poi mostra la scheda al parrucchiere o al barbiere. Può indicare una domanda in giapponese e tu tocchi la risposta.' },
+  es: { title: 'Mostrar en la peluquería', desc: 'Toque el corte que quiere — largo, flequillo, número de máquina, color — y muestre una tarjeta grande en japonés en una peluquería o barbería de Japón. Funciona sin conexión.', lead: 'Toque lo que quiere y muestre la tarjeta al peluquero o barbero. Puede señalar una pregunta en japonés y usted toca su respuesta.' },
+}[lang];
+---
+
+<Base
+  lang={lang}
+  title={C.title}
+  description={C.desc}
+  path="salon/" backHref={`/${lang}/`}
+>
+  <h1 class="page-title">💇 {C.title}</h1>
+  <p class="lead">{C.lead}</p>
+  <SalonApp client:load lang={lang} />
+</Base>
+
+<style>
+  .page-title { font-size: 1.4rem; margin: 8px 0 4px; }
+  .lead { margin: 0 0 16px; color: var(--muted); font-size: 0.9rem; }
+</style>
