@@ -39,7 +39,7 @@ export const siteConfig = {
    * お問い合わせの Google フォームの「事前入力した URL」。ページの欄に PAGE と入れたもの
    * （scripts/contact/create_contact_form.gs を実行すると実行ログに出る）。全ページの下と about に出す。空のあいだは出さない。
    */
-  contactFormUrl: '',
+  contactFormUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSdEk6JLv6s8HuD93G16eLyv6yK0qOfOn_hkZVNJWWPQzyoBDg/viewform?usp=pp_url&entry.1930517132=PAGE',
   /** 連絡先（about・プライバシーポリシーに出す）。 */
   contactEmail: '',
 };
