@@ -167,3 +167,14 @@ interface CardState {
 - [ ] 緊急連絡先（`src/data/emergency.ts`）を公式サイトで再確認（#7119 の実施地域、JNTO ホットラインの番号・対応言語）
 - [ ] 指差しカードの日本語を薬剤師・登録販売者に見てもらう
 - [ ] 免責文を確認（必要なら専門家に）
+
+## スマホアプリ（Capacitor）
+
+サイトをそのままアプリに同梱する（電波がなくても開ける）。サイトも今までどおり公開し、ストアのボタンは公開後に `site.config.ts` の URL を書くと出る。
+
+- `npm run build:app`: `PUBLIC_APP=1` でサイトを `dist-app/` にビルドし、`android/` に写す。アプリ版は広告・寄付・ストアのボタン・GA を出さない（`site.config.ts` の最後）
+- `android/`: Capacitor が作った Android プロジェクト。ページごとの HTML を開けるように `MainActivity` で `/…/` を `/…/index.html` に読み替えている（`PagesWebViewClient.java`）
+- アイコン: `assets/` の画像から `npx @capacitor/assets generate --android` で作る
+- 試し用の APK: GitHub の Actions > Android app を実行 > Artifacts からダウンロード
+- 順番: Android（喫煙所＋市販薬）を先に出す。iPhone は最初は市販薬・救急だけ（審査ガイドライン 1.4.3 たばこ）で、喫煙所は後のアップデートで足す
+- Google Play は会社名義（組織アカウント、D-U-N-S 番号が必要）。個人名義だと「12人・14日間のクローズドテスト」が公開の条件になる

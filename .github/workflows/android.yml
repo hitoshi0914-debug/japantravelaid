@@ -1,0 +1,32 @@
+# Android アプリ（Capacitor）をビルドして、試し用の APK を Actions の「Artifacts」に置く。
+# スマホで Actions > Android app > いちばん上の実行 > Artifacts の japan-travel-aid-debug をダウンロードして入れられる。
+# ストア提出用（署名した AAB）は Google Play の登録が済んでから足す。
+name: Android app
+
+on:
+  pull_request:
+    paths: ['android/**', 'capacitor.config.ts', 'package.json', 'package-lock.json', '.github/workflows/android.yml']
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: npm ci
+      # サイトをアプリ用（広告・寄付・GA なし）にビルドして android/ に写す。
+      - run: npm run build:app
+      - run: ./gradlew assembleDebug
+        working-directory: android
+      - uses: actions/upload-artifact@v4
+        with:
+          name: japan-travel-aid-debug
+          path: android/app/build/outputs/apk/debug/app-debug.apk

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Japan Travel Aid</string>
+    <string name="title_activity_main">Japan Travel Aid</string>
+    <string name="package_name">com.japantravelaid.app</string>
+    <string name="custom_url_scheme">com.japantravelaid.app</string>
+</resources>
