@@ -17,8 +17,8 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
-    // ストア提出用の署名（アップロード鍵）。鍵とパスワードは GitHub の Secrets にだけ置き、Actions が
-    // ANDROID_KEYSTORE_FILE に書き出して渡す。アップロード鍵は Google Play App Signing で失くしても再発行できる。
+    // ストア提出用の署名（アップロード鍵）。鍵とパスワードは GitHub の Secrets の ANDROID_UPLOAD_KEY にだけ置き、Actions が
+    // 鍵を ANDROID_KEYSTORE_FILE に書き出して渡す。アップロード鍵は Google Play App Signing で失くしても再発行できる。
     def keystorePassword = System.getenv('ANDROID_KEYSTORE_PASSWORD')
     signingConfigs {
         if (keystorePassword) {

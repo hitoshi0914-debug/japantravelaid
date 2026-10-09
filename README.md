@@ -176,6 +176,6 @@ interface CardState {
 - `android/`: Capacitor が作った Android プロジェクト。ページごとの HTML を開けるように `MainActivity` で `/…/` を `/…/index.html` に読み替えている（`PagesWebViewClient.java`）
 - アイコン: `assets/` の画像から `npx @capacitor/assets generate --android` で作る
 - 試し用の APK: GitHub の Actions > Android app を実行 > Artifacts からダウンロード
-- ストア提出用の AAB: Actions > Android app > Run workflow で `japan-travel-aid-release` ができる。署名のアップロード鍵は GitHub の Secrets（`ANDROID_KEYSTORE_BASE64`・`ANDROID_KEYSTORE_PASSWORD`）にだけ置く。Play App Signing を使うので、鍵を失くしても Play Console から再発行できる
+- ストア提出用の AAB: Actions > Android app の Artifacts の `japan-travel-aid-release`。署名のアップロード鍵は GitHub の Secrets の `ANDROID_UPLOAD_KEY`（「パスワード:鍵ファイルの base64」）にだけ置く。Play App Signing を使うので、鍵を失くしても Play Console から再発行できる
 - 順番: Android（喫煙所＋市販薬）を先に出す。iPhone は最初は市販薬・救急だけ（審査ガイドライン 1.4.3 たばこ）で、喫煙所は後のアップデートで足す
 - Google Play は会社名義（組織アカウント、D-U-N-S 番号が必要）。個人名義だと「12人・14日間のクローズドテスト」が公開の条件になる
