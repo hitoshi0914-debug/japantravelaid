@@ -1,27 +1,27 @@
 ---
-// トップの「使い方」3ステップ（2026-10-09 ユーザー: トップに1つだけ）
+// トップの「使い方」3ステップ。押すと画面写真つきの /how-to-use/ へ（2026-10-09 ユーザー: トップに1つだけ）
 import type { Lang } from '../i18n/locales';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 
-const C: Record<Lang, { title: string; steps: [string, string, string] }> = {
-  en: { title: 'How to use', steps: ['Pick a card and tap what you need (symptoms, haircut…).', 'Show the big Japanese card to the staff.', 'Staff point to their reply. You see it in your language too.'] },
-  ja: { title: '使い方', steps: ['カードを選び、伝えたいこと（症状・髪型など）をタップ。', '大きな日本語のカードを店員に見せる。', '店員が返事を指差し。あなたの言葉でも表示されます。'] },
-  ko: { title: '사용 방법', steps: ['카드를 고르고 전하고 싶은 것(증상, 헤어스타일 등)을 누르세요.', '큰 일본어 카드를 직원에게 보여주세요.', '직원이 답을 손가락으로 가리킵니다. 내 언어로도 표시됩니다.'] },
-  'zh-tw': { title: '使用方法', steps: ['選擇卡片，點選想表達的內容（症狀、髮型等）。', '把大字日文卡片給店員看。', '店員用手指點選回覆，也會以您的語言顯示。'] },
-  'zh-cn': { title: '使用方法', steps: ['选择卡片，点选想表达的内容（症状、发型等）。', '把大字日文卡片给店员看。', '店员用手指点选回复，也会以您的语言显示。'] },
-  de: { title: 'So funktioniert’s', steps: ['Karte wählen und antippen, was Sie brauchen (Beschwerden, Haarschnitt …).', 'Die große japanische Karte dem Personal zeigen.', 'Das Personal zeigt auf die Antwort – auch in Ihrer Sprache.'] },
-  fr: { title: 'Mode d’emploi', steps: ['Choisissez une carte et touchez ce qu’il vous faut (symptômes, coupe…).', 'Montrez la grande carte en japonais au personnel.', 'Le personnel pointe sa réponse, affichée aussi dans votre langue.'] },
-  it: { title: 'Come si usa', steps: ['Scegli una scheda e tocca ciò che ti serve (sintomi, taglio…).', 'Mostra la grande scheda in giapponese al personale.', 'Il personale indica la risposta, mostrata anche nella tua lingua.'] },
-  es: { title: 'Cómo se usa', steps: ['Elija una tarjeta y toque lo que necesita (síntomas, corte…).', 'Muestre la tarjeta grande en japonés al personal.', 'El personal señala su respuesta, que también ve en su idioma.'] },
+const C: Record<Lang, { title: string; steps: [string, string, string]; more: string }> = {
+  en: { more: 'See it step by step with screenshots', title: 'How to use', steps: ['Pick a card and tap what you need (symptoms, haircut…).', 'Show the big Japanese card to the staff.', 'Staff point to their reply. You see it in your language too.'] },
+  ja: { more: '実際の画面で詳しく見る', title: '使い方', steps: ['カードを選び、伝えたいこと（症状・髪型など）をタップ。', '大きな日本語のカードを店員に見せる。', '店員が返事を指差し。あなたの言葉でも表示されます。'] },
+  ko: { more: '실제 화면으로 자세히 보기', title: '사용 방법', steps: ['카드를 고르고 전하고 싶은 것(증상, 헤어스타일 등)을 누르세요.', '큰 일본어 카드를 직원에게 보여주세요.', '직원이 답을 손가락으로 가리킵니다. 내 언어로도 표시됩니다.'] },
+  'zh-tw': { more: '用實際畫面看詳細步驟', title: '使用方法', steps: ['選擇卡片，點選想表達的內容（症狀、髮型等）。', '把大字日文卡片給店員看。', '店員用手指點選回覆，也會以您的語言顯示。'] },
+  'zh-cn': { more: '用实际画面看详细步骤', title: '使用方法', steps: ['选择卡片，点选想表达的内容（症状、发型等）。', '把大字日文卡片给店员看。', '店员用手指点选回复，也会以您的语言显示。'] },
+  de: { more: 'Schritt für Schritt mit Bildschirmfotos', title: 'So funktioniert’s', steps: ['Karte wählen und antippen, was Sie brauchen (Beschwerden, Haarschnitt …).', 'Die große japanische Karte dem Personal zeigen.', 'Das Personal zeigt auf die Antwort – auch in Ihrer Sprache.'] },
+  fr: { more: 'Pas à pas, avec captures d’écran', title: 'Mode d’emploi', steps: ['Choisissez une carte et touchez ce qu’il vous faut (symptômes, coupe…).', 'Montrez la grande carte en japonais au personnel.', 'Le personnel pointe sa réponse, affichée aussi dans votre langue.'] },
+  it: { more: 'Passo passo, con schermate', title: 'Come si usa', steps: ['Scegli una scheda e tocca ciò che ti serve (sintomi, taglio…).', 'Mostra la grande scheda in giapponese al personale.', 'Il personale indica la risposta, mostrata anche nella tua lingua.'] },
+  es: { more: 'Paso a paso, con capturas', title: 'Cómo se usa', steps: ['Elija una tarjeta y toque lo que necesita (síntomas, corte…).', 'Muestre la tarjeta grande en japonés al personal.', 'El personal señala su respuesta, que también ve en su idioma.'] },
 };
 const t = C[lang] ?? C.en;
 const icons = ['👆', '📱', '👉'];
 ---
 
-<section class="howto" aria-labelledby="howto-title">
-  <h2 id="howto-title">{t.title}</h2>
+<a class="howto" href={`/${lang}/how-to-use/`} data-ga="howto_click">
+  <h2>📖 {t.title}</h2>
   <ol>
     {t.steps.map((s, i) => (
       <li>
@@ -30,14 +30,16 @@ const icons = ['👆', '📱', '👉'];
       </li>
     ))}
   </ol>
-</section>
+  <span class="more">{t.more} →</span>
+</a>
 
 <style>
-  .howto { margin: 0 0 16px; padding: 12px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); }
+  .howto { display: block; text-decoration: none; color: inherit; margin: 0 0 16px; padding: 12px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); }
   .howto h2 { margin: 0 0 8px; font-size: 1rem; }
   .howto ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
   .howto li { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; }
   .pic { position: relative; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: var(--accent-soft); font-size: 1.6rem; }
   .pic b { position: absolute; top: -4px; left: -4px; width: 20px; height: 20px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 0.75rem; line-height: 20px; }
   .txt { font-size: 0.8rem; line-height: 1.35; color: var(--text); }
+  .more { display: flex; align-items: center; justify-content: center; min-height: 48px; margin-top: 12px; border-radius: 999px; background: var(--accent); color: #fff; font-weight: 700; font-size: 0.95rem; }
 </style>
