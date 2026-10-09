@@ -143,9 +143,8 @@ const C = {
   .contacts { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
   .contacts li { padding: 12px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); }
   .contacts li.urgent { border: 2px solid var(--danger); background: var(--danger-soft); }
-  .contacts a { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; min-height: var(--tap); color: var(--text); text-decoration: none; }
-  /* 長い番号（050-…）を途中で折らない。入りきらないときは名前が次の行に回る */
-  .num { font-size: 1.6rem; font-weight: 900; white-space: nowrap; }
+  .contacts a { display: flex; align-items: center; gap: 10px; min-height: var(--tap); color: var(--text); text-decoration: none; }
+  .num { font-size: 1.6rem; font-weight: 900; }
   .label { display: flex; flex-direction: column; font-weight: 700; line-height: 1.2; }
   .label span { font-weight: 400; font-size: 0.75rem; color: var(--muted); }
   .contacts p { margin: 6px 0 0; font-size: 0.85rem; color: var(--muted); }
