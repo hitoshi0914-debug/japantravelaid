@@ -7,7 +7,8 @@ android {
         applicationId "com.japantravelaid.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
+        // ストアに出すたびに増やす番号。Actions の本番ビルドでは実行番号を使う。
+        versionCode((System.getenv('VERSION_CODE') ?: '1').toInteger())
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
@@ -16,8 +17,23 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    // ストア提出用の署名（アップロード鍵）。鍵とパスワードは GitHub の Secrets にだけ置き、Actions が
+    // ANDROID_KEYSTORE_FILE に書き出して渡す。アップロード鍵は Google Play App Signing で失くしても再発行できる。
+    def keystorePassword = System.getenv('ANDROID_KEYSTORE_PASSWORD')
+    signingConfigs {
+        if (keystorePassword) {
+            release {
+                storeFile file(System.getenv('ANDROID_KEYSTORE_FILE'))
+                storeType 'pkcs12'
+                storePassword keystorePassword
+                keyAlias 'upload'
+                keyPassword keystorePassword
+            }
+        }
+    }
     buildTypes {
         release {
+            if (keystorePassword) signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }

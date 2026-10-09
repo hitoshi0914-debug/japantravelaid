@@ -30,3 +30,19 @@ jobs:
         with:
           name: japan-travel-aid-debug
           path: android/app/build/outputs/apk/debug/app-debug.apk
+      # ストア提出用: 手動実行のときだけ。versionCode は実行番号（ストアに出すたびに増える必要がある）。
+      - if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/upload-key.p12"
+          ./gradlew bundleRelease
+        working-directory: android
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEYSTORE_FILE: ${{ runner.temp }}/upload-key.p12
+          VERSION_CODE: ${{ github.run_number }}
+      - if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v4
+        with:
+          name: japan-travel-aid-release
+          path: android/app/build/outputs/bundle/release/app-release.aab
