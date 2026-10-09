@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace = "com.japantravelaid.app"
+    namespace = "com.yamaguchi.japantravelaid"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.japantravelaid.app"
+        applicationId "com.yamaguchi.japantravelaid"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         // ストアに出すたびに増やす番号。Actions の本番ビルドでは実行番号を使う。

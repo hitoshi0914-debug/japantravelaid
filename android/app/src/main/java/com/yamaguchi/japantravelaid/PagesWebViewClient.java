@@ -1,4 +1,4 @@
-package com.japantravelaid.app;
+package com.yamaguchi.japantravelaid;
 
 import android.net.Uri;
 import android.webkit.WebResourceRequest;

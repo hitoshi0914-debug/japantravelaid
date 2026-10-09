@@ -1,4 +1,4 @@
-package com.japantravelaid.app;
+package com.yamaguchi.japantravelaid;
 
 import android.os.Bundle;
 import com.getcapacitor.BridgeActivity;
