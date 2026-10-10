@@ -1,5 +1,9 @@
 // 公開後に登録するサービスの ID。ここに書いてビルド・デプロイし直すと有効になる（空のあいだは何も出力しない）。
 // 手順は README.md の「公開と収益化」。japanrockbar と同じ流れ。
+
+/** スマホアプリ用のビルド（npm run build:app）。アプリには広告・寄付・ストアボタン・GA を入れない（下の最後で空にする）。 */
+export const isApp = import.meta.env.PUBLIC_APP === '1';
+
 export const siteConfig = {
   siteName: 'Japan Travel Aid',
   /** Google Analytics 4 の測定 ID（例: 'G-ABC123XYZ'）。このサイト用に新しいプロパティを作る。 */
@@ -43,3 +47,6 @@ export const siteConfig = {
   /** 連絡先（about・プライバシーポリシーに出す）。 */
   contactEmail: '',
 };
+
+// アプリ版: AdSense はアプリで使えない（AdMob が必要）、寄付はストアの決済規約に触れる、ストアボタンはアプリ内では不要。
+if (isApp) Object.assign(siteConfig, { gaMeasurementId: '', adsensePublisherId: '', donateUrl: '', appStoreUrl: '', googlePlayUrl: '' });
