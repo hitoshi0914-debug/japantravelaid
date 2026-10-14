@@ -26,6 +26,8 @@ interface Props {
 const { lang, title, description = tr(ui.tagline, lang), path, backHref = path === '' ? undefined : `/${lang}/`, noindex = false } = Astro.props;
 const siteName = siteConfig.siteName;
 const fullTitle = title === siteName ? title : `${title} | ${siteName}`;
+// お問い合わせフォーム: ページの欄にこのページのパスを入れて開く
+const contactUrl = siteConfig.contactFormUrl && siteConfig.contactFormUrl.replace('PAGE', encodeURIComponent(`${lang}/${path}`));
 const url = (code: string) => new URL(`/${code}/${path}`, Astro.site).href;
 const alternates = locales.filter((l) => langsForPath(path).includes(l.code));
 ---
@@ -86,6 +88,7 @@ const alternates = locales.filter((l) => langsForPath(path).includes(l.code));
     <footer class="container site-footer">
       <a href={`/${lang}/about/`}>{tr(ui.about, lang)}</a>
       <a href={`/${lang}/privacy/`}>{tr(ui.privacy, lang)}</a>
+      {contactUrl && <a href={contactUrl} target="_blank" rel="noopener" data-ga="contact_click">{tr(ui.contact, lang)}</a>}
     </footer>
     <ConsentBanner lang={lang} />
     <script>

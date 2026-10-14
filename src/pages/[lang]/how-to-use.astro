@@ -1,0 +1,130 @@
+---
+// 使い方ページ: 薬剤師カードの実際の画面で、初めての人向けに一歩ずつ説明する。
+// 画面写真は scripts/howto/make_shots.mjs で作る（public/howto/<言語>-<1〜6>.jpg）。
+import { langPaths, tr, type Lang } from '../../i18n/locales';
+import { ui } from '../../i18n/ui';
+import Base from '../../layouts/Base.astro';
+
+export const getStaticPaths = () => langPaths();
+const lang = Astro.params.lang as Lang;
+
+type Copy = { title: string; desc: string; lead: string; steps: [string, string, string, string, string, string]; who: [string, string]; same: string; tryPharmacist: string; trySalon: string; tipsTitle: string; tips: string[] };
+const C: Record<Lang, Copy> = {
+  en: {
+    title: 'How to use', desc: 'Step-by-step guide with screenshots: how to use the point-and-show cards at a Japanese drugstore or hair salon.',
+    lead: 'You do not need to speak Japanese. Here is the whole flow at a drugstore, with real screenshots.',
+    steps: ['Tap everything that applies to you. A check mark appears on what you tap.', 'Tap {btn} at the bottom.', 'Turn your phone around and show the screen to the staff. The big Japanese text tells them what you need.', 'The staff point to a question at the bottom of the card and tap it.', 'The question appears in your language. Tap your answer.', 'Your answer appears in big Japanese. Show it to the staff again.'],
+    who: ['You', 'Staff'], same: 'The hair salon card works the same way.', tryPharmacist: 'Try the pharmacist card', trySalon: 'Try the hair salon card',
+    tipsTitle: 'Good to know', tips: ['Works offline once the page has loaded. Add it to your home screen before your trip.', 'Your choices are saved on your phone, so you can prepare them before going in.', 'The screen stays on while the card is shown.', 'To close the card, tap ✕ or your phone’s back button.'],
+  },
+  ja: {
+    title: '使い方', desc: '指差しカードの使い方を実際の画面で一歩ずつ説明します（ドラッグストア・美容室）。',
+    lead: '日本語が話せなくても大丈夫です。ドラッグストアでの流れを、実際の画面で説明します。',
+    steps: ['当てはまるものを全部タップします。タップしたものにチェックが付きます。', '下の{btn}をタップします。', 'スマホを相手に向けて、画面を店員に見せます。大きな日本語で用件が伝わります。', '店員がカードの下の質問を指差してタップします。', '質問があなたの言葉でも出ます。答えをタップします。', '答えが大きな日本語で出ます。もう一度店員に見せます。'],
+    who: ['あなた', '店員'], same: '美容室のカードも同じ使い方です。', tryPharmacist: '薬剤師カードを使う', trySalon: '美容室カードを使う',
+    tipsTitle: '知っておくと便利', tips: ['一度開けばオフラインでも使えます。旅行前にホーム画面に追加しておくと安心です。', '選んだ内容はスマホに保存されるので、お店に入る前に準備できます。', 'カードを表示している間は画面が消えません。', 'カードを閉じるには ✕ かスマホの「戻る」を押します。'],
+  },
+  ko: {
+    title: '사용 방법', desc: '일본 드러그스토어·미용실에서 손가락 카드를 쓰는 방법을 실제 화면으로 하나씩 설명합니다.',
+    lead: '일본어를 못해도 괜찮습니다. 드러그스토어에서의 흐름을 실제 화면으로 보여드립니다.',
+    steps: ['해당하는 것을 모두 누르세요. 누른 항목에 체크 표시가 생깁니다.', '아래의 {btn}를 누르세요.', '휴대폰을 돌려 직원에게 화면을 보여주세요. 큰 일본어로 용건이 전달됩니다.', '직원이 카드 아래의 질문을 가리키며 누릅니다.', '질문이 내 언어로도 나옵니다. 답을 누르세요.', '답이 큰 일본어로 나옵니다. 다시 직원에게 보여주세요.'],
+    who: ['나', '직원'], same: '미용실 카드도 같은 방법으로 씁니다.', tryPharmacist: '약사 카드 사용하기', trySalon: '미용실 카드 사용하기',
+    tipsTitle: '알아두면 좋은 점', tips: ['한 번 열면 오프라인에서도 작동합니다. 여행 전에 홈 화면에 추가해 두세요.', '선택한 내용은 휴대폰에 저장되므로 가게에 들어가기 전에 준비할 수 있습니다.', '카드를 보여주는 동안 화면이 꺼지지 않습니다.', '카드를 닫으려면 ✕ 또는 휴대폰의 뒤로 가기를 누르세요.'],
+  },
+  'zh-tw': {
+    title: '使用方法', desc: '用實際畫面一步步說明如何在日本藥妝店、美髮店使用指點卡片。',
+    lead: '不會說日語也沒關係。以下用實際畫面說明在藥妝店的使用流程。',
+    steps: ['點選所有符合的項目，點過的項目會打勾。', '點選下方的{btn}。', '把手機轉過去，讓店員看畫面。大字日文會告訴對方您的需求。', '店員用手指點選卡片下方的問題。', '問題也會以您的語言顯示，請點選您的回答。', '您的回答會以大字日文顯示，再給店員看一次。'],
+    who: ['您', '店員'], same: '美髮店卡片的用法也一樣。', tryPharmacist: '使用藥劑師卡片', trySalon: '使用美髮店卡片',
+    tipsTitle: '小提醒', tips: ['開啟過一次後，離線也能使用。建議出發前加到主畫面。', '選擇的內容會存在手機裡，可以在進店前先準備好。', '顯示卡片時，螢幕不會自動關閉。', '要關閉卡片，請點 ✕ 或手機的返回鍵。'],
+  },
+  'zh-cn': {
+    title: '使用方法', desc: '用实际画面一步步说明如何在日本药妆店、美发店使用指点卡片。',
+    lead: '不会说日语也没关系。下面用实际画面说明在药妆店的使用流程。',
+    steps: ['点选所有符合的项目，点过的项目会打勾。', '点选下方的{btn}。', '把手机转过去，让店员看屏幕。大字日文会告诉对方您的需求。', '店员用手指点选卡片下方的问题。', '问题也会以您的语言显示，请点选您的回答。', '您的回答会以大字日文显示，再给店员看一次。'],
+    who: ['您', '店员'], same: '美发店卡片的用法也一样。', tryPharmacist: '使用药剂师卡片', trySalon: '使用美发店卡片',
+    tipsTitle: '小提示', tips: ['打开过一次后，离线也能使用。建议出发前添加到主屏幕。', '选择的内容会保存在手机里，可以在进店前先准备好。', '显示卡片时，屏幕不会自动熄灭。', '要关闭卡片，请点 ✕ 或手机的返回键。'],
+  },
+  de: {
+    title: 'So funktioniert’s', desc: 'Schritt für Schritt mit Bildschirmfotos: So nutzen Sie die Zeigekarten in einer japanischen Drogerie oder beim Friseur.',
+    lead: 'Sie müssen kein Japanisch sprechen. Hier der ganze Ablauf in der Drogerie, mit echten Bildschirmfotos.',
+    steps: ['Tippen Sie alles an, was auf Sie zutrifft. Angetippte Punkte bekommen einen Haken.', 'Tippen Sie unten auf {btn}.', 'Drehen Sie das Handy um und zeigen Sie dem Personal den Bildschirm. Der große japanische Text sagt, was Sie brauchen.', 'Das Personal zeigt auf eine Frage unten auf der Karte und tippt sie an.', 'Die Frage erscheint in Ihrer Sprache. Tippen Sie Ihre Antwort an.', 'Ihre Antwort erscheint groß auf Japanisch. Zeigen Sie sie wieder dem Personal.'],
+    who: ['Sie', 'Personal'], same: 'Die Friseurkarte funktioniert genauso.', tryPharmacist: 'Apothekerkarte öffnen', trySalon: 'Friseurkarte öffnen',
+    tipsTitle: 'Gut zu wissen', tips: ['Funktioniert offline, sobald die Seite einmal geladen ist. Legen Sie sie vor der Reise auf den Startbildschirm.', 'Ihre Auswahl wird auf dem Handy gespeichert – Sie können sie vorher vorbereiten.', 'Solange die Karte angezeigt wird, bleibt der Bildschirm an.', 'Zum Schließen ✕ oder die Zurück-Taste drücken.'],
+  },
+  fr: {
+    title: 'Mode d’emploi', desc: 'Guide pas à pas avec captures d’écran : utiliser les cartes à montrer dans une droguerie ou chez un coiffeur au Japon.',
+    lead: 'Pas besoin de parler japonais. Voici tout le déroulement dans une droguerie, avec de vraies captures d’écran.',
+    steps: ['Touchez tout ce qui vous concerne. Une coche apparaît sur ce que vous touchez.', 'Touchez {btn} en bas.', 'Tournez le téléphone et montrez l’écran au personnel. Le grand texte japonais explique ce qu’il vous faut.', 'Le personnel pointe une question en bas de la carte et la touche.', 'La question s’affiche dans votre langue. Touchez votre réponse.', 'Votre réponse s’affiche en grand en japonais. Montrez-la de nouveau au personnel.'],
+    who: ['Vous', 'Personnel'], same: 'La carte du coiffeur fonctionne de la même façon.', tryPharmacist: 'Ouvrir la carte pharmacien', trySalon: 'Ouvrir la carte coiffeur',
+    tipsTitle: 'Bon à savoir', tips: ['Fonctionne hors ligne une fois la page chargée. Ajoutez-la à l’écran d’accueil avant le voyage.', 'Vos choix restent enregistrés sur le téléphone : préparez-les avant d’entrer.', 'L’écran reste allumé pendant l’affichage de la carte.', 'Pour fermer la carte, touchez ✕ ou le bouton retour.'],
+  },
+  it: {
+    title: 'Come si usa', desc: 'Guida passo passo con schermate: come usare le schede da mostrare in un drugstore o dal parrucchiere in Giappone.',
+    lead: 'Non serve parlare giapponese. Ecco tutto il percorso in un drugstore, con schermate reali.',
+    steps: ['Tocca tutto ciò che ti riguarda. Su ciò che tocchi compare un segno di spunta.', 'Tocca {btn} in basso.', 'Gira il telefono e mostra lo schermo al personale. Il grande testo giapponese spiega di cosa hai bisogno.', 'Il personale indica una domanda in fondo alla scheda e la tocca.', 'La domanda compare nella tua lingua. Tocca la tua risposta.', 'La tua risposta compare in grande in giapponese. Mostrala di nuovo al personale.'],
+    who: ['Tu', 'Personale'], same: 'La scheda del parrucchiere funziona allo stesso modo.', tryPharmacist: 'Apri la scheda farmacista', trySalon: 'Apri la scheda parrucchiere',
+    tipsTitle: 'Utile da sapere', tips: ['Funziona offline una volta caricata la pagina. Aggiungila alla schermata Home prima del viaggio.', 'Le tue scelte restano salvate sul telefono: puoi prepararle prima di entrare.', 'Lo schermo resta acceso mentre la scheda è mostrata.', 'Per chiudere la scheda tocca ✕ o il tasto indietro.'],
+  },
+  es: {
+    title: 'Cómo se usa', desc: 'Guía paso a paso con capturas: cómo usar las tarjetas para señalar en una droguería o peluquería de Japón.',
+    lead: 'No hace falta hablar japonés. Este es todo el proceso en una droguería, con capturas reales.',
+    steps: ['Toque todo lo que le corresponda. Lo que toque queda marcado.', 'Toque {btn} abajo.', 'Gire el móvil y muestre la pantalla al personal. El texto grande en japonés explica lo que necesita.', 'El personal señala una pregunta en la parte de abajo de la tarjeta y la toca.', 'La pregunta aparece en su idioma. Toque su respuesta.', 'Su respuesta aparece en grande en japonés. Muéstrela de nuevo al personal.'],
+    who: ['Usted', 'Personal'], same: 'La tarjeta de peluquería funciona igual.', tryPharmacist: 'Abrir la tarjeta del farmacéutico', trySalon: 'Abrir la tarjeta de peluquería',
+    tipsTitle: 'Conviene saber', tips: ['Funciona sin conexión una vez cargada la página. Añádala a la pantalla de inicio antes del viaje.', 'Sus elecciones se guardan en el móvil, así puede prepararlas antes de entrar.', 'La pantalla no se apaga mientras se muestra la tarjeta.', 'Para cerrar la tarjeta, toque ✕ o el botón atrás.'],
+  },
+};
+const t = C[lang] ?? C.en;
+const q = ['ja', 'zh-tw', 'zh-cn'].includes(lang) ? ['「', '」'] : ['“', '”'];
+const btn = `${q[0]}${tr(ui.showCard, lang)}${q[1]}`;
+// どの手順をだれが操作するか（0 = あなた、1 = 店員）
+const actor = [0, 0, 0, 1, 0, 1];
+---
+
+<Base lang={lang} title={t.title} description={t.desc} path="how-to-use/" backHref={`/${lang}/`}>
+  <h1 class="page-title">📖 {t.title}</h1>
+  <p class="lead">{t.lead}</p>
+
+  <ol class="steps">
+    {t.steps.map((s, i) => (
+      <li class="step">
+        <div class="step-head">
+          <span class="num">{i + 1}</span>
+          <span class={`who who--${actor[i]}`}>{actor[i] ? '🧑‍⚕️' : '🙋'} {t.who[actor[i]]}</span>
+        </div>
+        <p class="step-text">{s.replace('{btn}', btn)}</p>
+        <img src={`/howto/${lang}-${i + 1}.jpg`} width="585" height="1140" alt={s.replace('{btn}', btn)} loading={i < 2 ? 'eager' : 'lazy'} decoding="async" />
+      </li>
+    ))}
+  </ol>
+
+  <p class="same">💇 {t.same}</p>
+  <div class="cta">
+    <a class="btn-primary" href={`/${lang}/medicine/pharmacist/`}>🗣️ {t.tryPharmacist}</a>
+    <a class="btn-ghost" href={`/${lang}/salon/`}>💇 {t.trySalon}</a>
+  </div>
+
+  <h2 class="tips-title">{t.tipsTitle}</h2>
+  <ul class="tips">
+    {t.tips.map((tip) => <li>{tip}</li>)}
+  </ul>
+</Base>
+
+<style>
+  .page-title { font-size: 1.4rem; margin: 8px 0 4px; }
+  .lead { margin: 0 0 16px; color: var(--muted); font-size: 0.95rem; }
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 20px; }
+  .step { padding: 14px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); }
+  .step-head { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .num { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 800; }
+  .who { font-size: 0.8rem; font-weight: 700; padding: 2px 10px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); }
+  .who--1 { background: #fff1e6; color: #9a4a00; }
+  .step-text { margin: 0 0 12px; font-size: 1.05rem; font-weight: 600; line-height: 1.45; }
+  .step img { display: block; width: 100%; max-width: 280px; height: auto; margin: 0 auto; border-radius: 18px; border: 6px solid #1f2328; box-shadow: 0 4px 14px rgb(0 0 0 / 0.15); }
+  .same { margin: 24px 0 12px; font-weight: 600; }
+  .cta { display: grid; gap: 10px; }
+  .cta a { display: flex; align-items: center; justify-content: center; min-height: 52px; padding: 0 16px; border-radius: var(--radius); font-weight: 700; text-decoration: none; }
+  .cta .btn-ghost { border: 1px solid var(--border); background: var(--surface); color: var(--text); }
+  .tips-title { margin: 28px 0 8px; font-size: 1.1rem; }
+  .tips { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; }
+</style>

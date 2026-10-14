@@ -1,0 +1,55 @@
+---
+// Google アカウントの連携（Google ドライブ）に関するプライバシー説明。
+// Google の OAuth 同意画面に掲載する URL 用の独立ページ。
+import Base from '../layouts/Base.astro';
+---
+
+<Base lang="en" title="Google Drive connection – Privacy" path="google-app-privacy" noindex>
+  <h1>Google Drive connection – Privacy</h1>
+  <p>This page explains how the Google account connection used by the site operator's weekly analytics report works. It does not apply to visitors of this site.</p>
+
+  <h2>What the connection does</h2>
+  <p>A private tool run by the site operator creates a weekly report of Google Analytics 4 data for the operator's own websites and saves the report as a file in the operator's own Google Drive.</p>
+
+  <h2>Google user data we access</h2>
+  <p>The connection uses only the <code>https://www.googleapis.com/auth/drive.file</code> scope. This allows the tool to access only the files it creates. It cannot read, change, or delete other files in Google Drive.</p>
+
+  <h2>How the data is used and stored</h2>
+  <ul>
+    <li>Report files are stored only in the operator's Google Drive.</li>
+    <li>Google user data is not shared with third parties, sold, or used for advertising.</li>
+    <li>Google user data is not transferred to any other service, except as needed to run the tool.</li>
+    <li>Credentials are kept in the operator's private GitHub Actions secrets and are not published.</li>
+  </ul>
+
+  <h2>Revoking access</h2>
+  <p>You can revoke access at any time at <a href="https://myaccount.google.com/permissions">Google Account permissions</a>.</p>
+
+  <h2>Contact</h2>
+  <p>Questions about this page can be sent through the <a href="/en/about/">contact form</a> on this site.</p>
+
+  <hr />
+
+  <h1>Googleドライブ連携について（プライバシー）</h1>
+  <p>このページは、サイト運営者が毎週作成している Google アナリティクスのレポートで使っている Google アカウント連携について説明します。サイトの訪問者には関係しません。</p>
+
+  <h2>連携の目的</h2>
+  <p>運営者が個人で使う仕組みで、運営者が管理する複数のサイトの GA4 データを週次でまとめ、レポートを運営者本人の Google ドライブに保存します。</p>
+
+  <h2>取得する Google ユーザーデータ</h2>
+  <p>権限は <code>https://www.googleapis.com/auth/drive.file</code> のみです。この権限では、このツールが作成したファイルにだけアクセスできます。ドライブ内のほかのファイルは読み取り・変更・削除できません。</p>
+
+  <h2>利用と保存の方法</h2>
+  <ul>
+    <li>レポートのファイルは、運営者本人の Google ドライブにだけ保存します。</li>
+    <li>Google ユーザーデータを第三者に共有・販売したり、広告に使ったりすることはありません。</li>
+    <li>ツールの動作に必要な場合を除き、Google ユーザーデータを他のサービスに送ることはありません。</li>
+    <li>認証情報は、運営者本人の GitHub Actions の秘密情報（Secrets）に保管し、公開しません。</li>
+  </ul>
+
+  <h2>連携の取り消し</h2>
+  <p>いつでも <a href="https://myaccount.google.com/permissions">Google アカウントの権限ページ</a> から連携を取り消せます。</p>
+
+  <h2>お問い合わせ</h2>
+  <p>このページについての質問は、<a href="/ja/about/">お問い合わせフォーム</a>からお送りください。</p>
+</Base>

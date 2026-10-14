@@ -187,5 +187,6 @@ const title = tr(ui.about, lang);
 
   <Donate lang={lang} />
 
+  {siteConfig.contactFormUrl && <p><a class="contact-btn" href={siteConfig.contactFormUrl.replace('PAGE', encodeURIComponent(`${lang}/about/`))} target="_blank" rel="noopener" data-ga="contact_click">✉️ {tr(ui.contact, lang)}</a></p>}
   {siteConfig.contactEmail && <p>{C.contact}: <a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a></p>}
 </Base>

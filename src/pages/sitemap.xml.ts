@@ -14,6 +14,7 @@ export const GET: APIRoute = ({ site }) => {
     ...tiles.map((t) => t.path),
     'smoking/areas/',
     ...spotAreas().filter((g) => g.spots.length >= MIN_INDEXABLE_SPOTS).map((g) => `smoking/${g.area.slug}/`),
+    'how-to-use/',
     'about/',
     'privacy/',
   ])];
