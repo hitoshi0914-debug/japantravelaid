@@ -7,3 +7,4 @@ scripts/*.log
 .env
 .env.*
 scripts/smoking/cache/
+dist-app/
