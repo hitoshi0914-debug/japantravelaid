@@ -13,8 +13,8 @@ export const getStaticPaths = () => langPaths();
 const lang = Astro.params.lang as Lang;
 const url = (code: string) => new URL(`/${code}/smoking/`, Astro.site).href;
 const meta = {
-  en: { title: 'Smoking Area Finder: public smoking areas near you in Japan', description: 'Find the nearest public smoking areas in Japan on a map. English, 日本語, 한국어, 繁中, 简中, Deutsch, Français, Italiano, Español.' },
-  ja: { title: '喫煙所ファインダー｜近くの公衆喫煙所を地図で探す', description: '現在地から近い公衆喫煙所・駅や商業施設の喫煙所を地図で探せます。紙巻きOK・加熱式のみの区別つき。' },
+  en: { title: 'Smoking Area Near Me in Japan: find the closest one on a map', description: 'Tap once to show the closest public smoking area from where you are now. Stations, busy streets and shopping centers across Japan, with cigarettes vs heated-tobacco-only info. Free, no sign-up.' },
+  ja: { title: '近くの喫煙所｜現在地から一番近い喫煙所を地図で探す', description: '現在地から一番近い公衆喫煙所をワンタップで地図に表示。駅・繁華街・商業施設の喫煙所を全国で探せます。紙巻きOK／加熱式のみの区別つき。無料・登録不要。' },
   'zh-tw': { title: '吸菸區搜尋｜在地圖上找到日本附近的公共吸菸區', description: '依目前位置，在地圖上找出日本附近的公共吸菸區及車站、商業設施的吸菸室。標示可吸紙菸或僅限加熱菸。' },
   'zh-cn': { title: '吸烟区查找｜在地图上找到日本附近的公共吸烟区', description: '根据当前位置，在地图上找出日本附近的公共吸烟区及车站、商业设施的吸烟室。标注可吸卷烟或仅限加热烟。' },
   ko: { title: '흡연구역 찾기｜일본 내 주변 공공 흡연구역 지도', description: '현재 위치에서 가까운 일본의 공공 흡연구역과 역·상업시설 흡연실을 지도로 찾아보세요. 일반 담배 가능/가열식 전용 구분.' },
@@ -23,6 +23,7 @@ const meta = {
   it: { title: 'Trova aree fumatori: le aree fumatori pubbliche vicino a te in Giappone', description: 'Trova sulla mappa le aree fumatori pubbliche più vicine in Giappone, con l’indicazione sigarette consentite / solo tabacco riscaldato.' },
   es: { title: 'Buscador de zonas de fumadores: zonas públicas para fumar cerca de ti en Japón', description: 'Encuentra en el mapa las zonas públicas para fumar más cercanas en Japón, indicando si se permiten cigarrillos o solo tabaco calentado.' },
 }[lang];
+const areasLabel = { en: 'Smoking areas by city', ja: '地域から喫煙所を探す', 'zh-tw': '依城市搜尋吸菸區', 'zh-cn': '按城市查找吸烟区', ko: '지역별 흡연구역', de: 'Raucherbereiche nach Stadt', fr: 'Espaces fumeurs par ville', it: 'Aree fumatori per città', es: 'Zonas de fumadores por ciudad' }[lang];
 ---
 
 <!doctype html>
@@ -44,7 +45,13 @@ const meta = {
   </head>
   <body>
     <!-- Leaflet は window が必要なのでブラウザでだけ描画する -->
-    <SmokingFinder client:only="react" pageLang={lang} />
+    <SmokingFinder client:only="react" pageLang={lang}>
+      <div slot="fallback" style="padding:16px;font-family:system-ui,sans-serif">
+        <h1 style="font-size:1.3rem">{meta.title}</h1>
+        <p>{meta.description}</p>
+        <p><a href={`/${lang}/smoking/areas/`}>{areasLabel}</a></p>
+      </div>
+    </SmokingFinder>
     <ConsentBanner lang={lang} />
     <script>
       if ('serviceWorker' in navigator && location.hostname !== 'localhost') {

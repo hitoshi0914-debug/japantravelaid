@@ -14,8 +14,8 @@ for (const g of spotAreas()) {
   byPref.set(key, [...(byPref.get(key) ?? []), g]);
 }
 const { title, description } = {
-  en: { title: 'Smoking areas in Japan by city', description: 'Browse public smoking areas in Japan by city and ward.' },
-  ja: { title: '地域から喫煙所を探す', description: '全国の公衆喫煙所を市区町村ごとに探せます。' },
+  en: { title: 'Smoking areas in Japan by city: Tokyo, Osaka, Kyoto and more', description: 'Public smoking areas near stations and sightseeing spots in Tokyo, Osaka, Kyoto and other cities in Japan. Pick a city, or find the closest one from where you are now.' },
+  ja: { title: '地域から喫煙所を探す｜東京・大阪・京都など', description: '東京・大阪・京都など観光地の駅前や繁華街にある公衆喫煙所を、市区町村ごとに一覧できます。現在地から一番近い喫煙所も探せます。' },
   'zh-tw': { title: '依城市搜尋日本的吸菸區', description: '依市區町村瀏覽日本各地的公共吸菸區。' },
   'zh-cn': { title: '按城市查找日本的吸烟区', description: '按市区町村浏览日本各地的公共吸烟区。' },
   ko: { title: '도시별 일본 흡연구역', description: '일본 전국의 공공 흡연구역을 시·구별로 찾아보세요.' },
@@ -24,10 +24,12 @@ const { title, description } = {
   it: { title: 'Aree fumatori in Giappone per città', description: 'Sfoglia le aree fumatori pubbliche in Giappone per città e quartiere.' },
   es: { title: 'Zonas de fumadores en Japón por ciudad', description: 'Consulta las zonas públicas para fumar en Japón por ciudad y distrito.' },
 }[lang];
+const nearLabel = { en: 'Find the closest one from where I am', ja: '現在地から一番近い喫煙所を探す', 'zh-tw': '從目前位置找最近的吸菸區', 'zh-cn': '从当前位置找最近的吸烟区', ko: '현재 위치에서 가장 가까운 흡연구역 찾기', de: 'Nächsten Raucherbereich von hier finden', fr: 'Trouver le plus proche d’ici', it: 'Trova la più vicina da qui', es: 'Buscar la más cercana desde aquí' }[lang];
 ---
 
 <Base lang={lang} title={title} description={description} path="smoking/areas/" backHref={`/${lang}/smoking/`}>
   <h1 class="page-title">🚬 {title}</h1>
+  <a class="near-btn" href={`/${lang}/smoking/`}>📍 {nearLabel}</a>
   {[...byPref].map(([pref, groups]) => (
     <section>
       <h2>{pref}</h2>
@@ -42,6 +44,7 @@ const { title, description } = {
 
 <style>
   .page-title { font-size: 1.35rem; margin: 8px 0 12px; }
+  .near-btn { display: flex; align-items: center; justify-content: center; min-height: 52px; margin: 0 0 8px; border-radius: var(--radius); background: #0f766e; color: #fff; font-weight: 700; text-decoration: none; }
   h2 { font-size: 1rem; margin: 18px 0 6px; }
   ul { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
   li a { display: inline-flex; align-items: center; min-height: 48px; font-weight: 700; }
