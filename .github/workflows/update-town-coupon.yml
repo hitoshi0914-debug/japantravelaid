@@ -1,0 +1,81 @@
+# タウンクーポン（たばこすう）の喫煙できるお店・フリー喫煙所を集めて地図に出す（2026-10-22 先方の許可を得て追加）。
+# 1. crawl: 前回の続きから詳細ページと位置を取る（先方の負担を減らすため 1 秒 1 件・1 回 2500 件まで）。
+#    取れたところまでを town-coupon-data ブランチ（履歴を残さない 1 コミット）に保存する
+# 2. publish: public/smoking/shops/ を作り直し、変わっていれば main に commit して公開する
+# 全件（約 3.6 万件）がそろうまで 6 時間ごとに少しずつ進む。そろったあとは更新された店だけを取る。
+name: Update town-coupon shops
+
+on:
+  schedule:
+    - cron: '30 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 200
+    concurrency:
+      group: town-coupon-crawl
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Restore previous state
+        run: |
+          mkdir -p /tmp/tc
+          if git fetch --depth=1 origin town-coupon-data; then git show FETCH_HEAD:town_coupon.json > /tmp/tc/town_coupon.json; fi
+      - name: Crawl
+        run: python3 scripts/smoking/fetch_town_coupon.py --out /tmp/tc/town_coupon.json --max-details 2500 --max-minutes 150
+      - name: Save state
+        run: |
+          cd /tmp/tc
+          git init -q -b town-coupon-data
+          git config user.name "github-actions[bot]"
+          git config user.email "41898299+github-actions[bot]@users.noreply.github.com"
+          git add town_coupon.json
+          git commit -qm "town-coupon state"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" town-coupon-data
+
+  publish:
+    needs: crawl
+    runs-on: ubuntu-latest
+    concurrency:
+      group: deploy
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build shop files
+        run: |
+          git fetch --depth=1 origin town-coupon-data
+          git show FETCH_HEAD:town_coupon.json > /tmp/town_coupon.json
+          python3 scripts/smoking/make_shop_tiles.py /tmp/town_coupon.json
+      - name: Commit if changed
+        id: commit
+        run: |
+          git add -A public/smoking/shops
+          if git diff --cached --quiet; then echo "changed=false" >> "$GITHUB_OUTPUT"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898299+github-actions[bot]@users.noreply.github.com"
+          git commit -qm "Update town-coupon shops"
+          git pull -q --rebase origin main
+          git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+      # GITHUB_TOKEN の push では Deploy が動かないので、ここで公開する。
+      - if: steps.commit.outputs.changed == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - if: steps.commit.outputs.changed == 'true'
+        run: npm ci && npm run deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: cc2d7d905379f8bfe3810ba800cac21c

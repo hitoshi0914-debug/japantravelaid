@@ -33,6 +33,55 @@ export interface Spot {
   area: Area | null;
   /** ユーザー投稿で追加した人のニックネーム（承認済みの投稿だけ）。古いデータにはない。 */
   added_by?: string | null;
+  /** タウンクーポン（たばこすう）由来: shop=喫煙できるお店（要注文）、free=誰でも使えるフリー喫煙所。public/smoking/shops/ から読む。 */
+  kind?: 'shop' | 'free';
+  /** お店での吸い方: seat=席で吸える、room=店内の喫煙室 */
+  smoke?: 'seat' | 'room' | null;
+  /** 出典ページ（タウンクーポンの店のページ） */
+  url?: string;
+}
+
+/** public/smoking/shops/ のファイル（scripts/smoking/make_shop_tiles.py が作る）の1件 */
+export interface ShopItem {
+  id: string;
+  lat: number;
+  lng: number;
+  name: string;
+  address: string;
+  smoke: 'seat' | 'room' | null;
+  tobacco: Tobacco;
+  hours: string | null;
+  url: string;
+}
+
+export interface ShopIndex {
+  tile: number;
+  source: { id: string; name: string; license: string; url: string };
+  shops: number;
+  free: number;
+  tiles: string[];
+}
+
+export function shopToSpot(x: ShopItem, kind: 'shop' | 'free'): Spot {
+  return {
+    id: x.id, lat: x.lat, lng: x.lng,
+    name: { ja: x.name }, address: x.address ? { ja: x.address } : {},
+    type: kind === 'shop' ? 'indoor' : 'unknown',
+    access: kind === 'shop' ? 'customers' : 'public',
+    fee: null, hours: x.hours, note: null,
+    sources: [{ source: 'town-coupon', ref: x.id }],
+    updated: null, tobacco: x.tobacco, area: null,
+    kind, smoke: x.smoke, url: x.url,
+  };
+}
+
+/** 現在地のまわり 3×3 枚のタイル名（make_shop_tiles.py の tile_key と同じ計算） */
+export function nearbyTiles(lat: number, lng: number, size: number): string[] {
+  const y = Math.floor(lat / size);
+  const x = Math.floor(lng / size);
+  const out: string[] = [];
+  for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) out.push(`${y + dy}_${x + dx}`);
+  return out;
 }
 
 export interface SpotsFile {
