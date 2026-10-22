@@ -1,0 +1,24 @@
+name: Probe town-coupon
+on:
+  push:
+    branches: [probe-town-coupon]
+permissions:
+  contents: write
+jobs:
+  probe:
+    if: "!contains(github.event.head_commit.message, 'probe result')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          mkdir -p probe
+          UA="JapanTravelAid/1.0 (+https://japantravelaid.com/)"
+          curl -sSL -A "$UA" -D probe/list_headers.txt "https://www.town-coupon.com/wp-json/wp/v2/shop_information?per_page=100&page=1&_fields=id,slug,link,title,class_list,modified" -o probe/list1.json
+          curl -sSL -A "$UA" "https://www.town-coupon.com/wp-json/wp/v2/shop_category?per_page=100" -o probe/categories.json || true
+          curl -sSL -A "$UA" "https://www.town-coupon.com/shop_information/new-kourakuen-i" -o probe/new-kourakuen-i.html
+          curl -sSL -A "$UA" "https://www.town-coupon.com/shop_information/meatpia" -o probe/meatpia.html
+          curl -sSL -A "$UA" "https://msearch.gsi.go.jp/address-search/AddressSearch?q=%E5%8D%83%E8%91%89%E7%9C%8C%E5%B8%82%E5%B7%9D%E5%B8%82%E5%B8%82%E5%B7%9D1%E4%B8%81%E7%9B%AE1-1" -o probe/gsi.json
+          ls -la probe
+          git config user.name "github-actions[bot]"
+          git config user.email "41898299+github-actions[bot]@users.noreply.github.com"
+          git add probe && git commit -m "probe result" && git push
