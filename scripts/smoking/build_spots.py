@@ -513,9 +513,26 @@ def assign_areas(spots: list[dict], cities: dict, grid: dict) -> None:
     log(f"市区町村: 住所から {by_addr} 件・座標から {by_coord} 件・判定できず {missing} 件")
 
 
+def previous_osm(path: str) -> list[dict]:
+    """前回出力した spots.json から OSM だけが出典のスポットを取り出す（Overpass が使えないとき用）。"""
+    try:
+        with open(path, encoding="utf-8") as f:
+            spots = json.load(f).get("spots", [])
+    except (OSError, ValueError):
+        return []
+    out = []
+    for sp in spots:
+        if sp.get("sources") and all(x.get("source") == "osm" for x in sp["sources"]):
+            sp = dict(sp)
+            sp.pop("area", None)
+            out.append(sp)
+    return out
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--out", default="public/smoking/spots.json")
+    ap.add_argument("--previous", default="public/smoking/spots.json", help="Overpass が使えないとき OSM 分を使い回す前回のデータ")
     ap.add_argument("--no-osm", action="store_true", help="Overpass API を使わない")
     ap.add_argument("--overpass-file", help="取得済みの Overpass 応答 JSON（API を呼ばない）")
     ap.add_argument("--save-overpass", help="取得した Overpass 応答をこのパスに保存する")
@@ -566,8 +583,12 @@ def main() -> int:
             log(f"OpenStreetMap: {len(osm)} 件")
             used_sources.append({"id": "osm", "name": "OpenStreetMap contributors", "license": "ODbL 1.0",
                                  "url": "https://www.openstreetmap.org/copyright"})
-        except Exception as e:  # ネットワーク不通でも自治体データだけで出力する
-            log(f"OSM の取得に失敗したので自治体データだけで続けます: {e}")
+        except Exception as e:  # Overpass が落ちていたら、前回の spots.json の OSM 分を使い回す
+            osm = previous_osm(args.previous)
+            log(f"OSM の取得に失敗したので前回の OSM {len(osm)} 件を使います: {e}")
+            if osm:
+                used_sources.append({"id": "osm", "name": "OpenStreetMap contributors", "license": "ODbL 1.0",
+                                     "url": "https://www.openstreetmap.org/copyright"})
 
     community: list[dict] = []
     if args.community:

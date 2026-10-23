@@ -7,7 +7,7 @@ import { Clock, Flag, Gem, Medal, Phone, Plus, Languages, List, LocateFixed, Map
 import { contacts } from '../../data/emergency';
 import { locales, tr, type Lang } from '../../i18n/locales';
 import { siteConfig } from '../../site.config';
-import { contributionCounts, localized, rankFor, reportUrl, routeUrl, spotLang, submitUrl, type RankId, type Spot, type SpotLang, type SpotsFile } from '../../lib/smoking';
+import { contributionCounts, localized, nearbyTiles, rankFor, reportUrl, routeUrl, shopToSpot, spotLang, submitUrl, type RankId, type ShopIndex, type ShopItem, type Spot, type SpotLang, type SpotsFile } from '../../lib/smoking';
 
 // ---------- データ型（scripts/smoking/SCHEMA.md・src/lib/smoking.ts） ----------
 
@@ -48,6 +48,12 @@ const T = {
     cigOnly: 'Cigarettes OK only',
     noCig: 'No spots nearby are confirmed for cigarettes. Turn off the filter to see all.',
     report: 'Report closed / wrong info',
+    showShops: 'Bars & restaurants too',
+    shopLabel: 'Bar / restaurant where you can smoke (order required)',
+    smokeSeat: 'Smoke at your seat',
+    smokeRoom: 'Smoking room inside',
+    provided: 'Info',
+    aboutShops: 'Bars and restaurants where you can smoke can be shown too (order required)',
   },
   'zh-tw': {
     findTitle: '發現地圖上沒有的吸菸區嗎？',
@@ -81,6 +87,12 @@ const T = {
     cigOnly: '只顯示可吸紙菸',
     noCig: '附近沒有確認可吸紙菸的地點。關閉篩選可顯示全部。',
     report: '回報已關閉／資訊有誤',
+    showShops: '也顯示可吸菸的店',
+    shopLabel: '可吸菸的店（需點餐）',
+    smokeSeat: '座位可吸菸',
+    smokeRoom: '店內有吸菸室',
+    provided: '資訊提供',
+    aboutShops: '也可顯示可吸菸的餐廳、酒吧（需點餐）',
   },
   'zh-cn': {
     findTitle: '发现地图上没有的吸烟区吗？',
@@ -114,6 +126,12 @@ const T = {
     cigOnly: '只显示可吸卷烟',
     noCig: '附近没有确认可吸卷烟的地点。关闭筛选可显示全部。',
     report: '报告已关闭／信息有误',
+    showShops: '也显示可吸烟的店',
+    shopLabel: '可吸烟的店（需点餐）',
+    smokeSeat: '座位可吸烟',
+    smokeRoom: '店内有吸烟室',
+    provided: '信息提供',
+    aboutShops: '也可显示可吸烟的餐厅、酒吧（需点餐）',
   },
   ko: {
     findTitle: '지도에 없는 흡연구역을 찾으셨나요?',
@@ -147,6 +165,12 @@ const T = {
     cigOnly: '일반 담배 가능만 보기',
     noCig: '근처에 일반 담배가 확인된 곳이 없습니다. 필터를 끄면 모두 표시됩니다.',
     report: '폐쇄·정보 오류 신고',
+    showShops: '흡연 가능 가게도 표시',
+    shopLabel: '흡연 가능한 가게(주문 필요)',
+    smokeSeat: '자리에서 흡연',
+    smokeRoom: '가게 안 흡연실',
+    provided: '정보 제공',
+    aboutShops: '흡연 가능한 음식점·바도 표시할 수 있습니다(주문 필요)',
   },
   ja: {
     findTitle: '地図にない喫煙所を見つけたら教えてね',
@@ -180,6 +204,12 @@ const T = {
     cigOnly: '紙巻きOKだけ表示',
     noCig: '近くに紙巻きOKと確認できた喫煙所がありません。絞り込みを外すとすべて表示します。',
     report: '閉鎖・間違いを報告',
+    showShops: '喫煙できるお店も表示',
+    shopLabel: '喫煙できるお店（要注文）',
+    smokeSeat: '席で吸える',
+    smokeRoom: '店内の喫煙室で吸える',
+    provided: '提供',
+    aboutShops: '喫煙できる飲食店も別の色で表示できます（要注文）',
   },
   de: {
     findTitle: 'Raucherbereich gefunden, der nicht auf der Karte ist?',
@@ -213,6 +243,12 @@ const T = {
     cigOnly: 'Nur „Zigaretten erlaubt“',
     noCig: 'In der Nähe ist kein Ort für Zigaretten bestätigt. Filter ausschalten, um alle zu sehen.',
     report: 'Geschlossen / falsche Angaben melden',
+    showShops: 'Auch Lokale mit Raucherlaubnis',
+    shopLabel: 'Lokal, in dem man rauchen darf (Bestellung nötig)',
+    smokeSeat: 'Rauchen am Platz',
+    smokeRoom: 'Raucherraum im Lokal',
+    provided: 'Quelle',
+    aboutShops: 'Lokale, in denen man rauchen darf, können zusätzlich angezeigt werden (Bestellung nötig)',
   },
   fr: {
     findTitle: "Vous avez trouvé un espace fumeurs absent de la carte ?",
@@ -246,6 +282,12 @@ const T = {
     cigOnly: 'Seulement « Cigarettes OK »',
     noCig: "Aucun lieu proche n'est confirmé pour les cigarettes. Désactivez le filtre pour tout voir.",
     report: 'Signaler fermé / info erronée',
+    showShops: 'Bars et restos fumeurs aussi',
+    shopLabel: 'Bar / restaurant où l’on peut fumer (commande requise)',
+    smokeSeat: 'Fumer à table',
+    smokeRoom: 'Fumoir à l’intérieur',
+    provided: 'Source',
+    aboutShops: 'Les bars et restaurants où l’on peut fumer peuvent aussi être affichés (commande requise)',
   },
   it: {
     findTitle: "Hai trovato un'area fumatori che non è sulla mappa?",
@@ -279,6 +321,12 @@ const T = {
     cigOnly: 'Solo «Sigarette OK»',
     noCig: 'Nessun luogo vicino è confermato per le sigarette. Disattiva il filtro per vederli tutti.',
     report: 'Segnala chiuso / info errate',
+    showShops: 'Anche locali per fumatori',
+    shopLabel: 'Locale dove si può fumare (consumazione obbligatoria)',
+    smokeSeat: 'Si fuma al tavolo',
+    smokeRoom: 'Sala fumatori interna',
+    provided: 'Fonte',
+    aboutShops: 'Si possono mostrare anche bar e ristoranti dove si può fumare (consumazione obbligatoria)',
   },
   es: {
     findTitle: '¿Encontraste una zona de fumadores que no está en el mapa?',
@@ -312,6 +360,12 @@ const T = {
     cigOnly: 'Solo «Cigarrillos OK»',
     noCig: 'No hay lugares cercanos confirmados para cigarrillos. Desactiva el filtro para ver todos.',
     report: 'Avisar de cierre / datos erróneos',
+    showShops: 'También bares y restaurantes',
+    shopLabel: 'Bar / restaurante donde se puede fumar (hay que consumir)',
+    smokeSeat: 'Se fuma en la mesa',
+    smokeRoom: 'Sala de fumadores dentro',
+    provided: 'Fuente',
+    aboutShops: 'También se pueden mostrar bares y restaurantes donde se puede fumar (hay que consumir)',
   },
 } satisfies Record<Lang, unknown>;
 
@@ -340,12 +394,12 @@ function formatDistance(m: number): string {
 
 // ---------- 地図の部品 ----------
 
-function numberIcon(n: number, active: boolean) {
+function numberIcon(n: number, active: boolean, shop = false) {
   return L.divIcon({
     className: '',
     iconSize: [30, 30],
     iconAnchor: [15, 15],
-    html: `<div class="flex h-[30px] w-[30px] items-center justify-center rounded-full border-2 border-white text-sm font-bold text-white shadow-md ${active ? 'bg-amber-500 scale-125' : 'bg-teal-700'}">${n}</div>`,
+    html: `<div class="flex h-[30px] w-[30px] items-center justify-center rounded-full border-2 border-white text-sm font-bold text-white shadow-md ${active ? 'bg-amber-500 scale-125' : shop ? 'bg-rose-600' : 'bg-teal-700'}">${n}</div>`,
   });
 }
 
@@ -518,6 +572,11 @@ export default function SmokingFinder({ pageLang }: Props) {
   // 喫煙所の名前・住所と地図の地名に使う言語（データにない言語は英語）。
   const lang: SpotLang = spotLang(pageLang);
   const [cigOnly, setCigOnly] = useState(false);
+  // 喫煙できるお店（タウンクーポン）も出すか。既定は出さない（2026-10-22 ユーザー決定: 公衆喫煙所とは別枠）
+  const [showShops, setShowShops] = useState(false);
+  const [shopIndex, setShopIndex] = useState<ShopIndex | null>(null);
+  const [freeSpots, setFreeSpots] = useState<Spot[]>([]);
+  const [shopTiles, setShopTiles] = useState<Record<string, Spot[]>>({});
   // 地域ページの「地図で見る」（?spot=ID）から来たら、その喫煙所を中心にして選んでおく。
   const [anchor, setAnchor] = useState<[number, number] | null>(null);
   const [data, setData] = useState<SpotsFile | null>(null);
@@ -539,6 +598,12 @@ export default function SmokingFinder({ pageLang }: Props) {
     addEventListener('online', on);
     addEventListener('offline', off);
     loadSpots();
+    loadShopIndex();
+    try {
+      if (localStorage.getItem('smoking-show-shops') === '1') setShowShops(true);
+    } catch {
+      /* 保存できない環境でも動く */
+    }
     if (spotParam) setStarted(true);
     return () => {
       removeEventListener('online', on);
@@ -558,6 +623,29 @@ export default function SmokingFinder({ pageLang }: Props) {
         if (s) setAnchor([s.lat, s.lng]);
       })
       .catch(() => setLoadError(true));
+  }
+
+  // タウンクーポンの一覧（なければ何もしない）。フリー喫煙所はいつも出す
+  function loadShopIndex() {
+    fetch('/smoking/shops/index.json')
+      .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
+      .then((idx: ShopIndex) => {
+        setShopIndex(idx);
+        return fetch('/smoking/shops/free.json').then((r) => (r.ok ? r.json() : []));
+      })
+      .then((items: ShopItem[]) => setFreeSpots(items.map((x) => shopToSpot(x, 'free'))))
+      .catch(() => {});
+  }
+
+  function toggleShops() {
+    setShowShops((v) => {
+      try {
+        localStorage.setItem('smoking-show-shops', v ? '0' : '1');
+      } catch {
+        /* 保存できない環境でも動く */
+      }
+      return !v;
+    });
   }
 
   // 言語の切り替え。その言語のページ（URL）へ移動する。
@@ -584,14 +672,31 @@ export default function SmokingFinder({ pageLang }: Props) {
   // 現在地が取れたら現在地、なければ ?spot= の喫煙所、それもなければ東京駅。
   const origin = position ?? anchor ?? TOKYO_STATION;
 
+  // お店を出すときは、中心のまわり 3×3 枚のタイルを読む（読んだタイルは覚えておく）
+  const wantedTiles = useMemo(
+    () => (showShops && shopIndex ? nearbyTiles(origin[0], origin[1], shopIndex.tile).filter((k) => shopIndex.tiles.includes(k)) : []),
+    [showShops, shopIndex, origin[0], origin[1]],
+  );
+  useEffect(() => {
+    for (const k of wantedTiles) {
+      if (k in shopTiles) continue;
+      setShopTiles((m) => ({ ...m, [k]: [] }));
+      fetch(`/smoking/shops/t/${k}.json`)
+        .then((r) => (r.ok ? r.json() : []))
+        .then((items: ShopItem[]) => setShopTiles((m) => ({ ...m, [k]: items.map((x) => shopToSpot(x, 'shop')) })))
+        .catch(() => {});
+    }
+  }, [wantedTiles]);
+
   const nearest: WithDistance[] = useMemo(() => {
     if (!data) return [];
-    return data.spots
+    const shops = showShops ? wantedTiles.flatMap((k) => shopTiles[k] ?? []) : [];
+    return [...data.spots, ...freeSpots, ...shops]
       .filter((s) => !cigOnly || s.tobacco === 'any')
       .map((s) => ({ ...s, distance: haversine(origin[0], origin[1], s.lat, s.lng) }))
       .sort((a, b) => a.distance - b.distance)
       .slice(0, MAX_RESULTS);
-  }, [data, origin[0], origin[1], cigOnly]);
+  }, [data, freeSpots, shopTiles, wantedTiles, showShops, origin[0], origin[1], cigOnly]);
 
   const counts = useMemo(() => contributionCounts(data?.spots ?? []), [data]);
   const addUrl = submitUrl(position);
@@ -643,7 +748,7 @@ export default function SmokingFinder({ pageLang }: Props) {
           <p className="text-5xl" aria-hidden>🚬</p>
           <h1 className="mt-3 text-3xl leading-tight font-bold">{t.title}</h1>
           <ul className="mt-4 space-y-1.5 text-sm text-slate-600">
-            {t.about.map((line) => (
+            {[t.about[0], shopIndex ? t.aboutShops : t.about[1], t.about[2]].map((line) => (
               <li key={line} className="flex gap-2">
                 <span className="text-teal-700">✓</span>
                 {line}
@@ -689,7 +794,7 @@ export default function SmokingFinder({ pageLang }: Props) {
             <Marker
               key={s.id}
               position={[s.lat, s.lng]}
-              icon={numberIcon(i + 1, s.id === focusId)}
+              icon={numberIcon(i + 1, s.id === focusId, s.kind === 'shop')}
               zIndexOffset={s.id === focusId ? 1000 : -i}
               eventHandlers={{ click: () => {
                 setFocusId(s.id);
@@ -712,7 +817,7 @@ export default function SmokingFinder({ pageLang }: Props) {
         {/* 見出しは1行（ホーム・タイトル・言語）＋絞り込み1つだけ。地域一覧への入口はリストの下 */}
         <header className="border-b border-slate-200 px-4 py-2">
           <h1 className="truncate text-base font-bold">{t.title}</h1>
-          <div className="mt-2 flex items-center gap-2">
+          <div className="mt-2 flex flex-wrap items-center gap-2">
             <button
               onClick={() => setCigOnly((v) => !v)}
               aria-pressed={cigOnly}
@@ -720,6 +825,16 @@ export default function SmokingFinder({ pageLang }: Props) {
             >
               🚬 {t.cigOnly}
             </button>
+            {shopIndex && shopIndex.shops > 0 && (
+              <button
+                onClick={toggleShops}
+                aria-pressed={showShops}
+                data-ga="smoking_shops"
+                className={`min-h-11 rounded-full border px-4 text-sm font-semibold ${showShops ? 'border-rose-600 bg-rose-600 text-white' : 'border-slate-300 text-slate-700'}`}
+              >
+                🍺 {t.showShops}
+              </button>
+            )}
             {/* 地図にない喫煙所の投稿（承認してから掲載）。現在地の緯度経度を入れてフォームを開く */}
             {addUrl && (
               <a
@@ -767,10 +882,13 @@ export default function SmokingFinder({ pageLang }: Props) {
                     onClick={() => setFocusId(s.id)}
                     className={`flex cursor-pointer gap-3 rounded-xl border p-3 transition ${active ? 'border-amber-400 bg-amber-50' : 'border-slate-200 hover:bg-slate-50'}`}
                   >
-                    <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white ${active ? 'bg-amber-500' : 'bg-teal-700'}`}>
+                    <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white ${active ? 'bg-amber-500' : s.kind === 'shop' ? 'bg-rose-600' : 'bg-teal-700'}`}>
                       {i + 1}
                     </span>
                     <div className="min-w-0 flex-1">
+                      {s.kind === 'shop' && (
+                        <p className="mb-0.5 inline-block rounded bg-rose-100 px-1.5 py-0.5 text-xs font-bold text-rose-900">🍺 {t.shopLabel}</p>
+                      )}
                       <p className="leading-snug font-semibold">{name}</p>
                       {address && (
                         <p className="mt-0.5 flex items-center gap-1 truncate text-xs text-slate-500">
@@ -783,15 +901,16 @@ export default function SmokingFinder({ pageLang }: Props) {
                         {' · '}
                         {t.walk(Math.max(1, Math.round(s.distance / WALK_M_PER_MIN)))}
                       </p>
-                      {(s.type !== 'unknown' || s.tobacco !== 'unknown' || s.access === 'customers' || s.hours) && (
+                      {(s.type !== 'unknown' || s.tobacco !== 'unknown' || s.access === 'customers' || s.hours || s.smoke) && (
                         <div className="mt-1 flex flex-wrap items-center gap-1.5 text-xs text-slate-600">
-                          {s.type !== 'unknown' && <span className="rounded bg-slate-100 px-1.5 py-0.5">{t.types[s.type]}</span>}
+                          {s.smoke && <span className="rounded bg-slate-100 px-1.5 py-0.5">{s.smoke === 'seat' ? t.smokeSeat : t.smokeRoom}</span>}
+                          {s.type !== 'unknown' && s.kind !== 'shop' && <span className="rounded bg-slate-100 px-1.5 py-0.5">{t.types[s.type]}</span>}
                           {s.tobacco !== 'unknown' && (
                             <span className={`rounded px-1.5 py-0.5 ${s.tobacco === 'any' ? 'bg-teal-100 text-teal-900' : 'bg-violet-100 text-violet-900'}`}>
                               {t.tobacco[s.tobacco]}
                             </span>
                           )}
-                          {s.access === 'customers' && <span className="rounded bg-amber-200 px-1.5 py-0.5 font-semibold text-amber-950">{t.customersOnly}</span>}
+                          {s.access === 'customers' && s.kind !== 'shop' && <span className="rounded bg-amber-200 px-1.5 py-0.5 font-semibold text-amber-950">{t.customersOnly}</span>}
                           {s.hours && (
                             <span className="flex items-center gap-1">
                               <Clock className="h-3 w-3" /> {s.hours}
@@ -807,6 +926,17 @@ export default function SmokingFinder({ pageLang }: Props) {
                           </p>
                         );
                       })()}
+                      {s.url && (
+                        <a
+                          href={s.url}
+                          target="_blank"
+                          rel="noopener"
+                          onClick={(e) => e.stopPropagation()}
+                          className="mt-1 mr-3 inline-flex min-h-10 items-center text-xs text-slate-500 underline"
+                        >
+                          {t.provided}: タウンクーポン
+                        </a>
+                      )}
                       {/* 報告リンクは全カードに小さく出す（選んだときだけだと見つけられなかった） */}
                       {reportUrl(s.id) && (
                         <a
@@ -849,7 +979,7 @@ export default function SmokingFinder({ pageLang }: Props) {
           {data && (
             <p className="mt-3 text-[11px] leading-relaxed text-slate-400">
               {t.updated}: {data.generated_at.slice(0, 10)} ·{' '}
-              {data.sources.map((src, i) => (
+              {[...data.sources, ...(shopIndex ? [shopIndex.source] : [])].map((src, i) => (
                 <span key={src.id}>
                   {i > 0 && ' · '}
                   <a href={src.url} target="_blank" rel="noopener" className="underline">

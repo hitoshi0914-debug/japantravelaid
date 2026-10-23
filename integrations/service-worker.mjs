@@ -26,7 +26,7 @@ export default function serviceWorker() {
         const files = (await walk(root))
           .map((f) => relative(root, f).split(sep).join('/'))
           // 喫煙所の地域ページは全国で数千になるので先読みしない（開いたページだけキャッシュされる）。
-          .filter((f) => !SKIP.has(f) && !f.endsWith('.map') && !/^[a-z-]+\/smoking\/(?!areas\/)[^/]+\/index\.html$/.test(f));
+          .filter((f) => !SKIP.has(f) && !f.endsWith('.map') && !f.startsWith('smoking/shops/t/') && !/^[a-z-]+\/smoking\/(?!areas\/)[^/]+\/index\.html$/.test(f));
         // index.html はディレクトリの URL（/en/pharmacist/）でキャッシュする。
         const urls = files.map((f) => '/' + f.replace(/(^|\/)index\.html$/, '$1')).sort();
         const hash = createHash('sha256');
