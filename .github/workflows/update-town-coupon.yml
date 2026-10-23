@@ -56,7 +56,8 @@ jobs:
         run: |
           git fetch --depth=1 origin town-coupon-data
           git show FETCH_HEAD:town_coupon.json > /tmp/town_coupon.json
-          python3 scripts/smoking/make_shop_tiles.py /tmp/town_coupon.json
+          if git fetch --depth=1 origin clubjt-data; then git show FETCH_HEAD:clubjt.json.gz > /tmp/clubjt.json.gz; fi
+          python3 scripts/smoking/make_shop_tiles.py /tmp/town_coupon.json --clubjt /tmp/clubjt.json.gz
       - name: Commit if changed
         id: commit
         run: |

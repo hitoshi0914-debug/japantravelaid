@@ -52,15 +52,23 @@ export interface ShopItem {
   tobacco: Tobacco;
   hours: string | null;
   url: string;
+  /** 出典（tc=タウンクーポン / jt=CLUB JT） */
+  src?: 'tc' | 'jt';
 }
 
 export interface ShopIndex {
   tile: number;
-  source: { id: string; name: string; license: string; url: string };
+  sources: { id: string; name: string; license: string; url: string }[];
   shops: number;
   free: number;
+  /** 喫煙できるお店のタイル（t/） */
   tiles: string[];
+  /** 誰でも使える喫煙所のタイル（f/） */
+  freeTiles: string[];
 }
+
+/** 地図のカードに出す出典の名前 */
+export const SHOP_SOURCE_LABEL: Record<string, string> = { 'town-coupon': 'タウンクーポン', clubjt: 'CLUB JT' };
 
 export function shopToSpot(x: ShopItem, kind: 'shop' | 'free'): Spot {
   return {
@@ -69,7 +77,7 @@ export function shopToSpot(x: ShopItem, kind: 'shop' | 'free'): Spot {
     type: kind === 'shop' ? 'indoor' : 'unknown',
     access: kind === 'shop' ? 'customers' : 'public',
     fee: null, hours: x.hours, note: null,
-    sources: [{ source: 'town-coupon', ref: x.id }],
+    sources: [{ source: x.src === 'jt' ? 'clubjt' : 'town-coupon', ref: x.id }],
     updated: null, tobacco: x.tobacco, area: null,
     kind, smoke: x.smoke, url: x.url,
   };

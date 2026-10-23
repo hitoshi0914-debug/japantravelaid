@@ -1,15 +1,19 @@
 #!/usr/bin/env python3
-"""fetch_town_coupon.py の結果から、地図で使うファイルを public/smoking/shops/ に書く。
+"""fetch_town_coupon.py・fetch_clubjt.py の結果から、地図で使うファイルを public/smoking/shops/ に書く。
 
-- free.json … 誰でも使えるフリー喫煙所（タウンクーポンの「フリー喫煙所」）。地図でいつも読み込み、公衆喫煙所と同じように出す
-- t/<緯度>_<経度>.json … 喫煙できるお店（注文が必要）。0.02 度（約 2km）四方ごとに分け、
-  地図で「喫煙できるお店も表示」を選んだときだけ、現在地のまわりの 9 枚を読み込む
-- index.json … お店のあるタイルの一覧・件数・出典
+- f/<緯度>_<経度>.json … 誰でも使える喫煙所（タウンクーポンの「フリー喫煙所」と CLUB JT の喫煙所。
+  OSM の喫煙所（spots.json）から 30m 以内のものは同じ場所とみなして除く）。地図でいつも現在地のまわりの 9 枚を読み込み、公衆喫煙所と同じように出す
+- t/<緯度>_<経度>.json … 喫煙できるお店（注文が必要）。地図で「喫煙できるお店も表示」を選んだときだけ、現在地のまわりの 9 枚を読み込む。
+  CLUB JT のお店は、タウンクーポンのお店から 20m 以内なら同じ店とみなして除く
+- タイルは 0.02 度（約 2km）四方。index.json … タイルの一覧・件数・出典
+- 各項目の src は出典（tc=タウンクーポン / jt=CLUB JT）
 
-使い方: python3 scripts/smoking/make_shop_tiles.py town_coupon.json
+使い方: python3 scripts/smoking/make_shop_tiles.py town_coupon.json [--clubjt clubjt.json.gz]
 """
 from __future__ import annotations
 
+import argparse
+import gzip
 import json
 import math
 import re
@@ -21,7 +25,12 @@ from pathlib import Path
 
 OUT = Path("public/smoking/shops")
 TILE = 0.02
-SOURCE = {"id": "town-coupon", "name": "タウンクーポン（たばこすう）", "license": "掲載許可済み", "url": "https://www.town-coupon.com/"}
+SOURCES = {
+    "tc": {"id": "town-coupon", "name": "タウンクーポン（たばこすう）", "license": "掲載許可済み", "url": "https://www.town-coupon.com/"},
+    "jt": {"id": "clubjt", "name": "CLUB JT 喫煙所マップ（JT）", "license": "JT の協力", "url": "https://www.clubjt.jp/map/"},
+}
+# CLUB JT で載せないもの: シーシャ（紙巻き・加熱式とは別）、たばこを売るだけの店
+JT_SKIP_GENRES = {"SHISHA"}
 
 
 def tile_key(lat: float, lng: float) -> str:
@@ -49,39 +58,107 @@ def to_item(s: dict) -> dict | None:
         "tobacco": "heated_only" if "加熱式のみ" in tob else "any" if "全たばこ" in tob or "紙" in tob else "unknown",
         "hours": re.sub(r"\s+", " ", unicodedata.normalize("NFKC", d.get("時間", ""))).strip() or None,
         "url": s["url"],
+        "src": "tc",
     }
     return item
 
 
+def jt_item(s: dict) -> dict | None:
+    if s["unstable"] or s["onlyBuying"] or s["genre"] in JT_SKIP_GENRES or s["atype"] == "NO_SMOKING" or s["name"].startswith("TEST"):
+        return None
+    hours = re.sub(r"\s+", " ", unicodedata.normalize("NFKC", s.get("hours") or "")).strip()
+    return {
+        "id": f"jt-{s['id']}",
+        "lat": round(s["lat"], 6), "lng": round(s["lng"], 6),
+        "name": unicodedata.normalize("NFKC", s["name"]).strip(),
+        "address": unicodedata.normalize("NFKC", s.get("address") or "").strip(),
+        "smoke": "seat" if s["atype"] == "SEAT" else "room" if s["atype"] in ("SMOKING_BOOTH", "GENERAL_SMOKING_AREA") else None,
+        "tobacco": "heated_only" if s["stype"] in ("HEATING", "LOW_HEATING") else "any" if s["stype"] == "PAPER_ROLL" else "unknown",
+        "hours": hours or None,
+        "url": f"https://www.clubjt.jp/map/?lat={s['lat']:.6f}&lng={s['lng']:.6f}",
+        "src": "jt",
+    }
+
+
+class Near:
+    """近くにすでに載せたものがあるかを調べる（おおよそ 1 度=111km で計算）"""
+
+    def __init__(self, meters: float):
+        self.deg = meters / 111_000
+        self.cells: dict[tuple[int, int], list[tuple[float, float]]] = {}
+
+    def add(self, lat: float, lng: float) -> None:
+        self.cells.setdefault((int(lat / self.deg), int(lng / self.deg)), []).append((lat, lng))
+
+    def has(self, lat: float, lng: float) -> bool:
+        cy, cx = int(lat / self.deg), int(lng / self.deg)
+        kx = math.cos(math.radians(lat))
+        for dy in (-1, 0, 1):
+            for dx in (-1, 0, 1):
+                for a, b in self.cells.get((cy + dy, cx + dx), []):
+                    if math.hypot(lat - a, (lng - b) * kx) < self.deg:
+                        return True
+        return False
+
+
 def main() -> int:
-    state = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
-    free, tiles = [], {}
-    for s in state["shops"]:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("town_coupon")
+    ap.add_argument("--clubjt")
+    ap.add_argument("--spots", default="public/smoking/spots.json")
+    args = ap.parse_args()
+
+    free, shops = [], []
+    tc = json.loads(Path(args.town_coupon).read_text(encoding="utf-8"))
+    for s in tc["shops"]:
         item = to_item(s)
-        if not item:
-            continue
-        if "free-smoking-area" in s["categories"]:
-            free.append(item)
-        else:
-            tiles.setdefault(tile_key(item["lat"], item["lng"]), []).append(item)
+        if item:
+            (free if "free-smoking-area" in s["categories"] else shops).append(item)
+    used = {"tc"}
+    if args.clubjt and Path(args.clubjt).exists():
+        osm, near_shop = Near(30), Near(20)
+        for sp in json.loads(Path(args.spots).read_text(encoding="utf-8"))["spots"]:
+            osm.add(sp["lat"], sp["lng"])
+        for x in free:
+            osm.add(x["lat"], x["lng"])
+        for x in shops:
+            near_shop.add(x["lat"], x["lng"])
+        jt = json.loads(gzip.decompress(Path(args.clubjt).read_bytes()))
+        before = len(free) + len(shops)
+        for s in sorted(jt["spots"].values(), key=lambda v: v["id"]):
+            item = jt_item(s)
+            if not item:
+                continue
+            if s["genre"] == "SMOKING_SPOT":
+                if not osm.has(item["lat"], item["lng"]):
+                    free.append(item)
+                    osm.add(item["lat"], item["lng"])
+            elif not near_shop.has(item["lat"], item["lng"]):
+                shops.append(item)
+                near_shop.add(item["lat"], item["lng"])
+        if len(free) + len(shops) > before:
+            used.add("jt")
+
+    def tiled(items: list[dict]) -> dict[str, list[dict]]:
+        out: dict[str, list[dict]] = {}
+        for x in items:
+            out.setdefault(tile_key(x["lat"], x["lng"]), []).append(x)
+        return out
+
     if OUT.exists():
         shutil.rmtree(OUT)
-    (OUT / "t").mkdir(parents=True)
     dump = lambda obj: json.dumps(obj, ensure_ascii=False, separators=(",", ":"))  # noqa: E731
-    free.sort(key=lambda x: x["id"])
-    (OUT / "free.json").write_text(dump(free), encoding="utf-8")
-    for key, items in tiles.items():
-        items.sort(key=lambda x: x["id"])
-        (OUT / "t" / f"{key}.json").write_text(dump(items), encoding="utf-8")
-    index = {
-        "tile": TILE,
-        "source": SOURCE,
-        "shops": sum(len(v) for v in tiles.values()),
-        "free": len(free),
-        "tiles": sorted(tiles),
-    }
+    index = {"tile": TILE, "sources": [SOURCES[k] for k in ("tc", "jt") if k in used]}
+    for kind, items in (("t", shops), ("f", free)):
+        tiles = tiled(items)
+        (OUT / kind).mkdir(parents=True)
+        for key, its in tiles.items():
+            its.sort(key=lambda x: x["id"])
+            (OUT / kind / f"{key}.json").write_text(dump(its), encoding="utf-8")
+        index["shops" if kind == "t" else "free"] = len(items)
+        index["tiles" if kind == "t" else "freeTiles"] = sorted(tiles)
     (OUT / "index.json").write_text(dump(index), encoding="utf-8")
-    print(f"フリー喫煙所 {len(free)} 件・お店 {index['shops']} 件（タイル {len(tiles)} 枚）を {OUT} に書きました", file=sys.stderr)
+    print(f"誰でも使える喫煙所 {len(free)} 件・お店 {len(shops)} 件を {OUT} に書きました", file=sys.stderr)
     return 0
 
 

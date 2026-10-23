@@ -1,0 +1,86 @@
+# JT の喫煙所マップ（CLUB JT）の喫煙所・喫煙できるお店を集めて地図に出す（2026-10-23 ユーザー依頼、まず東京）。
+# 1. crawl: 地図と同じ API をタイル（ズーム 16）ごとに 1.5 秒に 1 回だけ呼ぶ。1 回 150 分まで、続きは次の実行で。
+#    取れたところまでを clubjt-data ブランチ（履歴を残さない 1 コミット）に保存する
+# 2. publish: タウンクーポンと合わせて public/smoking/shops/ を作り直し、変わっていれば main に commit して公開する
+# 東京全体（約 1 万タイル）がそろうまで毎日少しずつ進む。そろったあとは 30 日より古いタイルだけ取り直す。
+name: Update CLUB JT spots
+
+on:
+  schedule:
+    - cron: '0 17 * * *'
+  workflow_dispatch:
+    inputs:
+      max_minutes:
+        description: 1 回に巡回する分数
+        default: '150'
+
+permissions:
+  contents: write
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 200
+    concurrency:
+      group: clubjt-crawl
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Restore previous state
+        run: |
+          mkdir -p /tmp/jt
+          if git fetch --depth=1 origin clubjt-data; then git show FETCH_HEAD:clubjt.json.gz > /tmp/jt/clubjt.json.gz; fi
+      - name: Crawl
+        run: python3 scripts/smoking/fetch_clubjt.py --out /tmp/jt/clubjt.json.gz --max-minutes ${{ inputs.max_minutes || '150' }}
+      - name: Save state
+        run: |
+          cd /tmp/jt
+          git init -q -b clubjt-data
+          git config user.name "github-actions[bot]"
+          git config user.email "41898299+github-actions[bot]@users.noreply.github.com"
+          git add clubjt.json.gz
+          git commit -qm "clubjt state"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" clubjt-data
+
+  publish:
+    needs: crawl
+    runs-on: ubuntu-latest
+    concurrency:
+      group: deploy
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build shop files
+        run: |
+          git fetch --depth=1 origin town-coupon-data
+          git show FETCH_HEAD:town_coupon.json > /tmp/town_coupon.json
+          if git fetch --depth=1 origin clubjt-data; then git show FETCH_HEAD:clubjt.json.gz > /tmp/clubjt.json.gz; fi
+          python3 scripts/smoking/make_shop_tiles.py /tmp/town_coupon.json --clubjt /tmp/clubjt.json.gz
+      - name: Commit if changed
+        id: commit
+        run: |
+          git add -A public/smoking/shops
+          if git diff --cached --quiet; then echo "changed=false" >> "$GITHUB_OUTPUT"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898299+github-actions[bot]@users.noreply.github.com"
+          git commit -qm "Update smoking shops"
+          git pull -q --rebase origin main
+          git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+      # GITHUB_TOKEN の push では Deploy が動かないので、ここで公開する。
+      - if: steps.commit.outputs.changed == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - if: steps.commit.outputs.changed == 'true'
+        run: npm ci && npm run deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: cc2d7d905379f8bfe3810ba800cac21c

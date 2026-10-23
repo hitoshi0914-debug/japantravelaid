@@ -7,7 +7,7 @@ import { Clock, Flag, Gem, Medal, Phone, Plus, Languages, List, LocateFixed, Map
 import { contacts } from '../../data/emergency';
 import { locales, tr, type Lang } from '../../i18n/locales';
 import { siteConfig } from '../../site.config';
-import { contributionCounts, localized, nearbyTiles, rankFor, reportUrl, routeUrl, shopToSpot, spotLang, submitUrl, type RankId, type ShopIndex, type ShopItem, type Spot, type SpotLang, type SpotsFile } from '../../lib/smoking';
+import { contributionCounts, localized, nearbyTiles, rankFor, reportUrl, routeUrl, shopToSpot, SHOP_SOURCE_LABEL, spotLang, submitUrl, type RankId, type ShopIndex, type ShopItem, type Spot, type SpotLang, type SpotsFile } from '../../lib/smoking';
 
 // ---------- データ型（scripts/smoking/SCHEMA.md・src/lib/smoking.ts） ----------
 
@@ -575,7 +575,6 @@ export default function SmokingFinder({ pageLang }: Props) {
   // 喫煙できるお店（タウンクーポン）も出すか。既定は出さない（2026-10-22 ユーザー決定: 公衆喫煙所とは別枠）
   const [showShops, setShowShops] = useState(false);
   const [shopIndex, setShopIndex] = useState<ShopIndex | null>(null);
-  const [freeSpots, setFreeSpots] = useState<Spot[]>([]);
   const [shopTiles, setShopTiles] = useState<Record<string, Spot[]>>({});
   // 地域ページの「地図で見る」（?spot=ID）から来たら、その喫煙所を中心にして選んでおく。
   const [anchor, setAnchor] = useState<[number, number] | null>(null);
@@ -625,15 +624,11 @@ export default function SmokingFinder({ pageLang }: Props) {
       .catch(() => setLoadError(true));
   }
 
-  // タウンクーポンの一覧（なければ何もしない）。フリー喫煙所はいつも出す
+  // タウンクーポン・CLUB JT の一覧（なければ何もしない）。誰でも使える喫煙所（f/）はいつも出す
   function loadShopIndex() {
     fetch('/smoking/shops/index.json')
       .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
-      .then((idx: ShopIndex) => {
-        setShopIndex(idx);
-        return fetch('/smoking/shops/free.json').then((r) => (r.ok ? r.json() : []));
-      })
-      .then((items: ShopItem[]) => setFreeSpots(items.map((x) => shopToSpot(x, 'free'))))
+      .then((idx: ShopIndex) => setShopIndex(idx))
       .catch(() => {});
   }
 
@@ -672,31 +667,34 @@ export default function SmokingFinder({ pageLang }: Props) {
   // 現在地が取れたら現在地、なければ ?spot= の喫煙所、それもなければ東京駅。
   const origin = position ?? anchor ?? TOKYO_STATION;
 
-  // お店を出すときは、中心のまわり 3×3 枚のタイルを読む（読んだタイルは覚えておく）
-  const wantedTiles = useMemo(
-    () => (showShops && shopIndex ? nearbyTiles(origin[0], origin[1], shopIndex.tile).filter((k) => shopIndex.tiles.includes(k)) : []),
-    [showShops, shopIndex, origin[0], origin[1]],
-  );
+  // 中心のまわり 3×3 枚のタイルを読む（読んだタイルは覚えておく）。f/ はいつも、t/（お店）は表示を選んだときだけ
+  const wantedTiles = useMemo(() => {
+    if (!shopIndex) return [];
+    const around = nearbyTiles(origin[0], origin[1], shopIndex.tile);
+    const free = around.filter((k) => (shopIndex.freeTiles ?? []).includes(k)).map((k) => `f/${k}`);
+    const shops = showShops ? around.filter((k) => shopIndex.tiles.includes(k)).map((k) => `t/${k}`) : [];
+    return [...free, ...shops];
+  }, [showShops, shopIndex, origin[0], origin[1]]);
   useEffect(() => {
     for (const k of wantedTiles) {
       if (k in shopTiles) continue;
       setShopTiles((m) => ({ ...m, [k]: [] }));
-      fetch(`/smoking/shops/t/${k}.json`)
+      fetch(`/smoking/shops/${k}.json`)
         .then((r) => (r.ok ? r.json() : []))
-        .then((items: ShopItem[]) => setShopTiles((m) => ({ ...m, [k]: items.map((x) => shopToSpot(x, 'shop')) })))
+        .then((items: ShopItem[]) => setShopTiles((m) => ({ ...m, [k]: items.map((x) => shopToSpot(x, k.startsWith('f/') ? 'free' : 'shop')) })))
         .catch(() => {});
     }
   }, [wantedTiles]);
 
   const nearest: WithDistance[] = useMemo(() => {
     if (!data) return [];
-    const shops = showShops ? wantedTiles.flatMap((k) => shopTiles[k] ?? []) : [];
-    return [...data.spots, ...freeSpots, ...shops]
+    const extra = wantedTiles.flatMap((k) => shopTiles[k] ?? []);
+    return [...data.spots, ...extra]
       .filter((s) => !cigOnly || s.tobacco === 'any')
       .map((s) => ({ ...s, distance: haversine(origin[0], origin[1], s.lat, s.lng) }))
       .sort((a, b) => a.distance - b.distance)
       .slice(0, MAX_RESULTS);
-  }, [data, freeSpots, shopTiles, wantedTiles, showShops, origin[0], origin[1], cigOnly]);
+  }, [data, shopTiles, wantedTiles, origin[0], origin[1], cigOnly]);
 
   const counts = useMemo(() => contributionCounts(data?.spots ?? []), [data]);
   const addUrl = submitUrl(position);
@@ -934,7 +932,7 @@ export default function SmokingFinder({ pageLang }: Props) {
                           onClick={(e) => e.stopPropagation()}
                           className="mt-1 mr-3 inline-flex min-h-10 items-center text-xs text-slate-500 underline"
                         >
-                          {t.provided}: タウンクーポン
+                          {t.provided}: {SHOP_SOURCE_LABEL[s.sources[0]?.source] ?? ''}
                         </a>
                       )}
                       {/* 報告リンクは全カードに小さく出す（選んだときだけだと見つけられなかった） */}
@@ -979,7 +977,7 @@ export default function SmokingFinder({ pageLang }: Props) {
           {data && (
             <p className="mt-3 text-[11px] leading-relaxed text-slate-400">
               {t.updated}: {data.generated_at.slice(0, 10)} ·{' '}
-              {[...data.sources, ...(shopIndex ? [shopIndex.source] : [])].map((src, i) => (
+              {[...data.sources, ...(shopIndex?.sources ?? [])].map((src, i) => (
                 <span key={src.id}>
                   {i > 0 && ' · '}
                   <a href={src.url} target="_blank" rel="noopener" className="underline">
