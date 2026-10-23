@@ -22,7 +22,7 @@ const { appStoreUrl, googlePlayUrl } = siteConfig;
       )}
       {googlePlayUrl && (
         <a href={googlePlayUrl} rel="noopener" data-ga="store_click" data-ga-params='{"store":"google_play"}'>
-          <img src="/badges/google-play.png" alt="Get it on Google Play" height="44" />
+          <img class="gp" src="/badges/google-play.png" alt="Get it on Google Play" height="64" />
         </a>
       )}
     </div>
@@ -34,4 +34,6 @@ const { appStoreUrl, googlePlayUrl } = siteConfig;
   .store-badges p { margin: 0 0 8px; font-weight: 700; font-size: 0.9rem; }
   .row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
   .row img { height: 44px; width: auto; display: block; }
+  /* Google の公式画像はまわりに余白があるので、見た目を App Store と揃えるため大きめに出す */
+  .row img.gp { height: 64px; margin: -10px 0; }
 </style>

@@ -1,0 +1,50 @@
+# Android アプリ（Capacitor）をビルドして、試し用の APK を Actions の「Artifacts」に置く。
+# スマホで Actions > Android app > いちばん上の実行 > Artifacts の japan-travel-aid-debug をダウンロードして入れられる。
+# ストア提出用（署名した AAB）は Google Play の登録が済んでから足す。
+name: Android app
+
+on:
+  pull_request:
+    paths: ['android/**', 'capacitor.config.ts', 'package.json', 'package-lock.json', '.github/workflows/android.yml']
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: npm ci
+      # サイトをアプリ用（広告・寄付・GA なし）にビルドして android/ に写す。
+      - run: npm run build:app
+      - run: ./gradlew assembleDebug
+        working-directory: android
+      - uses: actions/upload-artifact@v4
+        with:
+          name: japan-travel-aid-debug
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+      # ストア提出用: Secrets の ANDROID_UPLOAD_KEY（「パスワード:鍵ファイルの base64」）があるときだけ、署名つき AAB を作る。
+      # versionCode は実行番号（ストアに出すたびに増える必要がある）。
+      - name: Build signed release bundle
+        env:
+          ANDROID_UPLOAD_KEY: ${{ secrets.ANDROID_UPLOAD_KEY }}
+          VERSION_CODE: ${{ github.run_number }}
+        working-directory: android
+        run: |
+          if [ -z "$ANDROID_UPLOAD_KEY" ]; then echo "ANDROID_UPLOAD_KEY is not set; skipping release bundle"; exit 0; fi
+          export ANDROID_KEYSTORE_PASSWORD="${ANDROID_UPLOAD_KEY%%:*}"
+          export ANDROID_KEYSTORE_FILE="$RUNNER_TEMP/upload-key.p12"
+          printf '%s' "${ANDROID_UPLOAD_KEY#*:}" | base64 -d > "$ANDROID_KEYSTORE_FILE"
+          ./gradlew bundleRelease
+      - uses: actions/upload-artifact@v4
+        with:
+          name: japan-travel-aid-release
+          path: android/app/build/outputs/bundle/release/app-release.aab
+          if-no-files-found: ignore
