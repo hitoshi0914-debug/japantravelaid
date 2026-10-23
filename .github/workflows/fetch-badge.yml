@@ -2,14 +2,19 @@ name: Fetch Google Play badge (temporary)
 on:
   pull_request:
     paths: ['.github/workflows/fetch-badge.yml']
+permissions:
+  contents: write
 jobs:
   fetch:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+        with: { ref: '${{ github.head_ref }}' }
       - run: |
-          mkdir badges
-          curl -fsSL -o badges/google-play-en.png https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png
-          curl -fsSL -o badges/google-play-ja.png https://play.google.com/intl/en_us/badges/static/images/badges/ja_badge_web_generic.png
-          file badges/*
-      - uses: actions/upload-artifact@v4
-        with: { name: badges, path: badges }
+          mkdir -p public/badges
+          curl -fsSL -o public/badges/google-play.png https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png
+          file public/badges/google-play.png
+          git rm -q .github/workflows/fetch-badge.yml
+          git add public/badges/google-play.png
+          git -c user.name=github-actions -c user.email=github-actions@users.noreply.github.com commit -m "Add the official Google Play badge (downloaded from play.google.com)"
+          git push

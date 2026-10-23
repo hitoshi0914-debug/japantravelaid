@@ -33,7 +33,7 @@ export const siteConfig = {
    * Apple・Google とも、アプリが公開される前にバッジを出すことは認めていない。
    */
   appStoreUrl: '',
-  googlePlayUrl: '',
+  googlePlayUrl: 'https://play.google.com/store/apps/details?id=com.yamaguchi.japantravelaid',
   /**
    * 寄付（Ko-fi、受け取りは会社名義の PayPal）。全ページの下と about に「応援する」ボタンを出す。空なら出さない。
    * 地図（喫煙所ファインダー）と薬剤師カードの画面には出さない。アプリには入れない（ストアの規約でアプリ内の寄付は各社の決済が必要）。
