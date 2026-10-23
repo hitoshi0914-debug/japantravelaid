@@ -6,7 +6,7 @@
 - t/<緯度>_<経度>.json … 喫煙できるお店（注文が必要）。地図で「喫煙できるお店も表示」を選んだときだけ、現在地のまわりの 9 枚を読み込む。
   CLUB JT のお店は、タウンクーポンのお店から 20m 以内なら同じ店とみなして除く
 - タイルは 0.02 度（約 2km）四方。index.json … タイルの一覧・件数・出典
-- 各項目の src は出典（tc=タウンクーポン / jt=CLUB JT）
+- 各項目の src は出典（tc=タウンクーポン / jt=CLUB JT）。CLUB JT の分は出典の表示を出さない（2026-10-23 ユーザー）
 
 使い方: python3 scripts/smoking/make_shop_tiles.py town_coupon.json [--clubjt clubjt.json.gz]
 """
@@ -75,7 +75,8 @@ def jt_item(s: dict) -> dict | None:
         "smoke": "seat" if s["atype"] == "SEAT" else "room" if s["atype"] in ("SMOKING_BOOTH", "GENERAL_SMOKING_AREA") else None,
         "tobacco": "heated_only" if s["stype"] in ("HEATING", "LOW_HEATING") else "any" if s["stype"] == "PAPER_ROLL" else "unknown",
         "hours": hours or None,
-        "url": f"https://www.clubjt.jp/map/?lat={s['lat']:.6f}&lng={s['lng']:.6f}",
+        # 2026-10-23 ユーザー「提供はいらない」: CLUB JT の分は出典の表示・リンクを出さない
+        "url": "",
         "src": "jt",
     }
 
@@ -124,7 +125,6 @@ def main() -> int:
         for x in shops:
             near_shop.add(x["lat"], x["lng"])
         jt = json.loads(gzip.decompress(Path(args.clubjt).read_bytes()))
-        before = len(free) + len(shops)
         for s in sorted(jt["spots"].values(), key=lambda v: v["id"]):
             item = jt_item(s)
             if not item:
@@ -136,8 +136,6 @@ def main() -> int:
             elif not near_shop.has(item["lat"], item["lng"]):
                 shops.append(item)
                 near_shop.add(item["lat"], item["lng"])
-        if len(free) + len(shops) > before:
-            used.add("jt")
 
     def tiled(items: list[dict]) -> dict[str, list[dict]]:
         out: dict[str, list[dict]] = {}
