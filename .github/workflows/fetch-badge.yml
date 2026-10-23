@@ -1,0 +1,15 @@
+name: Fetch Google Play badge (temporary)
+on:
+  pull_request:
+    paths: ['.github/workflows/fetch-badge.yml']
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          mkdir badges
+          curl -fsSL -o badges/google-play-en.png https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png
+          curl -fsSL -o badges/google-play-ja.png https://play.google.com/intl/en_us/badges/static/images/badges/ja_badge_web_generic.png
+          file badges/*
+      - uses: actions/upload-artifact@v4
+        with: { name: badges, path: badges }
