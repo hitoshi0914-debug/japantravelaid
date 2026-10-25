@@ -1,0 +1,60 @@
+# 薬局・ドラッグストアのデータ（public/pharmacy/）を毎週 OSM から作り直して、変わっていれば commit して公開する。
+# 手動で今すぐ更新したいときは Actions タブ > Update pharmacy data > Run workflow。
+name: Update pharmacy data
+
+on:
+  schedule:
+    - cron: '0 19 * * 0' # 毎週月曜 4:00（日本時間）
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Build pharmacy tiles
+        run: |
+          old=$(python3 -c "import json;print(json.load(open('public/pharmacy/index.json'))['count'])" 2>/dev/null || echo 0)
+          python3 scripts/pharmacy/build_pharmacies.py --out /tmp/pharmacy
+          new=$(python3 -c "import json;print(json.load(open('/tmp/pharmacy/index.json'))['count'])")
+          echo "pharmacies: $old -> $new"
+          # 取得に失敗した・件数が半分以下に減ったときは、壊れたデータで上書きしない
+          if [ "$new" -lt $((old / 2)) ]; then echo "::error::薬局の件数が異常（$old → $new）なので更新しません"; exit 1; fi
+          rm -rf public/pharmacy && cp -r /tmp/pharmacy public/pharmacy
+
+      - name: Commit if changed
+        id: commit
+        run: |
+          # generated_at だけの変化は無視する
+          git add -A public/pharmacy
+          if git diff --cached --quiet -- public/pharmacy/t && git cat-file -e HEAD:public/pharmacy/index.json 2>/dev/null; then
+            git reset -q; echo "changed=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898299+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Update pharmacy data"
+          git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      # GITHUB_TOKEN の push では Deploy が動かないので、ここで公開する。
+      - if: steps.commit.outputs.changed == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - if: steps.commit.outputs.changed == 'true'
+        run: npm ci && npm run deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: cc2d7d905379f8bfe3810ba800cac21c

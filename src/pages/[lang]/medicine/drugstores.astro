@@ -1,5 +1,7 @@
 ---
-// 周辺のドラッグストア: Google マップの検索 URL を開くだけ（API キー不要・Google のデータは転載しない）。
+// 周辺の薬局・ドラッグストア: 現在地から近い店を OSM のデータで地図に出し（PharmacyFinder）、薬剤師カードへつなぐ。
+// 下に Google マップの検索 URL も残す（API キー不要・Google のデータは転載しない。深夜営業はこちらで探す）。
+import PharmacyFinder from '../../../components/pharmacy/PharmacyFinder';
 import { langPaths, type Lang } from '../../../i18n/locales';
 import Base from '../../../layouts/Base.astro';
 
@@ -123,7 +125,10 @@ const C = {
 <Base lang={lang} title={C.title} description={C.desc} path="medicine/drugstores/" backHref={`/${lang}/medicine/`}>
   <h1 class="page-title">📍 {C.title}</h1>
 
-  <a class="map-btn" href={maps('ドラッグストア')} target="_blank" rel="noopener" data-ga="map_click" data-ga-params='{"target":"drugstore"}'>
+  <PharmacyFinder client:only="react" lang={lang} />
+
+  <h2>Google Maps</h2>
+  <a class="map-btn map-btn--sub" href={maps('ドラッグストア')} target="_blank" rel="noopener" data-ga="map_click" data-ga-params='{"target":"drugstore"}'>
     {C.open} {lang !== 'ja' && <span lang="ja">ドラッグストア</span>}
   </a>
   <a class="map-btn map-btn--sub" href={maps(lang === 'ja' ? 'ドラッグストア 営業中' : 'drugstore open now')} target="_blank" rel="noopener" data-ga="map_click" data-ga-params='{"target":"drugstore_open"}'>
@@ -163,4 +168,34 @@ const C = {
   .kind-ja { font-size: 1.3rem !important; font-weight: 900; }
   .tips { padding-left: 1.2em; font-size: 0.92rem; }
   .tips li { margin-bottom: 8px; }
+</style>
+
+<style is:global>
+  /* PharmacyFinder（React の島）の見た目 */
+  .pf { display: grid; gap: 10px; }
+  .pf-locate { min-height: 56px; border: 0; border-radius: var(--radius); background: var(--accent); color: #fff; font: inherit; font-size: 1.05rem; font-weight: 800; cursor: pointer; }
+  .pf-locate:disabled { opacity: 0.7; }
+  .pf-msg { margin: 0; padding: 10px 12px; border-radius: var(--radius); background: var(--warn-soft); font-size: 0.92rem; }
+  .pf-filter { display: flex; align-items: center; gap: 8px; min-height: 44px; font-size: 0.95rem; }
+  .pf-filter input { width: 22px; height: 22px; accent-color: var(--accent); }
+  .pf-map { height: 46vh; min-height: 260px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); }
+  .pf-h { margin: 8px 0 0 !important; }
+  .pf-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .pf-item { display: flex; align-items: stretch; gap: 6px; border: 2px solid var(--border); border-radius: var(--radius); background: var(--surface); overflow: hidden; }
+  .pf-item.is-active { border-color: #f59e0b; }
+  .pf-item-main { flex: 1; display: flex; gap: 10px; align-items: flex-start; min-height: 56px; padding: 10px; border: 0; background: none; font: inherit; color: inherit; text-align: left; cursor: pointer; }
+  .pf-body { display: grid; gap: 2px; min-width: 0; }
+  .pf-ja { font-size: 0.85rem; color: var(--muted); }
+  .pf-meta { font-size: 0.82rem; color: var(--muted); overflow-wrap: anywhere; }
+  .pf-route { display: flex; align-items: center; padding: 0 14px; min-width: 48px; background: var(--accent-soft); color: var(--accent); font-weight: 800; font-size: 0.9rem; text-decoration: none; }
+  .pf-num, .pf-pin { display: flex; align-items: center; justify-content: center; flex: none; width: 30px; height: 30px; border-radius: 50%; color: #fff; font-weight: 800; font-size: 0.9rem; }
+  .pf-num--d, .pf-pin--d { background: var(--accent); }
+  .pf-num--p, .pf-pin--p { background: #5b6470; }
+  .pf-pin { border: 2px solid #fff; box-shadow: 0 1px 4px rgb(0 0 0 / 0.35); }
+  .pf-pin.is-active { background: #f59e0b; transform: scale(1.2); }
+  .pf-you { width: 18px; height: 18px; border-radius: 50%; background: #2563eb; border: 3px solid #fff; box-shadow: 0 0 0 6px rgb(37 99 235 / 0.25); }
+  .pf-note { margin: 0; font-size: 0.8rem; color: var(--muted); }
+  .pf-card { display: grid; gap: 4px; padding: 14px; border-radius: var(--radius); border: 2px solid var(--accent); background: var(--accent-soft); color: var(--text); text-decoration: none; }
+  .pf-card-h { font-weight: 900; font-size: 1.05rem; }
+  .pf-card-cta { display: flex; align-items: center; justify-content: center; min-height: 48px; margin-top: 6px; border-radius: 12px; background: var(--accent); color: #fff; font-weight: 800; }
 </style>
