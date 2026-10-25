@@ -18,6 +18,11 @@
 .chip-icon { font-size: 1.6rem; line-height: 1; flex: none; }
 .chip-text { display: flex; flex-direction: column; font-size: 0.88rem; font-weight: 700; line-height: 1.2; min-width: 0; }
 .chip-ja { font-weight: 400; font-size: 0.72rem; color: var(--muted); }
+.text-field { display: flex; flex-direction: column; gap: 6px; }
+.text-field-label { display: flex; align-items: baseline; gap: 8px; font-weight: 800; font-size: 1.05rem; }
+.text-field textarea { min-height: 64px; padding: 10px 12px; border: 2px solid var(--border); border-radius: 14px; background: var(--surface); color: var(--text); font: inherit; font-size: 1.1rem; resize: vertical; }
+.text-field textarea:focus { outline: none; border-color: var(--accent); }
+.text-field small { font-size: 0.78rem; color: var(--muted); }
 .select-actions {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
   display: flex; justify-content: center; gap: 8px;
@@ -49,6 +54,7 @@
 .card-section li { display: flex; flex-direction: column; padding: 4px 0; }
 .card-ja { font-size: 2rem; font-weight: 900; line-height: 1.25; }   /* 店員さんが離れていても読める大きさ */
 .card-en { font-size: 0.85rem; color: var(--muted); }
+.card-text { margin: 0; font-size: 2.2rem; font-weight: 900; line-height: 1.3; white-space: pre-line; overflow-wrap: anywhere; }
 .card-section--danger { background: var(--danger-soft); margin-inline: -16px; padding-inline: 16px; padding-bottom: 8px; border-top-color: var(--danger); }
 .card-section--danger h2 { color: var(--danger); }
 .card-disclaimer { display: flex; flex-direction: column; gap: 4px; margin-top: 24px; font-size: 0.72rem; color: var(--muted); }
@@ -65,6 +71,9 @@
   font: inherit; font-weight: 700; font-size: 0.92rem; text-align: left; cursor: pointer;
 }
 .answer--focused { border-style: solid; background: #fff; }
+.answer--quick { border-style: solid; background: var(--accent-soft); }
+.answer-btn--quick { display: flex; flex-direction: column; gap: 2px; }
+.answer-btn--quick small { font-weight: 400; font-size: 0.75rem; color: var(--muted); }
 .answer-q-en { margin: 0; font-size: 1.6rem; font-weight: 900; line-height: 1.3; }
 .answer-q-ja { margin: 4px 0 14px; color: var(--muted); }
 .answer-replies { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 14px; }

@@ -4,15 +4,15 @@ import type { Localized } from './locales';
 export const ui = {
   // トップの説明。サイトの中心は「日本人スタッフに見せる指差しカード」（2026-10-09）。
   siteTagline: {
-    en: 'Point-and-show cards for travelers in Japan: tap what you need, then show the big Japanese card to drugstore or hair salon staff. Works offline.',
-    ja: '訪日旅行者のための指差しカード。必要なことをタップして、大きな日本語のカードをドラッグストアや美容院の店員に見せるだけ。オフラインでも使えます。',
-    'zh-tw': '給訪日旅客的指示卡：點選需要的項目，把大字日文卡片給藥妝店或美髮店的店員看就好。離線也能使用。',
-    'zh-cn': '给访日游客的指示卡：点选需要的项目，把大字日文卡片给药妆店或理发店的店员看就行。离线也能使用。',
-    ko: '일본 여행자를 위한 손가락 카드: 필요한 것을 누르고, 큰 일본어 카드를 드러그스토어나 미용실 직원에게 보여주기만 하면 돼요. 오프라인에서도 쓸 수 있어요.',
-    de: 'Zeigekarten für Japan-Reisende: Tippen Sie an, was Sie brauchen, und zeigen Sie die große japanische Karte dem Personal in Drogerie oder Friseursalon. Funktioniert auch offline.',
-    fr: "Des cartes à montrer pour voyager au Japon : touchez ce dont vous avez besoin, puis montrez la grande carte en japonais au personnel de la pharmacie ou du salon de coiffure. Fonctionne hors ligne.",
-    it: 'Schede da mostrare per chi viaggia in Giappone: tocca ciò che ti serve e mostra la grande scheda in giapponese al personale di farmacia o parrucchiere. Funziona anche offline.',
-    es: 'Tarjetas para mostrar al viajar por Japón: toca lo que necesitas y enseña la tarjeta grande en japonés al personal de la farmacia o la peluquería. Funciona sin conexión.',
+    en: 'Point-and-show cards for travelers in Japan: tap what you need, then show the big Japanese card to staff at drugstores, restaurants, stations, taxis and more. Works offline.',
+    ja: '訪日旅行者のための指差しカード。必要なことをタップして、大きな日本語のカードをドラッグストア・飲食店・駅・タクシーなどの人に見せるだけ。オフラインでも使えます。',
+    'zh-tw': '給訪日旅客的指示卡：點選需要的項目，把大字日文卡片給藥妝店、餐廳、車站、計程車等的人看就好。離線也能使用。',
+    'zh-cn': '给访日游客的指示卡：点选需要的项目，把大字日文卡片给药妆店、餐厅、车站、出租车等的人看就行。离线也能使用。',
+    ko: '일본 여행자를 위한 손가락 카드: 필요한 것을 누르고, 큰 일본어 카드를 드러그스토어 · 음식점 · 역 · 택시 등에서 보여주기만 하면 돼요. 오프라인에서도 쓸 수 있어요.',
+    de: 'Zeigekarten für Japan-Reisende: Tippen Sie an, was Sie brauchen, und zeigen Sie die große japanische Karte dem Personal in Drogerie, Restaurant, Bahnhof, Taxi und mehr. Funktioniert auch offline.',
+    fr: "Des cartes à montrer pour voyager au Japon : touchez ce dont vous avez besoin, puis montrez la grande carte en japonais au personnel de la pharmacie, du restaurant, de la gare, du taxi, etc. Fonctionne hors ligne.",
+    it: 'Schede da mostrare per chi viaggia in Giappone: tocca ciò che ti serve e mostra la grande scheda in giapponese al personale di farmacia, ristorante, stazione, taxi e altro. Funziona anche offline.',
+    es: 'Tarjetas para mostrar al viajar por Japón: toca lo que necesitas y enseña la tarjeta grande en japonés al personal de la farmacia, el restaurante, la estación, el taxi y más. Funciona sin conexión.',
   },
   tagline: {
     en: 'Point, show, and get help at Japanese drugstores and hospitals.',

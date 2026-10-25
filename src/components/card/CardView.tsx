@@ -32,6 +32,13 @@ export function CardView({ lang, config, state, dispatch, onClose }: Props) {
         <p className="card-intro" lang="ja">{config.intro.ja}</p>
         {lang !== 'ja' && <p className="card-intro-en">{tr(config.intro, lang)}</p>}
 
+        {config.textField && state.text.trim() !== '' && (
+          <section className="card-section card-section--text">
+            <h2 lang="ja">{config.textField.cardHeading}</h2>
+            <p className="card-text">{state.text.trim()}</p>
+          </section>
+        )}
+
         {config.groups.map((group) => {
           const chosen = group.choices.filter((c) => (state.selection[group.id] ?? []).includes(c.id));
           const danger = config.dangerGroups?.includes(group.id);
