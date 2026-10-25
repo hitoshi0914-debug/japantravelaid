@@ -29,9 +29,25 @@ HEADERS = {
 WAIT_SEC = 1.5
 ZOOM = 16
 # 巡回する範囲（南, 西, 北, 東）。上から順に取る
+# 2026-10-25 ユーザー「タウンクーポンが終わったら JT はどんどん取りに行って」: 東京のあと、観光客の多い順に全国の主な都市へ広げる
 REGIONS = {
     "tokyo23": (35.52, 139.56, 35.83, 139.93),
     "tama": (35.57, 139.00, 35.80, 139.56),
+    "osaka": (34.40, 135.30, 34.90, 135.70),
+    "kyoto": (34.88, 135.65, 35.10, 135.85),
+    "yokohama": (35.30, 139.45, 35.62, 139.78),
+    "nagoya": (35.00, 136.80, 35.28, 137.05),
+    "fukuoka": (33.50, 130.30, 33.70, 130.50),
+    "sapporo": (42.95, 141.20, 43.15, 141.50),
+    "kobe": (34.62, 135.00, 34.78, 135.30),
+    "nara": (34.65, 135.75, 34.72, 135.86),
+    "hiroshima": (34.33, 132.38, 34.45, 132.52),
+    "naha": (26.15, 127.63, 26.30, 127.80),
+    "sendai": (38.20, 140.80, 38.32, 140.95),
+    "kanazawa": (36.52, 136.60, 36.62, 136.72),
+    "chiba": (35.50, 139.85, 35.85, 140.40),
+    "saitama": (35.80, 139.30, 36.05, 139.90),
+    "shonan-hakone": (35.18, 139.00, 35.40, 139.50),
 }
 
 
@@ -82,7 +98,7 @@ def fetch(tile: str) -> list[dict]:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default="clubjt.json.gz")
-    ap.add_argument("--regions", default="tokyo23,tama")
+    ap.add_argument("--regions", default=",".join(REGIONS))
     ap.add_argument("--max-minutes", type=float, default=150)
     ap.add_argument("--refresh-days", type=int, default=30)
     args = ap.parse_args()

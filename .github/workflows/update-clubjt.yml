@@ -2,12 +2,13 @@
 # 1. crawl: 地図と同じ API をタイル（ズーム 16）ごとに 1.5 秒に 1 回だけ呼ぶ。1 回 150 分まで、続きは次の実行で。
 #    取れたところまでを clubjt-data ブランチ（履歴を残さない 1 コミット）に保存する
 # 2. publish: タウンクーポンと合わせて public/smoking/shops/ を作り直し、変わっていれば main に commit して公開する
-# 東京全体（約 1 万タイル）がそろうまで毎日少しずつ進む。そろったあとは 30 日より古いタイルだけ取り直す。
+# 東京 → 大阪・京都など全国の主な都市（fetch_clubjt.py の REGIONS）の順に進む。タウンクーポンが終わるまでは 1 日 1 回、そのあとは 6 時間ごと。
+# 一巡したあとは 30 日より古いタイルだけ取り直す。
 name: Update CLUB JT spots
 
 on:
   schedule:
-    - cron: '0 17 * * *'
+    - cron: '0 5,11,17,23 * * *'
   workflow_dispatch:
     inputs:
       max_minutes:
@@ -33,8 +34,14 @@ jobs:
         run: |
           mkdir -p /tmp/jt
           if git fetch --depth=1 origin clubjt-data; then git show FETCH_HEAD:clubjt.json.gz > /tmp/jt/clubjt.json.gz; fi
+      # タウンクーポンの取り込みが終わるまでは 1 日 1 回（17 時 UTC）だけ。終わったら 6 時間ごとに進める
       - name: Crawl
-        run: python3 scripts/smoking/fetch_clubjt.py --out /tmp/jt/clubjt.json.gz --max-minutes ${{ inputs.max_minutes || '150' }}
+        run: |
+          if [ "${{ github.event_name }}" = schedule ] && [ "$(date -u +%H)" != 17 ] && git fetch -q --depth=1 origin town-coupon-data \
+             && ! git show FETCH_HEAD:town_coupon.json | python3 -c "import json,sys; sys.exit(0 if json.load(sys.stdin).get('complete') else 1)"; then
+            echo "タウンクーポンの取り込み中なので今回は休みます"; exit 0
+          fi
+          python3 scripts/smoking/fetch_clubjt.py --out /tmp/jt/clubjt.json.gz --max-minutes ${{ inputs.max_minutes || '150' }}
       - name: Save state
         run: |
           cd /tmp/jt
