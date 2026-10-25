@@ -1,0 +1,35 @@
+---
+import BusApp from '../../../components/bus/BusApp';
+import { langPaths, type Lang } from '../../../i18n/locales';
+import Base from '../../../layouts/Base.astro';
+
+export const getStaticPaths = () => langPaths();
+const lang = Astro.params.lang as Lang;
+const C = {
+  en: { title: "Show to the Bus Driver", desc: "For local buses in rural Japan: show where you want to get off, ask “please tell me when we get there”, and handle numbered tickets and exact-fare boxes with a big Japanese card. Works offline.", lead: "Enter where you want to get off, then show the card to the driver. Tap a phrase to show it in Japanese; the driver can point to an answer." },
+  ja: { title: "バスで見せる", desc: "地方の路線バス向け。降りたいところを見せて「着いたら教えて」と頼んだり、整理券・おつりの出ない運賃箱で困ったときに大きな日本語のカードで伝えるツール。オフラインでも使えます。", lead: "降りたいところを入力して、カードを運転手さんに見せてください。一言をタップすると日本語で出て、運転手さんは答えを指差せます。" },
+  ko: { title: "버스에서 보여주기", desc: "일본 지방 노선버스용: 내리고 싶은 곳을 보여주고 “도착하면 알려 주세요”를 부탁하거나, 정리권 · 거스름돈이 안 나오는 요금함에서 곤란할 때 큰 일본어 카드로 전하세요. 오프라인에서도 작동합니다.", lead: "내리고 싶은 곳을 입력한 뒤 카드를 기사님께 보여주세요. 한마디를 누르면 일본어로 나오고, 기사님이 답을 가리킬 수 있어요." },
+  'zh-tw': { title: "給公車司機看", desc: "適用日本鄉下的路線公車：給司機看想下車的地方、拜託「到了請告訴我」，遇到整理券或不找零的投幣箱時，也能用大字日文卡片溝通。離線也能使用。", lead: "輸入想下車的地方，再把卡片給司機看。點一下短句就會顯示日文，司機可以用手指點回答。" },
+  'zh-cn': { title: "给公交车司机看", desc: "适用日本乡下的路线公交：给司机看想下车的地方、拜托“到了请告诉我”，遇到整理券或不找零的投币箱时，也能用大字日文卡片沟通。离线也能使用。", lead: "输入想下车的地方，再把卡片给司机看。点一下短句就会显示日文，司机可以用手指点回答。" },
+  de: { title: "Dem Busfahrer zeigen", desc: "Für Linienbusse auf dem Land in Japan: Zeigen Sie, wo Sie aussteigen möchten, bitten Sie „Sagen Sie Bescheid, wenn wir da sind“ und meistern Sie Nummerntickets und Fahrgeldkästen ohne Wechselgeld mit einer großen Karte auf Japanisch. Funktioniert offline.", lead: "Geben Sie ein, wo Sie aussteigen möchten, und zeigen Sie die Karte dem Fahrer. Tippen Sie einen Satz an, um ihn auf Japanisch zu zeigen; der Fahrer zeigt auf eine Antwort." },
+  fr: { title: "Montrer au chauffeur de bus", desc: "Pour les bus locaux à la campagne au Japon : montrez où vous voulez descendre, demandez « prévenez-moi à l’arrivée », et gérez tickets numérotés et caisses sans monnaie avec une grande carte en japonais. Fonctionne hors ligne.", lead: "Saisissez où vous voulez descendre, puis montrez la carte au chauffeur. Touchez une phrase pour l’afficher en japonais ; le chauffeur peut pointer une réponse." },
+  it: { title: "Mostra all’autista dell’autobus", desc: "Per gli autobus locali nelle zone rurali del Giappone: mostra dove vuoi scendere, chiedi “mi avvisi quando arriviamo” e gestisci biglietti numerati e cassette senza resto con una grande scheda in giapponese. Funziona offline.", lead: "Inserisci dove vuoi scendere, poi mostra la scheda all’autista. Tocca una frase per mostrarla in giapponese; l’autista può indicare una risposta." },
+  es: { title: "Mostrar al conductor del autobús", desc: "Para autobuses locales en zonas rurales de Japón: muestre dónde quiere bajarse, pida “avíseme cuando lleguemos” y resuelva tiques numerados y cajas sin cambio con una tarjeta grande en japonés. Funciona sin conexión.", lead: "Escriba dónde quiere bajarse y muestre la tarjeta al conductor. Toque una frase para mostrarla en japonés; el conductor puede señalar una respuesta." },
+}[lang];
+---
+
+<Base
+  lang={lang}
+  title={C.title}
+  description={C.desc}
+  path="bus/" backHref={`/${lang}/`}
+>
+  <h1 class="page-title">🚌 {C.title}</h1>
+  <p class="lead">{C.lead}</p>
+  <BusApp client:load lang={lang} />
+</Base>
+
+<style>
+  .page-title { font-size: 1.4rem; margin: 8px 0 4px; }
+  .lead { margin: 0 0 16px; color: var(--muted); font-size: 0.9rem; }
+</style>

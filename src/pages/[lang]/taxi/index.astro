@@ -1,0 +1,35 @@
+---
+import TaxiApp from '../../../components/taxi/TaxiApp';
+import { langPaths, type Lang } from '../../../i18n/locales';
+import Base from '../../../layouts/Base.astro';
+
+export const getStaticPaths = () => langPaths();
+const lang = Astro.params.lang as Lang;
+const C = {
+  en: { title: "Show to the Taxi Driver", desc: "Show your destination in big Japanese to a taxi driver in Japan, then tap “stop here”, “please hurry” or ask to pay by card. Works offline.", lead: "Type or paste where you’re going, then show the card to the driver. During the ride, tap a phrase to show it in Japanese." },
+  ja: { title: "タクシーで見せる", desc: "行き先を大きな日本語で運転手さんに見せ、「ここで止めて」「急いで」「カードで払える？」をタップで伝えるツール。オフラインでも使えます。", lead: "行き先を入力（貼り付け）して、カードを運転手さんに見せてください。乗っている間は一言をタップすると日本語で大きく出ます。" },
+  ko: { title: "택시에서 보여주기", desc: "목적지를 큰 일본어로 택시 기사님께 보여주고, “여기서 세워 주세요”, “서둘러 주세요”, 카드 결제 여부를 눌러서 전하세요. 오프라인에서도 작동합니다.", lead: "목적지를 입력 (붙여 넣기)하고 카드를 기사님께 보여주세요. 타고 있는 동안 한마디를 누르면 일본어로 크게 나와요." },
+  'zh-tw': { title: "給計程車司機看", desc: "把目的地用大字日文給日本的計程車司機看，再點選「請在這裡停」「請開快一點」或詢問能否刷卡。離線也能使用。", lead: "輸入（貼上）目的地，再把卡片給司機看。搭車途中點一下短句，就會用日文大字顯示。" },
+  'zh-cn': { title: "给出租车司机看", desc: "把目的地用大字日文给日本的出租车司机看，再点选“请在这里停”“请开快一点”或询问能否刷卡。离线也能使用。", lead: "输入（粘贴）目的地，再把卡片给司机看。乘车途中点一下短句，就会用日文大字显示。" },
+  de: { title: "Dem Taxifahrer zeigen", desc: "Zeigen Sie dem Taxifahrer in Japan Ihr Ziel groß auf Japanisch und tippen Sie „Hier halten“, „Bitte beeilen“ oder fragen Sie nach Kartenzahlung. Funktioniert offline.", lead: "Geben Sie Ihr Ziel ein (oder fügen Sie es ein) und zeigen Sie die Karte dem Fahrer. Während der Fahrt tippen Sie einen Satz an, um ihn auf Japanisch zu zeigen." },
+  fr: { title: "Montrer au chauffeur de taxi", desc: "Montrez votre destination en grand et en japonais à un chauffeur de taxi au Japon, puis touchez « arrêtez-vous ici », « dépêchez-vous » ou demandez à payer par carte. Fonctionne hors ligne.", lead: "Saisissez ou collez votre destination, puis montrez la carte au chauffeur. Pendant le trajet, touchez une phrase pour l’afficher en japonais." },
+  it: { title: "Mostra al tassista", desc: "Mostra la destinazione in grande e in giapponese a un tassista in Giappone, poi tocca “si fermi qui”, “faccia in fretta” o chiedi di pagare con carta. Funziona offline.", lead: "Scrivi o incolla la destinazione, poi mostra la scheda all’autista. Durante il viaggio tocca una frase per mostrarla in giapponese." },
+  es: { title: "Mostrar al taxista", desc: "Muestre su destino en grande y en japonés a un taxista en Japón, y toque “pare aquí”, “dese prisa” o pregunte si puede pagar con tarjeta. Funciona sin conexión.", lead: "Escriba o pegue su destino y muestre la tarjeta al conductor. Durante el trayecto, toque una frase para mostrarla en japonés." },
+}[lang];
+---
+
+<Base
+  lang={lang}
+  title={C.title}
+  description={C.desc}
+  path="taxi/" backHref={`/${lang}/`}
+>
+  <h1 class="page-title">🚕 {C.title}</h1>
+  <p class="lead">{C.lead}</p>
+  <TaxiApp client:load lang={lang} />
+</Base>
+
+<style>
+  .page-title { font-size: 1.4rem; margin: 8px 0 4px; }
+  .lead { margin: 0 0 16px; color: var(--muted); font-size: 0.9rem; }
+</style>

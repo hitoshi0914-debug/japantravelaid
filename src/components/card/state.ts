@@ -12,6 +12,8 @@ export interface CardState {
   focus: string | null;
   /** 本人がその質問に返した答え（CardChoice の id）。 */
   reply: string | null;
+  /** 自由に書ける欄（CardConfig.textField）の中身。 */
+  text: string;
 }
 
 export type Action =
@@ -20,8 +22,9 @@ export type Action =
   | { type: 'back-to-select' }
   | { type: 'focus'; phrase: string | null }
   | { type: 'reply'; id: string | null }
+  | { type: 'text'; value: string }
   | { type: 'reset'; groups: CardGroup[] }
-  | { type: 'hydrate'; selection: Selection };
+  | { type: 'hydrate'; selection: Selection; text?: string };
 
 export const emptySelection = (groups: CardGroup[]): Selection =>
   Object.fromEntries(groups.map((g) => [g.id, [] as string[]]));
@@ -31,6 +34,7 @@ export const initialState = (groups: CardGroup[]): CardState => ({
   selection: emptySelection(groups),
   focus: null,
   reply: null,
+  text: '',
 });
 
 export function reducer(state: CardState, action: Action): CardState {
@@ -51,10 +55,12 @@ export function reducer(state: CardState, action: Action): CardState {
       return { ...state, focus: action.phrase, reply: null };
     case 'reply':
       return { ...state, reply: action.id };
+    case 'text':
+      return { ...state, text: action.value };
     case 'reset':
       return initialState(action.groups);
     case 'hydrate':
-      return { ...state, selection: action.selection };
+      return { ...state, selection: action.selection, text: action.text ?? state.text };
   }
 }
 
@@ -87,6 +93,23 @@ export function loadSelection(key: string, groups: CardGroup[]): Selection | nul
 export function saveSelection(key: string, selection: Selection) {
   try {
     localStorage.setItem(key, JSON.stringify(selection));
+  } catch {
+    /* 保存できなくてもカードは使える */
+  }
+}
+
+/** 自由に書ける欄は選択とは別のキー（<key>-text）に保存する。 */
+export function loadText(key: string): string {
+  try {
+    return localStorage.getItem(`${key}-text`) ?? '';
+  } catch {
+    return '';
+  }
+}
+
+export function saveText(key: string, text: string) {
+  try {
+    localStorage.setItem(`${key}-text`, text);
   } catch {
     /* 保存できなくてもカードは使える */
   }

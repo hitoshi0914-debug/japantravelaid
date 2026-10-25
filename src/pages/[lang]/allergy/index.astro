@@ -1,0 +1,35 @@
+---
+import AllergyApp from '../../../components/allergy/AllergyApp';
+import { langPaths, type Lang } from '../../../i18n/locales';
+import Base from '../../../layouts/Base.astro';
+
+export const getStaticPaths = () => langPaths();
+const lang = Astro.params.lang as Lang;
+const C = {
+  en: { title: "Show at Restaurants: Allergy & Diet Card", desc: "Tap your food allergies (egg, wheat, buckwheat, nuts, shellfish…) or diet (halal, vegan, vegetarian, gluten-free) and show a big Japanese card to restaurant staff in Japan. Works offline.", lead: "Tap what you can’t eat, then show the card to the restaurant staff. They can point to an answer in Japanese." },
+  ja: { title: "飲食店で見せる（アレルギー・食事制限）", desc: "食物アレルギー（卵・小麦・そば・ナッツ・甲殻類など）や食事制限（ハラール・ヴィーガン・ベジタリアン・グルテンフリー）をタップして、大きな日本語のカードを飲食店の店員に見せるツール。オフラインでも使えます。", lead: "食べられないものをタップして、カードを店員に見せてください。相手は日本語の答えを指差せます。" },
+  ko: { title: "음식점에서 보여주기 (알레르기 · 식단 제한)", desc: "음식 알레르기 (달걀, 밀, 메밀, 견과류, 갑각류 등)나 식단 제한 (할랄, 비건, 채식, 글루텐 프리)을 누르고 큰 일본어 카드를 일본 음식점 직원에게 보여주세요. 오프라인에서도 작동합니다.", lead: "못 먹는 것을 누른 뒤 카드를 직원에게 보여주세요. 상대가 일본어 답을 가리킬 수 있어요." },
+  'zh-tw': { title: "給餐廳看（過敏・飲食限制）", desc: "點選食物過敏（蛋、小麥、蕎麥、堅果、甲殼類等）或飲食限制（清真、純素、素食、無麩質），把大字日文卡片給日本餐廳的店員看。離線也能使用。", lead: "點選不能吃的東西，再把卡片給店員看。對方可以用手指點日文的回答。" },
+  'zh-cn': { title: "给餐厅看（过敏・饮食限制）", desc: "点选食物过敏（蛋、小麦、荞麦、坚果、甲壳类等）或饮食限制（清真、纯素、素食、无麸质），把大字日文卡片给日本餐厅的店员看。离线也能使用。", lead: "点选不能吃的东西，再把卡片给店员看。对方可以用手指点日文的回答。" },
+  de: { title: "Im Restaurant zeigen: Allergie- & Ernährungskarte", desc: "Tippen Sie Ihre Lebensmittelallergien (Ei, Weizen, Buchweizen, Nüsse, Schalentiere …) oder Ernährungsweise (halal, vegan, vegetarisch, glutenfrei) an und zeigen Sie dem Restaurantpersonal in Japan eine große Karte auf Japanisch. Funktioniert offline.", lead: "Tippen Sie an, was Sie nicht essen können, und zeigen Sie die Karte dem Personal. Es kann auf eine Antwort auf Japanisch zeigen." },
+  fr: { title: "Montrer au restaurant : carte allergies et régime", desc: "Touchez vos allergies alimentaires (œuf, blé, sarrasin, fruits à coque, crustacés…) ou votre régime (halal, végan, végétarien, sans gluten) et montrez une grande carte en japonais au personnel d’un restaurant au Japon. Fonctionne hors ligne.", lead: "Touchez ce que vous ne pouvez pas manger, puis montrez la carte au personnel. Il peut pointer une réponse en japonais." },
+  it: { title: "Mostra al ristorante: scheda allergie e dieta", desc: "Tocca le tue allergie alimentari (uova, grano, grano saraceno, frutta a guscio, crostacei…) o la tua dieta (halal, vegana, vegetariana, senza glutine) e mostra una grande scheda in giapponese al personale di un ristorante in Giappone. Funziona offline.", lead: "Tocca ciò che non puoi mangiare, poi mostra la scheda al personale. Può indicare una risposta in giapponese." },
+  es: { title: "Mostrar en restaurantes: tarjeta de alergias y dieta", desc: "Toque sus alergias alimentarias (huevo, trigo, trigo sarraceno, frutos secos, mariscos…) o su dieta (halal, vegana, vegetariana, sin gluten) y muestre una tarjeta grande en japonés al personal de un restaurante en Japón. Funciona sin conexión.", lead: "Toque lo que no puede comer y muestre la tarjeta al personal. Puede señalar una respuesta en japonés." },
+}[lang];
+---
+
+<Base
+  lang={lang}
+  title={C.title}
+  description={C.desc}
+  path="allergy/" backHref={`/${lang}/`}
+>
+  <h1 class="page-title">🍽️ {C.title}</h1>
+  <p class="lead">{C.lead}</p>
+  <AllergyApp client:load lang={lang} />
+</Base>
+
+<style>
+  .page-title { font-size: 1.4rem; margin: 8px 0 4px; }
+  .lead { margin: 0 0 16px; color: var(--muted); font-size: 0.9rem; }
+</style>

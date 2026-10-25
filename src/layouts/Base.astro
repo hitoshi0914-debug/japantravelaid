@@ -81,8 +81,8 @@ const alternates = locales.filter((l) => langsForPath(path).includes(l.code));
       {path.startsWith('medicine/') && <Disclaimer lang={lang} />}
     </main>
     <div class="container">
-      {/* 薬剤師・美容院カードの画面には寄付を出さない（店頭で困っている最中なので）。about は本文に置くので重ねない。 */}
-      {path !== 'medicine/pharmacist/' && path !== 'salon/' && path !== 'about/' && <Donate lang={lang} />}
+      {/* 指差しカード（薬剤師・美容院・飲食店・タクシー・駅・バス）の画面には寄付を出さない（店頭で困っている最中なので）。about は本文に置くので重ねない。 */}
+      {!['medicine/pharmacist/', 'salon/', 'allergy/', 'taxi/', 'train/', 'bus/', 'about/'].includes(path) && <Donate lang={lang} />}
       <StoreBadges lang={lang} />
     </div>
     <footer class="container site-footer">

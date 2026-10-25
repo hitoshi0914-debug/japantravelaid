@@ -3,7 +3,7 @@ import type { AnyLang } from '../../i18n/locales';
 import './card.css';
 import { CardView } from './CardView';
 import { SelectView } from './SelectView';
-import { initialState, loadSelection, reducer, saveSelection, selectionFromUrl } from './state';
+import { initialState, loadSelection, loadText, reducer, saveSelection, saveText, selectionFromUrl } from './state';
 import type { CardConfig } from './types';
 
 interface Props {
@@ -21,7 +21,8 @@ export function CardApp({ lang, config }: Props) {
   useEffect(() => {
     const fromUrl = selectionFromUrl(location.search, config.groups, config.urlGroup);
     const saved = fromUrl ?? loadSelection(config.storageKey, config.groups);
-    if (saved) dispatch({ type: 'hydrate', selection: saved });
+    const text = config.textField ? loadText(config.storageKey) : undefined;
+    if (saved || text) dispatch({ type: 'hydrate', selection: saved ?? state.selection, text });
     // 読み込んだら ?s= は消す（再読み込みで、その後に選んだ内容が URL の値で上書きされないように）。
     if (fromUrl) history.replaceState(history.state, '', location.pathname);
   }, []);
@@ -29,6 +30,10 @@ export function CardApp({ lang, config }: Props) {
   useEffect(() => {
     saveSelection(config.storageKey, state.selection);
   }, [state.selection]);
+
+  useEffect(() => {
+    if (config.textField) saveText(config.storageKey, state.text);
+  }, [state.text]);
 
   // カード表示中はブラウザの「戻る」でカードを閉じる（店頭で誤ってページを離れないように）。
   useEffect(() => {

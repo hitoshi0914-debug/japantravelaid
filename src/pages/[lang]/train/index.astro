@@ -1,0 +1,35 @@
+---
+import TrainApp from '../../../components/train/TrainApp';
+import { langPaths, type Lang } from '../../../i18n/locales';
+import Base from '../../../layouts/Base.astro';
+
+export const getStaticPaths = () => langPaths();
+const lang = Astro.params.lang as Lang;
+const C = {
+  en: { title: "Show at the Train Station", desc: "Missed your stop, IC card balance too low, lost ticket? Show a big Japanese card to station staff in Japan and ask “does this train stop at…?”. Works offline.", lead: "Pick what happened, then show the card to station staff. Tap a question to ask it in Japanese; staff can point to an answer." },
+  ja: { title: "駅で見せる（電車・きっぷ）", desc: "乗り過ごした・ICカードの残高が足りない・きっぷをなくした…を大きな日本語のカードで駅員さんに見せ、「この電車は○○に止まる？」をタップで聞けるツール。オフラインでも使えます。", lead: "困っていることを選んで、カードを駅員さんに見せてください。聞きたいことをタップすると日本語で出て、駅員さんは答えを指差せます。" },
+  ko: { title: "역에서 보여주기 (전철 · 표)", desc: "내릴 역을 지나쳤거나, IC카드 잔액이 부족하거나, 표를 잃어버렸나요? 큰 일본어 카드를 역무원에게 보여주고 “이 전철은 ○○에 서나요?”를 눌러서 물어보세요. 오프라인에서도 작동합니다.", lead: "곤란한 일을 고른 뒤 카드를 역무원에게 보여주세요. 질문을 누르면 일본어로 나오고, 역무원이 답을 가리킬 수 있어요." },
+  'zh-tw': { title: "給站務員看（電車・車票）", desc: "坐過站、IC卡餘額不足、車票不見了？把大字日文卡片給日本的站務員看，還能點選詢問「這班車有停○○嗎？」。離線也能使用。", lead: "選擇遇到的問題，再把卡片給站務員看。點一下問題就會顯示日文，站務員可以用手指點回答。" },
+  'zh-cn': { title: "给站务员看（电车・车票）", desc: "坐过站、IC卡余额不足、车票丢了？把大字日文卡片给日本的站务员看，还能点选询问“这趟车停○○吗？”。离线也能使用。", lead: "选择遇到的问题，再把卡片给站务员看。点一下问题就会显示日文，站务员可以用手指点回答。" },
+  de: { title: "Am Bahnhof zeigen", desc: "Haltestelle verpasst, IC-Karten-Guthaben zu niedrig, Ticket verloren? Zeigen Sie dem Bahnhofspersonal in Japan eine große Karte auf Japanisch und fragen Sie „Hält dieser Zug in …?“. Funktioniert offline.", lead: "Wählen Sie, was passiert ist, und zeigen Sie die Karte dem Personal. Tippen Sie eine Frage an, um sie auf Japanisch zu stellen; das Personal zeigt auf eine Antwort." },
+  fr: { title: "Montrer à la gare", desc: "Arrêt raté, solde de carte IC insuffisant, billet perdu ? Montrez une grande carte en japonais au personnel de la gare au Japon et demandez « ce train s’arrête-t-il à… ? ». Fonctionne hors ligne.", lead: "Choisissez ce qui s’est passé, puis montrez la carte au personnel. Touchez une question pour la poser en japonais ; le personnel peut pointer une réponse." },
+  it: { title: "Mostra in stazione", desc: "Fermata saltata, credito della carta IC insufficiente, biglietto perso? Mostra una grande scheda in giapponese al personale della stazione in Giappone e chiedi “questo treno ferma a…?”. Funziona offline.", lead: "Scegli cosa è successo, poi mostra la scheda al personale. Tocca una domanda per farla in giapponese; il personale può indicare una risposta." },
+  es: { title: "Mostrar en la estación", desc: "¿Se pasó de parada, no tiene saldo en la tarjeta IC o perdió el billete? Muestre una tarjeta grande en japonés al personal de la estación en Japón y pregunte “¿este tren para en…?”. Funciona sin conexión.", lead: "Elija qué ha pasado y muestre la tarjeta al personal. Toque una pregunta para hacerla en japonés; el personal puede señalar una respuesta." },
+}[lang];
+---
+
+<Base
+  lang={lang}
+  title={C.title}
+  description={C.desc}
+  path="train/" backHref={`/${lang}/`}
+>
+  <h1 class="page-title">🚉 {C.title}</h1>
+  <p class="lead">{C.lead}</p>
+  <TrainApp client:load lang={lang} />
+</Base>
+
+<style>
+  .page-title { font-size: 1.4rem; margin: 8px 0 4px; }
+  .lead { margin: 0 0 16px; color: var(--muted); font-size: 0.9rem; }
+</style>

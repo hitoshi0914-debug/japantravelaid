@@ -14,10 +14,25 @@ interface Props {
 // 選択画面: グループごとに大きなチップをタップで選ぶ。下に固定の「カードを表示」ボタン。
 export function SelectView({ lang, config, state, dispatch }: Props) {
   const count = Object.values(state.selection).reduce((n, ids) => n + ids.length, 0);
-  const ready = (state.selection[config.requiredGroup] ?? []).length > 0;
+  const ready = config.requiredGroup ? (state.selection[config.requiredGroup] ?? []).length > 0 : count > 0 || state.text.trim() !== '';
 
   return (
     <div className="select">
+      {config.textField && (
+        <label className="group text-field">
+          <span className="text-field-label">
+            {tr(config.textField.label, lang)}
+            {lang !== 'ja' && <span className="legend-ja" lang="ja">{config.textField.label.ja}</span>}
+          </span>
+          <textarea
+            rows={2}
+            value={state.text}
+            placeholder={tr(config.textField.placeholder, lang)}
+            onChange={(e) => dispatch({ type: 'text', value: e.target.value })}
+          />
+          <small>{tr(config.textField.hint, lang)}</small>
+        </label>
+      )}
       {config.groups.map((group) => (
         <fieldset className="group" key={group.id}>
           <legend>
@@ -49,7 +64,7 @@ export function SelectView({ lang, config, state, dispatch }: Props) {
       ))}
 
       <div className="select-actions">
-        {hasAnything(state.selection) && (
+        {(hasAnything(state.selection) || state.text !== '') && (
           <button type="button" className="btn-ghost" onClick={() => dispatch({ type: 'reset', groups: config.groups })}>
             {tr(ui.clear, lang)}
           </button>
