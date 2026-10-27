@@ -39,6 +39,16 @@ export const tools: (Tile & { langs: readonly Lang[]; secondary?: boolean })[] =
     hint: { en: 'Tell me my stop, fares', ja: '着いたら教えて・運賃', 'zh-tw': '到站提醒・車資', 'zh-cn': '到站提醒・车费', ko: '도착 알림・요금', de: 'Haltestelle, Fahrpreis', fr: 'Mon arrêt, tarif', it: 'Fermata, tariffa', es: 'Mi parada, tarifa' },
   },
   {
+    id: 'hospital', kind: 'tool', pictogram: '🏥', path: 'medicine/hospital/', langs: allLangs(),
+    label: { en: 'Show at Hospital', ja: '病院の受付で見せる', 'zh-tw': '給醫院櫃台看', 'zh-cn': '给医院前台看', ko: '병원 접수에서 보여주기', de: 'Im Krankenhaus zeigen', fr: 'Montrer à l’hôpital', it: 'Mostra in ospedale', es: 'Mostrar en el hospital' },
+    hint: { en: 'No insurance, English doctor', ja: '保険なし・英語の医師', 'zh-tw': '沒有保險・英語醫師', 'zh-cn': '没有保险・英语医生', ko: '보험 없음・영어 의사', de: 'Ohne Versicherung, Arzt mit Englisch', fr: 'Sans assurance, médecin anglophone', it: 'Senza assicurazione, medico inglese', es: 'Sin seguro, médico en inglés' },
+  },
+  {
+    id: 'lost', kind: 'tool', pictogram: '🚓', path: 'lost/', langs: allLangs(),
+    label: { en: 'Lost or Stolen', ja: '落とし物・盗難', 'zh-tw': '遺失・遭竊', 'zh-cn': '丢失・被盗', ko: '분실・도난', de: 'Verloren / gestohlen', fr: 'Perdu ou volé', it: 'Perso o rubato', es: 'Perdido o robado' },
+    hint: { en: 'Police box, report number', ja: '交番・受理番号', 'zh-tw': '派出所・受理號碼', 'zh-cn': '派出所・受理号码', ko: '파출소・접수 번호', de: 'Polizeiposten, Aktenzeichen', fr: 'Poste de police, n° de déclaration', it: 'Polizia, numero di denuncia', es: 'Policía, número de denuncia' },
+  },
+  {
     id: 'medicine', kind: 'tool', pictogram: '💊', path: 'medicine/', langs: allLangs(),
     label: { en: 'Medicine & Emergency', ja: '市販薬・救急', 'zh-tw': '藥品・急救', 'zh-cn': '药品・急救', ko: '의약품・응급', de: 'Medikamente & Notfall', fr: 'Médicaments & urgences', it: 'Farmaci ed emergenze', es: 'Medicinas y urgencias' },
     hint: { en: 'Drugstore card, 119', ja: '薬局の指差しカード・119', 'zh-tw': '藥妝店指示卡・119', 'zh-cn': '药妆店指示卡・119', ko: '약국 손가락 카드・119', de: 'Apotheken-Karte, 119', fr: 'Carte pharmacie, 119', it: 'Scheda farmacia, 119', es: 'Tarjeta de farmacia, 119' },
