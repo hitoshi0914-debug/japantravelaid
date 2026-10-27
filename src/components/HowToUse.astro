@@ -1,6 +1,7 @@
 ---
 // トップの「使い方」3ステップ。押すと画面写真つきの /how-to-use/ へ（2026-10-09 ユーザー: トップに1つだけ）
 import type { Lang } from '../i18n/locales';
+import { Icon, type IconName } from './Icon';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
@@ -17,15 +18,15 @@ const C: Record<Lang, { title: string; steps: [string, string, string]; more: st
   es: { more: 'Paso a paso, con capturas', title: 'Cómo se usa', steps: ['Elija una tarjeta y toque lo que necesita (síntomas, corte…).', 'Muestre la tarjeta grande en japonés al personal.', 'El personal señala su respuesta, que también ve en su idioma.'] },
 };
 const t = C[lang] ?? C.en;
-const icons = ['👆', '📱', '👉'];
+const icons: IconName[] = ['pointer', 'phone', 'hand'];
 ---
 
 <a class="howto" href={`/${lang}/how-to-use/`} data-ga="howto_click">
-  <h2>📖 {t.title}</h2>
+  <h2><Icon name="book" size={18} /> {t.title}</h2>
   <ol>
     {t.steps.map((s, i) => (
       <li>
-        <span class="pic" aria-hidden="true">{icons[i]}<b>{i + 1}</b></span>
+        <span class="pic" aria-hidden="true"><Icon name={icons[i]} size={26} /><b>{i + 1}</b></span>
         <span class="txt">{s}</span>
       </li>
     ))}
@@ -38,7 +39,7 @@ const icons = ['👆', '📱', '👉'];
   .howto h2 { margin: 0 0 8px; font-size: 1rem; }
   .howto ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
   .howto li { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; }
-  .pic { position: relative; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: var(--accent-soft); font-size: 1.6rem; }
+  .pic { position: relative; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); }
   .pic b { position: absolute; top: -4px; left: -4px; width: 20px; height: 20px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 0.75rem; line-height: 20px; }
   .txt { font-size: 0.8rem; line-height: 1.35; color: var(--text); }
   .more { display: flex; align-items: center; justify-content: center; min-height: 48px; margin-top: 12px; border-radius: 999px; background: var(--accent); color: #fff; font-weight: 700; font-size: 0.95rem; }

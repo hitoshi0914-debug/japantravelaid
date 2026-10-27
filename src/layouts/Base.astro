@@ -4,6 +4,8 @@ import Analytics from '../components/Analytics.astro';
 import ConsentBanner from '../components/ConsentBanner.astro';
 import Disclaimer from '../components/Disclaimer.astro';
 import EmergencyBar from '../components/EmergencyBar.astro';
+import { Icon } from '../components/Icon';
+import Logo from '../components/Logo.astro';
 import Donate from '../components/Donate.astro';
 import StoreBadges from '../components/StoreBadges.astro';
 import { langsForPath } from '../data/tools';
@@ -61,12 +63,12 @@ const alternates = locales.filter((l) => langsForPath(path).includes(l.code));
     <header class="container site-header">
       <div class="brand-row">
         {backHref && <a class="back" href={backHref} aria-label={tr(ui.back, lang)}>←</a>}
-        <a class="brand" href={`/${lang}/`}>🧭 {siteName}</a>
+        <Logo href={`/${lang}/`} />
         {/* 言語切替: このページがある言語だけ。選ぶと同じページの別言語へ移動する */}
         {alternates.length > 1 && (
           <label class="lang-switch">
             <span class="sr-only">{tr(ui.language, lang)}</span>
-            🌐
+            <Icon name="globe" size={18} />
             <select data-lang-switch aria-label={tr(ui.language, lang)}>
               {alternates.map((l) => <option value={`/${l.code}/${path}`} selected={l.code === lang}>{l.label}</option>)}
             </select>
@@ -115,7 +117,6 @@ const alternates = locales.filter((l) => langsForPath(path).includes(l.code));
   .lang-switch { margin-left: auto; display: flex; align-items: center; gap: 2px; min-height: 44px; padding: 0 12px; border-radius: 999px; background: var(--surface); border: 1px solid var(--border); font-size: 0.9rem; }
   .lang-switch select { min-height: 44px; border: 0; background: transparent; color: var(--text); font: inherit; font-weight: 700; }
   .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-  .brand { display: inline-flex; align-items: center; min-height: 44px; font-weight: 800; color: var(--text); text-decoration: none; font-size: 0.95rem; }
   .back {
     display: grid; place-items: center;
     width: 48px; height: 48px; flex: none;

@@ -5,6 +5,7 @@ import type { Localized, Translation } from '../../i18n/locales';
 
 export interface CardChoice {
   id: string;
+  /** 絵文字。画面には出さない（2026-10-27 からアイコンなしのチップ）。答えの ⭕・❌ だけ ○・× の記号にして出す。 */
   pictogram: string;
   label: Localized;
 }

@@ -1,6 +1,8 @@
 ---
 // サイトのトップ: 緊急帯（レイアウト）＋ ツールの大きなアイコン。ツールが増えたら src/data/tools.ts に足す。
 import HowToUse from '../../components/HowToUse.astro';
+import { Icon } from '../../components/Icon';
+import InstallHint from '../../components/InstallHint.astro';
 import Tile from '../../components/Tile.astro';
 import { tools } from '../../data/tools';
 import { langPaths, tr, type Lang } from '../../i18n/locales';
@@ -10,24 +12,37 @@ import { siteConfig } from '../../site.config';
 
 export const getStaticPaths = () => langPaths();
 const lang = Astro.params.lang as Lang;
+// 医療・救急（赤系）と日常（青系）に分けて並べる（2026-10-27 外部の UI 評価: 緊急性の高いものを見分けやすく）
+const main = tools.filter((t) => !t.secondary);
+const groups = [
+  { title: ui.groupHealth, items: main.filter((t) => t.tone !== 'daily') },
+  { title: ui.groupDaily, items: main.filter((t) => t.tone === 'daily') },
+];
 ---
 
 <Base lang={lang} title={siteConfig.siteName} description={tr(ui.siteTagline, lang)} path="">
   <p class="tagline">{tr(ui.siteTagline, lang)}</p>
+  <InstallHint lang={lang} />
   <HowToUse lang={lang} />
-  <nav class="tools" aria-label="Tools">
-    {tools.filter((t) => !t.secondary).map((tool) => <Tile tile={tool} lang={lang} />)}
-  </nav>
+  {groups.map((g) => (
+    <section class="tool-group">
+      <h2>{tr(g.title, lang)}</h2>
+      <nav class="tools" aria-label={tr(g.title, lang)}>
+        {g.items.map((tool) => <Tile tile={tool} lang={lang} />)}
+      </nav>
+    </section>
+  ))}
   {/* 喫煙所はカードの下に小さく（2026-10-09 ユーザー決定: サイトの中心は指差しカード） */}
   <ul class="more-tools">
     {tools.filter((t) => t.secondary).map((t) => (
-      <li><a href={`/${lang}/${t.path}`} data-ga="tile_click" data-ga-params={JSON.stringify({ tile: t.id })}><span aria-hidden="true">{t.pictogram}</span> {tr(t.label, lang)}<small>{tr(t.hint, lang)}</small></a></li>
+      <li><a href={`/${lang}/${t.path}`} data-ga="tile_click" data-ga-params={JSON.stringify({ tile: t.id })}><Icon name={t.icon} /> {tr(t.label, lang)}<small>{tr(t.hint, lang)}</small></a></li>
     ))}
   </ul>
 </Base>
 
 <style>
   .tagline { margin: 8px 0 16px; color: var(--muted); font-size: 0.9rem; }
+  .tool-group h2 { margin: 20px 0 8px; font-size: 0.85rem; font-weight: 800; letter-spacing: 0.04em; color: var(--muted); text-transform: uppercase; }
   .tools { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
   .more-tools { list-style: none; margin: 16px 0 0; padding: 0; }
   .more-tools a { display: flex; align-items: center; gap: 10px; min-height: 56px; padding: 0 16px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); color: var(--text); font-weight: 700; text-decoration: none; }

@@ -3,8 +3,9 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { CircleMarker, MapContainer, Marker, TileLayer, useMap } from 'react-leaflet';
 import L from 'leaflet';
-import { Clock, Flag, Gem, Medal, Phone, Plus, Languages, List, LocateFixed, MapPin, Navigation, RefreshCw, WifiOff } from 'lucide-react';
+import { Beer, Check, Cigarette, Clock, Flag, Gem, Medal, Phone, Plus, Languages, List, LocateFixed, MapPin, Navigation, RefreshCw, WifiOff } from 'lucide-react';
 import { contacts } from '../../data/emergency';
+import { LogoMark } from '../LogoMark';
 import { locales, tr, type Lang } from '../../i18n/locales';
 import { siteConfig } from '../../site.config';
 import { contributionCounts, localized, nearbyTiles, rankFor, reportUrl, routeUrl, shopToSpot, SHOP_SOURCE_LABEL, spotLang, submitUrl, type RankId, type ShopIndex, type ShopItem, type Spot, type SpotLang, type SpotsFile } from '../../lib/smoking';
@@ -539,8 +540,9 @@ function SiteHeader({ pageLang, langSelect }: { pageLang: Lang; langSelect: Reac
   return (
     <div>
       <div className="flex min-h-14 items-center gap-2">
-        <a href={`/${pageLang}/`} className="flex min-h-11 items-center text-[0.95rem] font-extrabold text-slate-900 no-underline">
-          🧭 {siteConfig.siteName}
+        <a href={`/${pageLang}/`} className="flex min-h-11 items-center gap-2 font-bold text-slate-900 no-underline" aria-label={siteConfig.siteName}>
+          <LogoMark />
+          <span className="whitespace-nowrap">Japan Travel <b className="font-black text-[#0b7a55]">Aid</b></span>
         </a>
         {langSelect}
       </div>
@@ -743,12 +745,12 @@ export default function SmokingFinder({ pageLang }: Props) {
       <div className="flex min-h-dvh flex-col bg-white px-4 pt-[env(safe-area-inset-top)] pb-8 text-slate-900">
         <SiteHeader pageLang={pageLang} langSelect={langSelect} />
         <div className="flex flex-1 flex-col justify-center">
-          <p className="text-5xl" aria-hidden>🚬</p>
+          <span className="grid size-16 place-items-center rounded-full bg-teal-50 text-teal-700" aria-hidden><Cigarette size={34} /></span>
           <h1 className="mt-3 text-3xl leading-tight font-bold">{t.title}</h1>
           <ul className="mt-4 space-y-1.5 text-sm text-slate-600">
             {[t.about[0], shopIndex ? t.aboutShops : t.about[1], t.about[2]].map((line) => (
               <li key={line} className="flex gap-2">
-                <span className="text-teal-700">✓</span>
+                <Check size={18} className="mt-0.5 shrink-0 text-teal-700" aria-hidden />
                 {line}
               </li>
             ))}
@@ -821,7 +823,7 @@ export default function SmokingFinder({ pageLang }: Props) {
               aria-pressed={cigOnly}
               className={`min-h-11 rounded-full border px-4 text-sm font-semibold ${cigOnly ? 'border-teal-700 bg-teal-700 text-white' : 'border-slate-300 text-slate-700'}`}
             >
-              🚬 {t.cigOnly}
+              <Cigarette size={16} className="mr-1 inline" aria-hidden /> {t.cigOnly}
             </button>
             {shopIndex && shopIndex.shops > 0 && (
               <button
@@ -830,7 +832,7 @@ export default function SmokingFinder({ pageLang }: Props) {
                 data-ga="smoking_shops"
                 className={`min-h-11 rounded-full border px-4 text-sm font-semibold ${showShops ? 'border-rose-600 bg-rose-600 text-white' : 'border-slate-300 text-slate-700'}`}
               >
-                🍺 {t.showShops}
+                <Beer size={16} className="mr-1 inline" aria-hidden /> {t.showShops}
               </button>
             )}
             {/* 地図にない喫煙所の投稿（承認してから掲載）。現在地の緯度経度を入れてフォームを開く */}
@@ -885,7 +887,7 @@ export default function SmokingFinder({ pageLang }: Props) {
                     </span>
                     <div className="min-w-0 flex-1">
                       {s.kind === 'shop' && (
-                        <p className="mb-0.5 inline-block rounded bg-rose-100 px-1.5 py-0.5 text-xs font-bold text-rose-900">🍺 {t.shopLabel}</p>
+                        <p className="mb-0.5 inline-block rounded bg-rose-100 px-1.5 py-0.5 text-xs font-bold text-rose-900"><Beer size={12} className="mr-0.5 inline" aria-hidden /> {t.shopLabel}</p>
                       )}
                       <p className="leading-snug font-semibold">{name}</p>
                       {address && (

@@ -2,6 +2,7 @@
 // 免責表示（全ページ共通・常時表示）。日本語は店員が見ても誤解しないように併記する。
 import { tr, type Lang } from '../i18n/locales';
 import { ui } from '../i18n/ui';
+import { Icon } from './Icon';
 
 interface Props {
   lang: Lang;
@@ -10,8 +11,8 @@ const { lang } = Astro.props;
 ---
 
 <aside class="disclaimer" role="note">
-  <p>⚠️ {tr(ui.disclaimerShort, lang)} <a href={`/${lang}/about/`}>{tr(ui.about, lang)}</a></p>
-  <p lang="ja">{ui.disclaimerShort.ja}</p>
+  <p><Icon name="alert" size={16} /> {tr(ui.disclaimerShort, lang)} <a href={`/${lang}/about/`}>{tr(ui.about, lang)}</a></p>
+  {lang !== 'ja' && <p lang="ja">{ui.disclaimerShort.ja}</p>}
 </aside>
 
 <style>

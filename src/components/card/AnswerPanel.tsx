@@ -40,7 +40,7 @@ export function AnswerPanel({ lang, config, state, dispatch }: Props) {
           <div className="answer-replies">
             {focused.replies.map((r) => (
               <button type="button" key={r.id} className="reply-btn" onClick={() => dispatch({ type: 'reply', id: r.id })}>
-                <span aria-hidden="true">{r.pictogram}</span>
+                <ReplyMark pictogram={r.pictogram} />
                 <span>{tr(r.label, lang)}</span>
               </button>
             ))}
@@ -50,7 +50,7 @@ export function AnswerPanel({ lang, config, state, dispatch }: Props) {
         {reply && (
           <p className="answer-reply" lang="ja">
             <span className="answer-reply-label">お答え</span>
-            {reply.pictogram} {reply.label.ja}
+            <span><ReplyMark pictogram={reply.pictogram} /> {reply.label.ja}</span>
           </p>
         )}
 
@@ -94,4 +94,11 @@ export function AnswerPanel({ lang, config, state, dispatch }: Props) {
     </section>
     </>
   );
+}
+
+// 「はい・いいえ」の答えだけ、日本でおなじみの ○・× を出す（絵文字ではなく文字の記号）。
+function ReplyMark({ pictogram }: { pictogram: string }) {
+  if (pictogram === '⭕') return <span className="reply-mark reply-mark--yes" aria-hidden="true">○</span>;
+  if (pictogram === '❌') return <span className="reply-mark" aria-hidden="true">×</span>;
+  return null;
 }

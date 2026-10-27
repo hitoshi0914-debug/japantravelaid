@@ -14,8 +14,8 @@
   font: inherit; text-align: left; cursor: pointer;
 }
 .chip.is-selected { border-color: var(--accent); background: var(--accent-soft); }
-.chip.is-selected .chip-icon::after { content: '✓'; margin-left: 2px; font-size: 0.9rem; color: var(--accent); font-weight: 900; }
-.chip-icon { font-size: 1.6rem; line-height: 1; flex: none; }
+.chip-check { flex: none; color: var(--border); }
+.chip.is-selected .chip-check { color: var(--accent); }
 .chip-text { display: flex; flex-direction: column; font-size: 0.88rem; font-weight: 700; line-height: 1.2; min-width: 0; }
 .chip-ja { font-weight: 400; font-size: 0.72rem; color: var(--muted); }
 .text-field { display: flex; flex-direction: column; gap: 6px; }
@@ -43,7 +43,9 @@
   padding: calc(8px + env(safe-area-inset-top)) 12px 8px;
   background: var(--accent); color: #fff;
 }
-.card-bar-title { font-weight: 800; font-size: 1.05rem; }
+.card-bar-title { min-width: 0; font-weight: 800; font-size: 1.05rem; }
+.speak-btn { flex: none; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; margin-left: auto; min-height: var(--tap); padding: 0 14px; border: 0; border-radius: 999px; background: #fff; color: var(--accent); font: inherit; font-weight: 800; font-size: 0.9rem; cursor: pointer; }
+.speak-btn[aria-pressed='true'] { background: rgb(255 255 255 / 0.18); color: #fff; }
 .icon-btn { display: grid; place-items: center; width: var(--tap); height: var(--tap); border: 0; border-radius: 50%; background: rgb(255 255 255 / 0.18); color: inherit; cursor: pointer; }
 .card-body { max-width: 640px; margin: 0 auto; padding: 16px 16px calc(32px + env(safe-area-inset-bottom)); }
 .card-intro { margin: 0; font-size: 1.35rem; font-weight: 900; line-height: 1.45; white-space: pre-line; }
@@ -84,6 +86,8 @@
 }
 .answer-reply { display: flex; flex-direction: column; margin: 0 0 14px; font-size: 2.2rem; font-weight: 900; }
 .answer-reply-label { font-size: 0.85rem; color: var(--accent); }
+.reply-mark { font-weight: 900; }
+.reply-mark--yes { color: var(--danger); }
 
 /* カードの画面では Cookie のバナーを上に出す（下に固定の「カードを表示」ボタンを隠さないように） */
 body:has(.select-actions) .consent { top: calc(8px + env(safe-area-inset-top)); bottom: auto; }

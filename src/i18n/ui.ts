@@ -60,5 +60,11 @@ export const ui = {
     it: 'Questi strumenti sono gratuiti. Se ti sono stati utili, un piccolo contributo ci aiuta a mantenerli.',
     es: 'Estas herramientas son gratuitas. Si te han ayudado, un pequeño aporte nos ayuda a mantenerlas.',
   },
+  groupHealth: { en: 'Health & emergency', ja: '医療・救急', 'zh-tw': '醫療・急救', 'zh-cn': '医疗・急救', ko: '의료・응급', de: 'Gesundheit & Notfall', fr: 'Santé & urgences', it: 'Salute ed emergenze', es: 'Salud y urgencias' },
+  groupDaily: { en: 'Everyday & getting around', ja: '飲食・美容・交通', 'zh-tw': '餐飲・美髮・交通', 'zh-cn': '餐饮・美发・交通', ko: '음식・미용・교통', de: 'Alltag & unterwegs', fr: 'Au quotidien & déplacements', it: 'Vita quotidiana e spostamenti', es: 'Día a día y transporte' },
+  readAloud: { en: 'Read aloud', ja: '読み上げ', 'zh-tw': '朗讀', 'zh-cn': '朗读', ko: '읽어 주기', de: 'Vorlesen', fr: 'Lire à voix haute', it: 'Leggi ad alta voce', es: 'Leer en voz alta' },
+  stopReading: { en: 'Stop', ja: '停止', 'zh-tw': '停止', 'zh-cn': '停止', ko: '정지', de: 'Stopp', fr: 'Arrêter', it: 'Ferma', es: 'Detener' },
+  advice7119: { en: 'What is #7119?', ja: '#7119とは', 'zh-tw': '#7119 是什麼？', 'zh-cn': '#7119 是什么？', ko: '#7119란?', de: 'Was ist #7119?', fr: 'Qu’est-ce que le #7119 ?', it: 'Cos’è il #7119?', es: '¿Qué es el #7119?' },
+  notLifeThreatening: { en: 'For when it is NOT life-threatening. In an emergency, call 119.', ja: '命に関わらないときの相談窓口です。緊急のときは119へ。', 'zh-tw': '用於「沒有生命危險」時的諮詢。緊急時請撥119。', 'zh-cn': '用于“没有生命危险”时的咨询。紧急时请拨119。', ko: '생명이 위급하지 않을 때의 상담 창구입니다. 위급하면 119로.', de: 'Für Fälle, die NICHT lebensbedrohlich sind. Im Notfall 119 anrufen.', fr: 'Pour les cas qui ne mettent PAS la vie en danger. En urgence, appelez le 119.', it: 'Per i casi NON pericolosi per la vita. In emergenza chiama il 119.', es: 'Para casos que NO ponen en peligro la vida. En una emergencia, llame al 119.' },
   language: { en: 'Language', ja: '言語', 'zh-tw': '語言', 'zh-cn': '语言', ko: '언어', de: 'Sprache', fr: 'Langue', it: 'Lingua', es: 'Idioma' },
 } satisfies Record<string, Localized>;
