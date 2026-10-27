@@ -1,0 +1,35 @@
+---
+import LostApp from '../../../components/lost/LostApp';
+import { langPaths, type Lang } from '../../../i18n/locales';
+import Base from '../../../layouts/Base.astro';
+
+export const getStaticPaths = () => langPaths();
+const lang = Astro.params.lang as Lang;
+const C = {
+  en: { title: "Lost or Stolen: Show at the Police Box", desc: "Lost your wallet, phone or passport, or had something stolen? Show a big Japanese card at a police box (koban) and get a report number for insurance. Works offline.", lead: "Pick what happened and what you lost, then show the card at a police box (交番) or lost and found. Staff can point to a question in Japanese." },
+  ja: { title: "落とし物・盗難（交番で見せる）", desc: "財布・スマホ・パスポートをなくした、盗まれた…。大きな日本語のカードを交番で見せ、保険用の受理番号ももらえるように伝えるツール。オフラインでも使えます。", lead: "できごととなくした物を選んで、カードを交番や忘れ物窓口で見せてください。相手は日本語の質問を指差せます。" },
+  ko: { title: "분실 · 도난 (파출소에서 보여주기)", desc: "지갑 · 휴대폰 · 여권을 잃어버렸거나 도난당했나요? 큰 일본어 카드를 파출소(交番)에 보여주고 보험용 접수 번호도 받으세요. 오프라인에서도 작동합니다.", lead: "무슨 일이 있었는지와 잃어버린 물건을 고른 뒤 카드를 파출소나 분실물 창구에 보여주세요. 상대가 일본어 질문을 가리킬 수 있어요." },
+  'zh-tw': { title: "遺失・遭竊（給派出所看）", desc: "錢包、手機、護照不見了，或是被偷了？把大字日文卡片給派出所（交番）看，也能拿到保險用的受理號碼。離線也能使用。", lead: "選擇發生的事和遺失的物品，再把卡片給派出所或失物招領處看。對方可以用手指點日文問題。" },
+  'zh-cn': { title: "丢失・被盗（给派出所看）", desc: "钱包、手机、护照丢了，或者被偷了？把大字日文卡片给派出所（交番）看，也能拿到保险用的受理号码。离线也能使用。", lead: "选择发生的事和丢失的物品，再把卡片给派出所或失物招领处看。对方可以用手指点日文问题。" },
+  de: { title: "Verloren oder gestohlen: beim Polizeiposten zeigen", desc: "Geldbörse, Handy oder Pass verloren oder bestohlen worden? Zeigen Sie beim Polizeiposten (Koban) eine große Karte auf Japanisch und erhalten Sie ein Aktenzeichen für die Versicherung. Funktioniert offline.", lead: "Wählen Sie, was passiert ist und was fehlt, und zeigen Sie die Karte beim Polizeiposten (交番) oder Fundbüro. Das Personal kann auf eine Frage auf Japanisch zeigen." },
+  fr: { title: "Perdu ou volé : montrer au poste de police", desc: "Portefeuille, téléphone ou passeport perdu, ou victime d’un vol ? Montrez une grande carte en japonais au poste de police (koban) et obtenez un numéro de déclaration pour l’assurance. Fonctionne hors ligne.", lead: "Choisissez ce qui s’est passé et l’objet perdu, puis montrez la carte au poste de police (交番) ou aux objets trouvés. Le personnel peut pointer une question en japonais." },
+  it: { title: "Perso o rubato: mostra al posto di polizia", desc: "Hai perso portafoglio, telefono o passaporto, o ti hanno derubato? Mostra una grande scheda in giapponese al posto di polizia (koban) e ottieni il numero della denuncia per l’assicurazione. Funziona offline.", lead: "Scegli cosa è successo e cosa hai perso, poi mostra la scheda al posto di polizia (交番) o agli oggetti smarriti. Il personale può indicare una domanda in giapponese." },
+  es: { title: "Perdido o robado: mostrar en el puesto de policía", desc: "¿Ha perdido la cartera, el móvil o el pasaporte, o le han robado? Muestre una tarjeta grande en japonés en el puesto de policía (koban) y obtenga un número de denuncia para el seguro. Funciona sin conexión.", lead: "Elija qué pasó y qué perdió, y muestre la tarjeta en el puesto de policía (交番) u objetos perdidos. El personal puede señalar una pregunta en japonés." },
+}[lang];
+---
+
+<Base
+  lang={lang}
+  title={C.title}
+  description={C.desc}
+  path="lost/" backHref={`/${lang}/`}
+>
+  <h1 class="page-title">🚓 {C.title}</h1>
+  <p class="lead">{C.lead}</p>
+  <LostApp client:load lang={lang} />
+</Base>
+
+<style>
+  .page-title { font-size: 1.4rem; margin: 8px 0 4px; }
+  .lead { margin: 0 0 16px; color: var(--muted); font-size: 0.9rem; }
+</style>

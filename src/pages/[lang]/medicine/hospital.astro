@@ -1,0 +1,35 @@
+---
+import HospitalApp from '../../../components/hospital/HospitalApp';
+import { langPaths, type Lang } from '../../../i18n/locales';
+import Base from '../../../layouts/Base.astro';
+
+export const getStaticPaths = () => langPaths();
+const lang = Astro.params.lang as Lang;
+const C = {
+  en: { title: "Show at Hospital Reception", desc: "No Japanese insurance, need an English-speaking doctor? Tap your symptoms and show a big Japanese card at a hospital or clinic reception in Japan. Works offline.", lead: "Tap what applies, then show the card at reception. Staff can point to a question in Japanese, and you tap your answer." },
+  ja: { title: "病院の受付で見せる", desc: "日本の保険がない・英語が話せる医師を希望…。症状をタップして、大きな日本語のカードを病院・クリニックの受付に見せるツール。オフラインでも使えます。", lead: "当てはまるものをタップして、カードを受付に見せてください。受付の方は日本語の質問を指差し、こちらはタップで答えられます。" },
+  ko: { title: "병원 접수에서 보여주기", desc: "일본 보험이 없거나 영어 하는 의사가 필요하세요? 증상을 누르고 큰 일본어 카드를 일본 병원 · 클리닉 접수처에 보여주세요. 오프라인에서도 작동합니다.", lead: "해당하는 것을 누른 뒤 카드를 접수처에 보여주세요. 직원이 일본어 질문을 가리키면 눌러서 답할 수 있어요." },
+  'zh-tw': { title: "給醫院櫃台看", desc: "沒有日本的保險、想找會說英語的醫師？點選症狀，把大字日文卡片給日本醫院・診所的櫃台看。離線也能使用。", lead: "點選符合的項目，再把卡片給櫃台看。對方用手指點日文問題，您點選回答即可。" },
+  'zh-cn': { title: "给医院前台看", desc: "没有日本的保险、想找会说英语的医生？点选症状，把大字日文卡片给日本医院・诊所的前台看。离线也能使用。", lead: "点选符合的项目，再把卡片给前台看。对方用手指点日文问题，您点选回答即可。" },
+  de: { title: "An der Krankenhausanmeldung zeigen", desc: "Keine japanische Versicherung, Arzt mit Englisch gesucht? Tippen Sie Ihre Beschwerden an und zeigen Sie an der Anmeldung eines Krankenhauses oder einer Klinik in Japan eine große Karte auf Japanisch. Funktioniert offline.", lead: "Tippen Sie an, was zutrifft, und zeigen Sie die Karte an der Anmeldung. Das Personal zeigt auf eine Frage auf Japanisch, Sie tippen Ihre Antwort an." },
+  fr: { title: "Montrer à l’accueil de l’hôpital", desc: "Pas d’assurance japonaise, besoin d’un médecin anglophone ? Touchez vos symptômes et montrez une grande carte en japonais à l’accueil d’un hôpital ou d’une clinique au Japon. Fonctionne hors ligne.", lead: "Touchez ce qui vous concerne, puis montrez la carte à l’accueil. Le personnel peut pointer une question en japonais, et vous touchez votre réponse." },
+  it: { title: "Mostra all’accettazione dell’ospedale", desc: "Niente assicurazione giapponese, serve un medico che parli inglese? Tocca i sintomi e mostra una grande scheda in giapponese all’accettazione di un ospedale o di una clinica in Giappone. Funziona offline.", lead: "Tocca ciò che ti riguarda, poi mostra la scheda all’accettazione. Il personale può indicare una domanda in giapponese e tu tocchi la risposta." },
+  es: { title: "Mostrar en la recepción del hospital", desc: "¿Sin seguro japonés o necesita un médico que hable inglés? Toque sus síntomas y muestre una tarjeta grande en japonés en la recepción de un hospital o clínica de Japón. Funciona sin conexión.", lead: "Toque lo que corresponda y muestre la tarjeta en recepción. El personal puede señalar una pregunta en japonés y usted toca su respuesta." },
+}[lang];
+---
+
+<Base
+  lang={lang}
+  title={C.title}
+  description={C.desc}
+  path="medicine/hospital/" backHref={`/${lang}/medicine/`}
+>
+  <h1 class="page-title">🏥 {C.title}</h1>
+  <p class="lead">{C.lead}</p>
+  <HospitalApp client:load lang={lang} />
+</Base>
+
+<style>
+  .page-title { font-size: 1.4rem; margin: 8px 0 4px; }
+  .lead { margin: 0 0 16px; color: var(--muted); font-size: 0.9rem; }
+</style>
