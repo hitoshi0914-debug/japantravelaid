@@ -1,4 +1,5 @@
 ---
+import { Icon } from '../../../components/Icon';
 // 地域ごとの喫煙所一覧（例: /en/smoking/tokyo-taito/）。spots.json から自動で作る。
 // 検索流入（「台東区 喫煙所」など）の入口で、AdSense の広告はこのページに出る（地図画面には出さない）。
 // 件数が少ない地域は noindex・サイトマップ外（MIN_INDEXABLE_SPOTS）。
@@ -34,7 +35,7 @@ const L = {
     tobacco: { any: 'Cigarettes OK', heated_only: 'Heated tobacco only', unknown: 'Tobacco type unknown' },
     customers: 'Customers only', unnamed: 'Smoking area',
     addedBy: (x: string) => `Added by ${x}`,
-    ranks: { bronze: '🥉 Bronze', silver: '🥈 Silver', gold: '🥇 Gold', platinum: '🏅 Platinum', diamond: '💎 Diamond' },
+    ranks: { bronze: 'Bronze', silver: 'Silver', gold: 'Gold', platinum: 'Platinum', diamond: 'Diamond' },
   },
   ja: {
     title: `${area.city}の喫煙所一覧（${n}か所）`,
@@ -46,7 +47,7 @@ const L = {
     tobacco: { any: '紙巻きOK', heated_only: '加熱式のみ', unknown: '紙巻き/加熱式 不明' },
     customers: '利用者限定', unnamed: '喫煙所',
     addedBy: (x: string) => `${x} さんが追加`,
-    ranks: { bronze: '🥉 ブロンズ', silver: '🥈 シルバー', gold: '🥇 ゴールド', platinum: '🏅 プラチナ', diamond: '💎 ダイヤ' },
+    ranks: { bronze: 'ブロンズ', silver: 'シルバー', gold: 'ゴールド', platinum: 'プラチナ', diamond: 'ダイヤ' },
   },
   'zh-tw': {
     title: `${city}的吸菸區（${n} 處）`,
@@ -58,7 +59,7 @@ const L = {
     tobacco: { any: '可吸紙菸', heated_only: '僅限加熱菸', unknown: '菸品類型不明' },
     customers: '限顧客使用', unnamed: '吸菸區',
     addedBy: (x: string) => `由 ${x} 新增`,
-    ranks: { bronze: '🥉 銅牌', silver: '🥈 銀牌', gold: '🥇 金牌', platinum: '🏅 白金', diamond: '💎 鑽石' },
+    ranks: { bronze: '銅牌', silver: '銀牌', gold: '金牌', platinum: '白金', diamond: '鑽石' },
   },
   'zh-cn': {
     title: `${city}的吸烟区（${n} 处）`,
@@ -70,7 +71,7 @@ const L = {
     tobacco: { any: '可吸卷烟', heated_only: '仅限加热烟', unknown: '烟草类型不明' },
     customers: '仅限顾客', unnamed: '吸烟区',
     addedBy: (x: string) => `由 ${x} 添加`,
-    ranks: { bronze: '🥉 铜牌', silver: '🥈 银牌', gold: '🥇 金牌', platinum: '🏅 白金', diamond: '💎 钻石' },
+    ranks: { bronze: '铜牌', silver: '银牌', gold: '金牌', platinum: '白金', diamond: '钻石' },
   },
   ko: {
     title: `${city} 흡연구역 (${n}곳)`,
@@ -82,7 +83,7 @@ const L = {
     tobacco: { any: '일반 담배 가능', heated_only: '가열식 담배 전용', unknown: '담배 종류 불명' },
     customers: '이용객 전용', unnamed: '흡연구역',
     addedBy: (x: string) => `${x} 님이 추가`,
-    ranks: { bronze: '🥉 브론즈', silver: '🥈 실버', gold: '🥇 골드', platinum: '🏅 플래티넘', diamond: '💎 다이아' },
+    ranks: { bronze: '브론즈', silver: '실버', gold: '골드', platinum: '플래티넘', diamond: '다이아' },
   },
   de: {
     title: `Raucherbereiche in ${name} (${n})`,
@@ -94,7 +95,7 @@ const L = {
     tobacco: { any: 'Zigaretten erlaubt', heated_only: 'Nur Tabakerhitzer', unknown: 'Tabakart unbekannt' },
     customers: 'Nur für Kunden', unnamed: 'Raucherbereich',
     addedBy: (x: string) => `Hinzugefügt von ${x}`,
-    ranks: { bronze: '🥉 Bronze', silver: '🥈 Silber', gold: '🥇 Gold', platinum: '🏅 Platin', diamond: '💎 Diamant' },
+    ranks: { bronze: 'Bronze', silver: 'Silber', gold: 'Gold', platinum: 'Platin', diamond: 'Diamant' },
   },
   fr: {
     title: `Espaces fumeurs à ${name} (${n})`,
@@ -106,7 +107,7 @@ const L = {
     tobacco: { any: 'Cigarettes autorisées', heated_only: 'Tabac chauffé uniquement', unknown: 'Type de tabac inconnu' },
     customers: 'Réservé aux clients', unnamed: 'Espace fumeurs',
     addedBy: (x: string) => `Ajouté par ${x}`,
-    ranks: { bronze: '🥉 Bronze', silver: '🥈 Argent', gold: '🥇 Or', platinum: '🏅 Platine', diamond: '💎 Diamant' },
+    ranks: { bronze: 'Bronze', silver: 'Argent', gold: 'Or', platinum: 'Platine', diamond: 'Diamant' },
   },
   it: {
     title: `Aree fumatori a ${name} (${n})`,
@@ -118,7 +119,7 @@ const L = {
     tobacco: { any: 'Sigarette consentite', heated_only: 'Solo tabacco riscaldato', unknown: 'Tipo di tabacco sconosciuto' },
     customers: 'Solo per clienti', unnamed: 'Area fumatori',
     addedBy: (x: string) => `Aggiunto da ${x}`,
-    ranks: { bronze: '🥉 Bronzo', silver: '🥈 Argento', gold: '🥇 Oro', platinum: '🏅 Platino', diamond: '💎 Diamante' },
+    ranks: { bronze: 'Bronzo', silver: 'Argento', gold: 'Oro', platinum: 'Platino', diamond: 'Diamante' },
   },
   es: {
     title: `Zonas de fumadores en ${name} (${n})`,
@@ -130,16 +131,16 @@ const L = {
     tobacco: { any: 'Se permiten cigarrillos', heated_only: 'Solo tabaco calentado', unknown: 'Tipo de tabaco desconocido' },
     customers: 'Solo clientes', unnamed: 'Zona de fumadores',
     addedBy: (x: string) => `Añadido por ${x}`,
-    ranks: { bronze: '🥉 Bronce', silver: '🥈 Plata', gold: '🥇 Oro', platinum: '🏅 Platino', diamond: '💎 Diamante' },
+    ranks: { bronze: 'Bronce', silver: 'Plata', gold: 'Oro', platinum: 'Platino', diamond: 'Diamante' },
   },
 }[lang];
 const spotName = (s: Spot) => localized(s.name, spotLang(lang)) ?? L.unnamed;
 ---
 
 <Base lang={lang} title={L.title} description={L.description} path={`smoking/${area.slug}/`} backHref={`/${lang}/smoking/areas/`} noindex={!indexable}>
-  <h1 class="page-title">🚬 {L.title}</h1>
+  <h1 class="page-title"><Icon name="cigarette" size={26} className="title-icon" /> {L.title}</h1>
   <p class="lead">{L.lead}</p>
-  <a class="cta" href={`/${lang}/smoking/`}>📍 {L.nearMe}</a>
+  <a class="cta" href={`/${lang}/smoking/`}><Icon name="pin" /> {L.nearMe}</a>
 
   <ol class="spots">
     {spots.map((s) => {
@@ -153,11 +154,11 @@ const spotName = (s: Spot) => localized(s.name, spotLang(lang)) ?? L.unnamed;
             <span>{L.types[s.type]}</span>
             <span class:list={['tob', `tob--${s.tobacco}`]}>{L.tobacco[s.tobacco]}</span>
             {s.access === 'customers' && <span class="cust">{L.customers}</span>}
-            {s.hours && <span>🕒 {L.hours}: {s.hours}</span>}
+            {s.hours && <span><Icon name="clock" size={14} /> {L.hours}: {s.hours}</span>}
           </p>
           {s.added_by && (() => {
             const rank = rankFor(counts.get(s.added_by) ?? 0);
-            return <p class="by">{L.addedBy(s.added_by)} {rank && <span class:list={['rank', `rank--${rank}`]}>{L.ranks[rank]}</span>}</p>;
+            return <p class="by">{L.addedBy(s.added_by)} {rank && <span class:list={['rank', `rank--${rank}`]}><Icon name="medal" size={12} /> {L.ranks[rank]}</span>}</p>;
           })()}
           <p class="actions">
             <a href={`/${lang}/smoking/?spot=${encodeURIComponent(s.id)}`}>{L.map}</a>

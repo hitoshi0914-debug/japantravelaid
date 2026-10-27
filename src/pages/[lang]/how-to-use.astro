@@ -1,4 +1,5 @@
 ---
+import { Icon } from '../../components/Icon';
 // 使い方ページ: 薬剤師カードの実際の画面で、初めての人向けに一歩ずつ説明する。
 // 画面写真は scripts/howto/make_shots.mjs で作る（public/howto/<言語>-<1〜6>.jpg）。
 import { langPaths, tr, type Lang } from '../../i18n/locales';
@@ -82,7 +83,7 @@ const actor = [0, 0, 0, 1, 0, 1];
 ---
 
 <Base lang={lang} title={t.title} description={t.desc} path="how-to-use/" backHref={`/${lang}/`}>
-  <h1 class="page-title">📖 {t.title}</h1>
+  <h1 class="page-title"><Icon name="book" size={26} className="title-icon" /> {t.title}</h1>
   <p class="lead">{t.lead}</p>
 
   <ol class="steps">
@@ -90,7 +91,7 @@ const actor = [0, 0, 0, 1, 0, 1];
       <li class="step">
         <div class="step-head">
           <span class="num">{i + 1}</span>
-          <span class={`who who--${actor[i]}`}>{actor[i] ? '🧑‍⚕️' : '🙋'} {t.who[actor[i]]}</span>
+          <span class={`who who--${actor[i]}`}><Icon name={actor[i] ? 'shop' : 'person'} size={16} /> {t.who[actor[i]]}</span>
         </div>
         <p class="step-text">{s.replace('{btn}', btn)}</p>
         <img src={`/howto/${lang}-${i + 1}.jpg`} width="585" height="1140" alt={s.replace('{btn}', btn)} loading={i < 2 ? 'eager' : 'lazy'} decoding="async" />
@@ -98,10 +99,10 @@ const actor = [0, 0, 0, 1, 0, 1];
     ))}
   </ol>
 
-  <p class="same">💇 {t.same}</p>
+  <p class="same"><Icon name="scissors" /> {t.same}</p>
   <div class="cta">
-    <a class="btn-primary" href={`/${lang}/medicine/pharmacist/`}>🗣️ {t.tryPharmacist}</a>
-    <a class="btn-ghost" href={`/${lang}/salon/`}>💇 {t.trySalon}</a>
+    <a class="btn-primary" href={`/${lang}/medicine/pharmacist/`}><Icon name="pharmacist" /> {t.tryPharmacist}</a>
+    <a class="btn-ghost" href={`/${lang}/salon/`}><Icon name="scissors" /> {t.trySalon}</a>
   </div>
 
   <h2 class="tips-title">{t.tipsTitle}</h2>

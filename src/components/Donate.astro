@@ -3,6 +3,7 @@
 import { tr, type Lang } from '../i18n/locales';
 import { ui } from '../i18n/ui';
 import { siteConfig } from '../site.config';
+import { Icon } from './Icon';
 
 interface Props {
   lang: Lang;
@@ -14,7 +15,7 @@ const url = siteConfig.donateUrl;
 {url && (
   <section class="donate">
     <p>{tr(ui.donateNote, lang)}</p>
-    <a href={url} target="_blank" rel="noopener" data-ga="donate_click">☕ {tr(ui.donate, lang)}</a>
+    <a href={url} target="_blank" rel="noopener" data-ga="donate_click"><Icon name="coffee" /> {tr(ui.donate, lang)}</a>
   </section>
 )}
 

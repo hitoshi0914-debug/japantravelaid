@@ -1,4 +1,5 @@
 ---
+import { Icon } from '../../../components/Icon';
 // 地域一覧（/en/smoking/areas/）。都道府県ごとに、喫煙所がある市区町村と件数を並べる。
 import { langPaths, type Lang } from '../../../i18n/locales';
 import Base from '../../../layouts/Base.astro';
@@ -28,8 +29,8 @@ const nearLabel = { en: 'Find the closest one from where I am', ja: '現在地�
 ---
 
 <Base lang={lang} title={title} description={description} path="smoking/areas/" backHref={`/${lang}/smoking/`}>
-  <h1 class="page-title">🚬 {title}</h1>
-  <a class="near-btn" href={`/${lang}/smoking/`}>📍 {nearLabel}</a>
+  <h1 class="page-title"><Icon name="cigarette" size={26} className="title-icon" /> {title}</h1>
+  <a class="near-btn" href={`/${lang}/smoking/`}><Icon name="pin" /> {nearLabel}</a>
   {[...byPref].map(([pref, groups]) => (
     <section>
       <h2>{pref}</h2>

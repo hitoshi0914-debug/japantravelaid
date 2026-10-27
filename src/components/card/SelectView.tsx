@@ -1,3 +1,4 @@
+import { Circle, CircleCheck } from 'lucide-react';
 import type { Dispatch } from 'react';
 import { tr, type AnyLang } from '../../i18n/locales';
 import { ui } from '../../i18n/ui';
@@ -51,7 +52,7 @@ export function SelectView({ lang, config, state, dispatch }: Props) {
                   aria-pressed={selected}
                   onClick={() => dispatch({ type: 'toggle', group: group.id, id: choice.id, single: group.single })}
                 >
-                  <span className="chip-icon" aria-hidden="true">{choice.pictogram}</span>
+                  {selected ? <CircleCheck className="chip-check" size={22} aria-hidden="true" /> : <Circle className="chip-check" size={22} aria-hidden="true" />}
                   <span className="chip-text">
                     <span>{tr(choice.label, lang)}</span>
                     {lang !== 'ja' && <span className="chip-ja" lang="ja">{choice.label.ja}</span>}

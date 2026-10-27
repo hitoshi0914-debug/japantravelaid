@@ -1,4 +1,5 @@
 ---
+import { Icon } from '../../../components/Icon';
 import BusApp from '../../../components/bus/BusApp';
 import { langPaths, type Lang } from '../../../i18n/locales';
 import Base from '../../../layouts/Base.astro';
@@ -24,7 +25,7 @@ const C = {
   description={C.desc}
   path="bus/" backHref={`/${lang}/`}
 >
-  <h1 class="page-title">🚌 {C.title}</h1>
+  <h1 class="page-title"><Icon name="bus" size={26} className="title-icon" /> {C.title}</h1>
   <p class="lead">{C.lead}</p>
   <BusApp client:load lang={lang} />
 </Base>

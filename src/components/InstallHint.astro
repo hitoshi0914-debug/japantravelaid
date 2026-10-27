@@ -1,0 +1,57 @@
+---
+// iPhone 向け「ホーム画面に追加」の案内（トップだけ）。iOS の Safari などで、まだホーム画面から開いていない人にだけ出す。
+// 閉じたら次から出さない（localStorage）。App Store 版はまだないので、iPhone はこれでアプリのように使ってもらう。
+import type { Lang } from '../i18n/locales';
+import { Icon } from './Icon';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+
+const C: Record<Lang, { title: string; share: string; add: string; offline: string; close: string }> = {
+  en: { title: 'Use it like an app on iPhone', share: 'Tap the Share button (in Safari it may be under “…”)', add: 'Choose “Add to Home Screen”', offline: 'After that it opens even without internet.', close: 'Close' },
+  ja: { title: 'iPhoneでアプリのように使う', share: '共有ボタンをタップ（Safariでは「…」の中にあることも）', add: '「ホーム画面に追加」を選ぶ', offline: 'そのあとは電波がなくても開けます。', close: '閉じる' },
+  ko: { title: 'iPhone에서 앱처럼 쓰기', share: '공유 버튼을 누르세요 (Safari에서는 “…” 안에 있을 수 있어요)', add: '“홈 화면에 추가”를 선택하세요', offline: '그다음엔 인터넷 없이도 열려요.', close: '닫기' },
+  'zh-tw': { title: '在 iPhone 上像 App 一樣使用', share: '點「分享」按鈕（Safari 中可能在「…」裡）', add: '選擇「加入主畫面」', offline: '之後沒有網路也能開啟。', close: '關閉' },
+  'zh-cn': { title: '在 iPhone 上像 App 一样使用', share: '点“分享”按钮（Safari 中可能在“…”里）', add: '选择“添加到主屏幕”', offline: '之后没有网络也能打开。', close: '关闭' },
+  de: { title: 'Auf dem iPhone wie eine App nutzen', share: 'Auf „Teilen“ tippen (in Safari ggf. unter „…“)', add: '„Zum Home-Bildschirm“ wählen', offline: 'Danach öffnet sie sich auch ohne Internet.', close: 'Schließen' },
+  fr: { title: 'L’utiliser comme une app sur iPhone', share: 'Touchez « Partager » (dans Safari, parfois sous « … »)', add: 'Choisissez « Sur l’écran d’accueil »', offline: 'Ensuite, elle s’ouvre même sans internet.', close: 'Fermer' },
+  it: { title: 'Usala come un’app su iPhone', share: 'Tocca «Condividi» (in Safari può essere sotto «…»)', add: 'Scegli «Aggiungi alla schermata Home»', offline: 'Poi si apre anche senza internet.', close: 'Chiudi' },
+  es: { title: 'Úsala como una app en el iPhone', share: 'Toque «Compartir» (en Safari puede estar en «…»)', add: 'Elija «Añadir a pantalla de inicio»', offline: 'Después se abre incluso sin internet.', close: 'Cerrar' },
+};
+const t = C[lang] ?? C.en;
+---
+
+<aside class="install-hint" data-install-hint hidden>
+  <button type="button" class="close" aria-label={t.close} data-install-close><Icon name="x" size={20} /></button>
+  <p class="title"><Icon name="phone" size={18} /> {t.title}</p>
+  <ol>
+    <li><span class="ic"><Icon name="share" size={18} /></span>{t.share}</li>
+    <li><span class="ic"><Icon name="add-home" size={18} /></span>{t.add}</li>
+  </ol>
+  <p class="note">{t.offline}</p>
+</aside>
+
+<script>
+  const KEY = 'jta-install-hint-closed';
+  const box = document.querySelector<HTMLElement>('[data-install-hint]');
+  const ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const standalone = (navigator as any).standalone === true || matchMedia('(display-mode: standalone)').matches;
+  let closed = false;
+  try { closed = localStorage.getItem(KEY) === '1'; } catch {}
+  if (box && ios && !standalone && !closed) box.hidden = false;
+  box?.querySelector('[data-install-close]')?.addEventListener('click', () => {
+    box.hidden = true;
+    try { localStorage.setItem(KEY, '1'); } catch {}
+  });
+</script>
+
+<style>
+  .install-hint { position: relative; margin: 0 0 16px; padding: 12px 48px 12px 14px; border-radius: var(--radius); background: var(--accent-soft); border: 1px solid var(--accent); font-size: 0.88rem; }
+  .install-hint[hidden] { display: none; }
+  .title { display: flex; align-items: center; gap: 6px; margin: 0 0 6px; font-weight: 800; color: var(--accent); }
+  ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+  li { display: flex; align-items: center; gap: 8px; line-height: 1.35; }
+  .ic { display: grid; place-items: center; width: 30px; height: 30px; flex: none; border-radius: 8px; background: var(--surface); color: var(--daily); }
+  .note { margin: 6px 0 0; color: var(--muted); font-size: 0.8rem; }
+  .close { position: absolute; top: 4px; right: 4px; display: grid; place-items: center; width: 44px; height: 44px; border: 0; background: transparent; color: var(--muted); cursor: pointer; }
+</style>

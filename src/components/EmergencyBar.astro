@@ -1,25 +1,48 @@
 ---
 // ヘッダー直下の緊急帯。どのページでも最上部に出し、ワンタップで電話をかけられる。
-import { Phone } from '@lucide/astro';
+import { Info, Phone } from '@lucide/astro';
 import { contacts } from '../data/emergency';
 import { tr, type Lang } from '../i18n/locales';
+import { ui } from '../i18n/ui';
 
 interface Props {
   lang: Lang;
 }
 const { lang } = Astro.props;
 const shown = contacts.filter((c) => c.id === 'ambulance' || c.id === '7119');
+const advice = contacts.find((c) => c.id === '7119')!;
 ---
 
 <div class="emergency-bar" role="region" aria-label="Emergency numbers">
   {shown.map((c) => (
-    <a class:list={['em-call', { urgent: c.urgent }]} href={`tel:${c.tel}`} data-ga="call_click" data-ga-params={JSON.stringify({ number: c.number })}>
-      <Phone size={18} aria-hidden="true" />
-      <strong>{c.number}</strong>
-      <span>{tr(c.label, lang)}</span>
-    </a>
+    <div class="em-cell">
+      <a class:list={['em-call', { urgent: c.urgent }]} href={`tel:${c.tel}`} data-ga="call_click" data-ga-params={JSON.stringify({ number: c.number })}>
+        <Phone size={18} aria-hidden="true" />
+        <strong>{c.number}</strong>
+        <span>{tr(c.label, lang)}</span>
+      </a>
+      {/* #7119 と 119 の使い分けが分かりにくい（外部の UI 評価）ので、i で説明を開く */}
+      {c.id === '7119' && (
+        <button type="button" class="em-info" aria-expanded="false" aria-controls="em-7119-note" aria-label={tr(ui.advice7119, lang)} data-em-info>
+          <Info size={20} aria-hidden="true" />
+        </button>
+      )}
+    </div>
   ))}
 </div>
+<p class="em-note" id="em-7119-note" hidden>
+  <strong>#7119</strong> {tr(ui.notLifeThreatening, lang)} {tr(advice.note, lang)}
+</p>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-em-info]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const note = document.getElementById(btn.getAttribute('aria-controls')!)!;
+      note.hidden = !note.hidden;
+      btn.setAttribute('aria-expanded', String(!note.hidden));
+    });
+  });
+</script>
 
 <style>
   .emergency-bar {
@@ -28,12 +51,17 @@ const shown = contacts.filter((c) => c.id === 'ambulance' || c.id === '7119');
     gap: 8px;
     padding: 8px 0;
   }
+  .em-cell { display: flex; gap: 4px; min-width: 0; }
   .em-call {
+    flex: 1;
+    min-width: 0;
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 6px;
+    align-content: center;
+    gap: 0 6px;
     min-height: var(--tap);
-    padding: 0 12px;
+    padding: 4px 12px;
     border-radius: 12px;
     background: var(--warn-soft);
     color: var(--text);
@@ -42,5 +70,9 @@ const shown = contacts.filter((c) => c.id === 'ambulance' || c.id === '7119');
     line-height: 1.15;
   }
   .em-call strong { font-size: 1.15rem; }
+  .em-call span { flex-basis: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.75rem; }
   .em-call.urgent { background: var(--danger); color: #fff; }
+  .em-info { flex: none; display: grid; place-items: center; width: 44px; min-height: var(--tap); border: 0; border-radius: 12px; background: var(--warn-soft); color: var(--text); cursor: pointer; }
+  .em-info[aria-expanded='true'] { background: #fde68a; }
+  .em-note { margin: 0 0 8px; padding: 10px 12px; border-radius: 12px; background: var(--warn-soft); font-size: 0.85rem; line-height: 1.45; }
 </style>
