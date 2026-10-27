@@ -12,7 +12,7 @@ const { lang } = Astro.props;
 
 <aside class="disclaimer" role="note">
   <p><Icon name="alert" size={16} /> {tr(ui.disclaimerShort, lang)} <a href={`/${lang}/about/`}>{tr(ui.about, lang)}</a></p>
-  <p lang="ja">{ui.disclaimerShort.ja}</p>
+  {lang !== 'ja' && <p lang="ja">{ui.disclaimerShort.ja}</p>}
 </aside>
 
 <style>
