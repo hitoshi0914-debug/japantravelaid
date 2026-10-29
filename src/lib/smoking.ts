@@ -58,6 +58,8 @@ export interface ShopItem {
 
 export interface ShopIndex {
   tile: number;
+  /** 喫煙所（f/）のタイルの大きさ */
+  freeTile?: number;
   sources: { id: string; name: string; license: string; url: string }[];
   shops: number;
   free: number;

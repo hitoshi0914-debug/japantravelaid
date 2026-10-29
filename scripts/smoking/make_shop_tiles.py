@@ -5,7 +5,7 @@
   OSM の喫煙所（spots.json）から 30m 以内のものは同じ場所とみなして除く）。地図でいつも現在地のまわりの 9 枚を読み込み、公衆喫煙所と同じように出す
 - t/<緯度>_<経度>.json … 喫煙できるお店（注文が必要）。地図で「喫煙できるお店も表示」を選んだときだけ、現在地のまわりの 9 枚を読み込む。
   CLUB JT のお店は、タウンクーポンのお店から 20m 以内なら同じ店とみなして除く
-- タイルは 0.02 度（約 2km）四方。index.json … タイルの一覧・件数・出典
+- タイルはお店 0.02 度（約 2km）・喫煙所 0.05 度（約 5km）四方。index.json … タイルの一覧・件数・出典
 - 各項目の src は出典（tc=タウンクーポン / jt=CLUB JT）。CLUB JT の分は出典の表示を出さない（2026-10-23 ユーザー）
 
 使い方: python3 scripts/smoking/make_shop_tiles.py town_coupon.json [--clubjt clubjt.json.gz]
@@ -25,6 +25,8 @@ from pathlib import Path
 
 OUT = Path("public/smoking/shops")
 TILE = 0.02
+# 誰でも使える喫煙所はまばらなので大きめのタイル（公開先の Cloudflare は 1 回 2 万ファイルまで。2026-10-29 全国分で 0.02 だと上限に近づいた）
+FREE_TILE = 0.05
 SOURCES = {
     "tc": {"id": "town-coupon", "name": "タウンクーポン（たばこすう）", "license": "掲載許可済み", "url": "https://www.town-coupon.com/"},
     "jt": {"id": "clubjt", "name": "CLUB JT 喫煙所マップ（JT）", "license": "JT の協力", "url": "https://www.clubjt.jp/map/"},
@@ -33,8 +35,8 @@ SOURCES = {
 JT_SKIP_GENRES = {"SHISHA"}
 
 
-def tile_key(lat: float, lng: float) -> str:
-    return f"{math.floor(lat / TILE)}_{math.floor(lng / TILE)}"
+def tile_key(lat: float, lng: float, size: float = TILE) -> str:
+    return f"{math.floor(lat / size)}_{math.floor(lng / size)}"
 
 
 def short_address(addr: str) -> str:
@@ -137,18 +139,18 @@ def main() -> int:
                 shops.append(item)
                 near_shop.add(item["lat"], item["lng"])
 
-    def tiled(items: list[dict]) -> dict[str, list[dict]]:
+    def tiled(items: list[dict], size: float) -> dict[str, list[dict]]:
         out: dict[str, list[dict]] = {}
         for x in items:
-            out.setdefault(tile_key(x["lat"], x["lng"]), []).append(x)
+            out.setdefault(tile_key(x["lat"], x["lng"], size), []).append(x)
         return out
 
     if OUT.exists():
         shutil.rmtree(OUT)
     dump = lambda obj: json.dumps(obj, ensure_ascii=False, separators=(",", ":"))  # noqa: E731
-    index = {"tile": TILE, "sources": [SOURCES[k] for k in ("tc", "jt") if k in used]}
+    index = {"tile": TILE, "freeTile": FREE_TILE, "sources": [SOURCES[k] for k in ("tc", "jt") if k in used]}
     for kind, items in (("t", shops), ("f", free)):
-        tiles = tiled(items)
+        tiles = tiled(items, TILE if kind == "t" else FREE_TILE)
         (OUT / kind).mkdir(parents=True)
         for key, its in tiles.items():
             its.sort(key=lambda x: x["id"])

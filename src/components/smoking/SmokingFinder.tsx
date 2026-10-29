@@ -673,7 +673,9 @@ export default function SmokingFinder({ pageLang }: Props) {
   const wantedTiles = useMemo(() => {
     if (!shopIndex) return [];
     const around = nearbyTiles(origin[0], origin[1], shopIndex.tile);
-    const free = around.filter((k) => (shopIndex.freeTiles ?? []).includes(k)).map((k) => `f/${k}`);
+    const free = nearbyTiles(origin[0], origin[1], shopIndex.freeTile ?? shopIndex.tile)
+      .filter((k) => (shopIndex.freeTiles ?? []).includes(k))
+      .map((k) => `f/${k}`);
     const shops = showShops ? around.filter((k) => shopIndex.tiles.includes(k)).map((k) => `t/${k}`) : [];
     return [...free, ...shops];
   }, [showShops, shopIndex, origin[0], origin[1]]);
