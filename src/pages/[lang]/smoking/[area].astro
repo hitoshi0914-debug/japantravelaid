@@ -26,8 +26,9 @@ const n = spots.length;
 const city = cityName(area, lang);
 const L = {
   en: {
-    title: `Smoking areas in ${name} (${n})`,
-    description: `${n} public smoking areas in ${name}, Japan, with cigarette / heated-tobacco info, hours, map and walking directions.`,
+    heading: `Smoking areas in ${name} (${n})`,
+    title: `Smoking areas near me in ${name}: ${n} spots on a map`,
+    description: `Find the nearest smoking area from where you are now. ${n} public smoking areas in ${name}, Japan, with cigarette / heated-tobacco info, hours, map and walking directions.`,
     lead: 'Smoking on the street is banned in many areas of Japan, and fines may apply. Please use designated smoking areas and follow the signs on site, as details may change.',
     map: 'Show on map', route: 'Directions', report: 'Report closed / wrong info', hours: 'Hours',
     allAreas: 'Browse other areas', nearMe: 'Find smoking areas near me', updated: 'Data updated',
@@ -38,8 +39,9 @@ const L = {
     ranks: { bronze: 'Bronze', silver: 'Silver', gold: 'Gold', platinum: 'Platinum', diamond: 'Diamond' },
   },
   ja: {
-    title: `${area.city}の喫煙所一覧（${n}か所）`,
-    description: `${area.pref}${area.city}の公衆喫煙所・駅や商業施設の喫煙所 ${n} か所。紙巻きOK・加熱式のみの区別、利用時間、地図とルート案内つき。`,
+    heading: `${area.city}の喫煙所一覧（${n}か所）`,
+    title: `${area.city}の喫煙所${n}か所｜現在地から近い喫煙所を地図で探す`,
+    description: `現在地から一番近い喫煙所をすぐ探せます。${area.pref}${area.city}の公衆喫煙所・駅や商業施設の喫煙所 ${n} か所。紙巻きOK・加熱式のみの区別、利用時間、地図とルート案内つき。`,
     lead: '路上喫煙が禁止されている地域が多いので、指定の喫煙所をご利用ください。情報は変わることがあるため、現地の表示に従ってください。',
     map: '地図で見る', route: 'ルート案内', report: '閉鎖・間違いを報告', hours: '利用時間',
     allAreas: 'ほかの地域から探す', nearMe: '現在地から近い喫煙所を探す', updated: 'データ更新',
@@ -138,7 +140,7 @@ const spotName = (s: Spot) => localized(s.name, spotLang(lang)) ?? L.unnamed;
 ---
 
 <Base lang={lang} title={L.title} description={L.description} path={`smoking/${area.slug}/`} backHref={`/${lang}/smoking/areas/`} noindex={!indexable}>
-  <h1 class="page-title"><Icon name="cigarette" size={26} className="title-icon" /> {L.title}</h1>
+  <h1 class="page-title"><Icon name="cigarette" size={26} className="title-icon" /> {'heading' in L ? L.heading : L.title}</h1>
   <p class="lead">{L.lead}</p>
   <a class="cta" href={`/${lang}/smoking/`}><Icon name="pin" /> {L.nearMe}</a>
 
