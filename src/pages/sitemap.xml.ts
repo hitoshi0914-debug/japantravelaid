@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { tiles } from '../data/categories';
-import { langsForPath, tools } from '../data/tools';
+import { guides } from '../data/guides';
+import { langsForPath, SMOKING_AREA_INDEX_LANGS, tools } from '../data/tools';
 import { locales } from '../i18n/locales';
 import { MIN_INDEXABLE_SPOTS } from '../lib/smoking';
 import { spotAreas } from '../lib/smokingData';
@@ -15,12 +16,15 @@ export const GET: APIRoute = ({ site }) => {
     'smoking/areas/',
     ...spotAreas().filter((g) => g.spots.length >= MIN_INDEXABLE_SPOTS).map((g) => `smoking/${g.area.slug}/`),
     'how-to-use/',
+    'guides/',
+    ...guides.map((g) => `guides/${g.slug}/`),
     'about/',
     'privacy/',
   ])];
   const url = (code: string, path: string) => new URL(`/${code}/${path}`, site).href;
   const entries = paths.flatMap((path) => {
-    const langs = locales.filter((l) => langsForPath(path).includes(l.code));
+    const isArea = path.startsWith('smoking/') && path !== 'smoking/' && path !== 'smoking/areas/';
+    const langs = locales.filter((l) => langsForPath(path).includes(l.code) && (!isArea || SMOKING_AREA_INDEX_LANGS.includes(l.code)));
     return langs.map((l) => {
       const alternates = langs
         .map((alt) => `    <xhtml:link rel="alternate" hreflang="${alt.hreflang}" href="${url(alt.code, path)}"/>`)
