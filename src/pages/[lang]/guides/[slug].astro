@@ -1,0 +1,59 @@
+---
+// 旅行ガイドの記事。最後に、その場面で使う指差しカードへのリンクを出す。
+import { Icon } from '../../../components/Icon';
+import { GUIDE_LANGS, guides, guideUi, type GuideLang } from '../../../data/guides';
+import Base from '../../../layouts/Base.astro';
+
+export const getStaticPaths = () =>
+  GUIDE_LANGS.flatMap((lang) => guides.map((g) => ({ params: { lang, slug: g.slug } })));
+const lang = Astro.params.lang as GuideLang;
+const guide = guides.find((g) => g.slug === Astro.params.slug)!;
+const T = guide.text[lang];
+const others = guides.filter((g) => g !== guide);
+const ld = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: T.title,
+  description: T.description,
+  inLanguage: lang,
+  dateModified: guide.updated,
+  publisher: { '@type': 'Organization', name: 'Japan Travel Aid' },
+};
+---
+
+<Base lang={lang} title={T.title} description={T.description} path={`guides/${guide.slug}/`} backHref={`/${lang}/guides/`}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(ld)} />
+  <article class="guide">
+    <h1>{T.title}</h1>
+    <p class="lead">{T.lead}</p>
+    {T.sections.map((s) => (
+      <section>
+        <h2>{s.h}</h2>
+        {s.p?.map((p) => <p>{p}</p>)}
+        {s.list && <ul>{s.list.map((li) => <li>{li}</li>)}</ul>}
+      </section>
+    ))}
+    <a class="use-card" href={`/${lang}/${guide.card}`}><Icon name={guide.icon} /> {guideUi.useCard[lang]}</a>
+    <p class="note">{guideUi.note[lang]}</p>
+    <p class="updated">{guideUi.updated[lang]}: <time datetime={guide.updated}>{guide.updated}</time></p>
+  </article>
+  <h2 class="more">{guideUi.more[lang]}</h2>
+  <ul class="others">
+    {others.map((g) => <li><a href={`/${lang}/guides/${g.slug}/`}>{g.text[lang].title}</a></li>)}
+  </ul>
+</Base>
+
+<style>
+  .guide h1 { font-size: 1.45rem; line-height: 1.3; margin: 12px 0 8px; }
+  .guide .lead { font-size: 1.05rem; }
+  .guide h2 { font-size: 1.15rem; margin: 24px 0 8px; }
+  .guide p, .guide li { line-height: 1.7; }
+  .guide ul { padding-left: 1.2em; }
+  .guide li { margin: 6px 0; }
+  .use-card { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 56px; margin: 24px 0 12px; border-radius: var(--radius); background: var(--accent); color: #fff; font-weight: 800; text-decoration: none; }
+  .note, .updated { color: var(--muted); font-size: 0.85rem; }
+  .more { font-size: 1rem; margin: 28px 0 8px; }
+  .others { padding-left: 1.2em; }
+  .others li { margin: 4px 0; }
+  .others a { display: inline-block; min-height: 44px; padding: 10px 0; }
+</style>

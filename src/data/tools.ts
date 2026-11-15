@@ -1,5 +1,10 @@
 import { tiles, type Tile } from './categories';
 import { locales, type Lang } from '../i18n/locales';
+import { GUIDE_LANGS } from './guides';
+
+/** 喫煙所の地域ページを検索に出す言語。ほかの言語はページを残して noindex・サイトマップ外
+（2026-11-06 AdSense「有用性の低いコンテンツ」対策: 似たページが約300枚になるため）。 */
+export const SMOKING_AREA_INDEX_LANGS: readonly Lang[] = ['en', 'ja'];
 
 // サイトのトップ（/en/・/ja/）に並べるツール。新しいツールを足すときはここに1行追加し、
 // src/pages/[lang]/<id>/ にページを作る。langs はそのツールのページを生成する言語。
@@ -54,5 +59,6 @@ export const tools: (Tile & { langs: readonly Lang[]; secondary?: boolean })[] =
 
 /** 言語の後ろのパス（例: "medicine/pharmacist/"）のページが生成される言語。 */
 export function langsForPath(path: string): readonly Lang[] {
+  if (path.startsWith('guides/')) return GUIDE_LANGS;
   return tools.find((t) => path.startsWith(t.path))?.langs ?? allLangs();
 }

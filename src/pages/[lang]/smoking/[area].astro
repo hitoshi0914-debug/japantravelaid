@@ -2,9 +2,10 @@
 import { Icon } from '../../../components/Icon';
 // 地域ごとの喫煙所一覧（例: /en/smoking/tokyo-taito/）。spots.json から自動で作る。
 // 検索流入（「台東区 喫煙所」など）の入口で、AdSense の広告はこのページに出る（地図画面には出さない）。
-// 件数が少ない地域は noindex・サイトマップ外（MIN_INDEXABLE_SPOTS）。
+// 件数が少ない地域と、英語・日本語以外の言語は noindex・サイトマップ外（MIN_INDEXABLE_SPOTS・SMOKING_AREA_INDEX_LANGS）。
 import { langPaths, type Lang } from '../../../i18n/locales';
 import Base from '../../../layouts/Base.astro';
+import { SMOKING_AREA_INDEX_LANGS } from '../../../data/tools';
 import { areaName, cityName, contributionCounts, localized, spotLang, MIN_INDEXABLE_SPOTS, rankFor, reportUrl, routeUrl, type Spot } from '../../../lib/smoking';
 import { loadSpots, spotAreas } from '../../../lib/smokingData';
 
@@ -20,7 +21,7 @@ const name = areaName(area, lang);
 const updated = loadSpots().generated_at.slice(0, 10);
 // 投稿者のランクは全国の投稿数で決める
 const counts = contributionCounts(loadSpots().spots);
-const indexable = spots.length >= MIN_INDEXABLE_SPOTS;
+const indexable = spots.length >= MIN_INDEXABLE_SPOTS && SMOKING_AREA_INDEX_LANGS.includes(lang);
 
 const n = spots.length;
 const city = cityName(area, lang);

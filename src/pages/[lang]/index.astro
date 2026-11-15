@@ -4,6 +4,7 @@ import HowToUse from '../../components/HowToUse.astro';
 import { Icon } from '../../components/Icon';
 import InstallHint from '../../components/InstallHint.astro';
 import Tile from '../../components/Tile.astro';
+import { guides, guideUi, isGuideLang } from '../../data/guides';
 import { tools } from '../../data/tools';
 import { langPaths, tr, type Lang } from '../../i18n/locales';
 import { ui } from '../../i18n/ui';
@@ -38,6 +39,15 @@ const groups = [
       <li><a href={`/${lang}/${t.path}`} data-ga="tile_click" data-ga-params={JSON.stringify({ tile: t.id })}><Icon name={t.icon} /> {tr(t.label, lang)}<small>{tr(t.hint, lang)}</small></a></li>
     ))}
   </ul>
+  {/* 旅行ガイド（読み物）。いまは英語・日本語だけ */}
+  {isGuideLang(lang) && (
+    <section class="guides">
+      <h2>{guideUi.sectionTitle[lang]}</h2>
+      <ul>
+        {guides.map((g) => <li><a href={`/${lang}/guides/${g.slug}/`}><Icon name={g.icon} /> {g.text[lang].title}</a></li>)}
+      </ul>
+    </section>
+  )}
 </Base>
 
 <style>
@@ -46,5 +56,8 @@ const groups = [
   .tools { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
   .more-tools { list-style: none; margin: 16px 0 0; padding: 0; }
   .more-tools a { display: flex; align-items: center; gap: 10px; min-height: 56px; padding: 0 16px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); color: var(--text); font-weight: 700; text-decoration: none; }
+  .guides h2 { margin: 24px 0 8px; font-size: 0.85rem; font-weight: 800; letter-spacing: 0.04em; color: var(--muted); text-transform: uppercase; }
+  .guides ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .guides a { display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 8px 16px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); color: var(--text); text-decoration: none; font-size: 0.95rem; }
   .more-tools small { margin-left: auto; font-weight: 400; font-size: 0.8rem; color: var(--muted); }
 </style>
