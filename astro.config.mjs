@@ -13,5 +13,7 @@ export default defineConfig({
   // 操作が必要な部分だけ React の島にする（指差しカード・喫煙所の地図）。
   integrations: [react(), serviceWorker()],
   // Tailwind は喫煙所ファインダーのページだけが読み込む（src/styles/smoking.css）。
-  vite: { plugins: [tailwindcss()] },
+  // 小さい CSS（全ページ共通の Base など 8KB 以下）は HTML に埋め込み、表示を止める読み込みを減らす（2026-11-18 PageSpeed）。
+  build: { inlineStylesheets: 'auto' },
+  vite: { plugins: [tailwindcss()], build: { assetsInlineLimit: 8192 } },
 });

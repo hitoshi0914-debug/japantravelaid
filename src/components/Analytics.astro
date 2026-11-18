@@ -47,6 +47,14 @@ const consentRequiredRegions = [
         gtag('event', el.getAttribute('data-ga'), params);
       });
     </script>
-    <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}></script>
+    {/* gtag.js はページの読み込みが終わってから読む。それまでの計測は dataLayer にたまり、読み込み後に送られる（2026-11-18 PageSpeed） */}
+    <script is:inline define:vars={{ gaId }}>
+      addEventListener('load', function () {
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=' + gaId;
+        document.head.appendChild(s);
+      });
+    </script>
   </>
 )}
