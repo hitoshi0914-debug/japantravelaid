@@ -13,6 +13,8 @@ export interface Tile {
   /** 省略時は medical（市販薬・救急ガイドのタイル）。 */
   tone?: TileTone;
   label: Localized;
+  /** トップの小さなタイル用の短い名前（省略時は label）。 */
+  short?: Localized;
   /** タイルの小さな補足（英語だけ表示）。 */
   hint: Localized;
   /** 言語の後ろのパス（例: "pharmacist/"）。 */

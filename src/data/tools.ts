@@ -8,10 +8,10 @@ function allLangs(): readonly Lang[] {
 }
 
 // 並び = トップでの並び。サイトの中心は「日本人スタッフに見せる指差しカード」（2026-10-09 ユーザー決定）。
-// secondary のツール（喫煙所）はカードの下に小さく出す。
+// 喫煙所もトップの「飲食・美容・交通」に並べる（2026-11-18 ユーザーのデザイン改善）。
 const card = (id: string) => tiles.find((t) => t.id === id)!;
 
-export const tools: (Tile & { langs: readonly Lang[]; secondary?: boolean })[] = [
+export const tools: (Tile & { langs: readonly Lang[] })[] = [
   { ...card('pharmacist'), langs: allLangs() },
   {
     id: 'salon', kind: 'tool', icon: 'scissors', tone: 'daily', path: 'salon/', langs: allLangs(),
@@ -20,6 +20,7 @@ export const tools: (Tile & { langs: readonly Lang[]; secondary?: boolean })[] =
   },
   {
     id: 'allergy', kind: 'tool', icon: 'utensils', tone: 'daily', path: 'allergy/', langs: allLangs(),
+    short: { en: 'Allergy & Diet', ja: '飲食店（アレルギー）', 'zh-tw': '餐廳（過敏）', 'zh-cn': '餐厅（过敏）', ko: '음식점(알레르기)', de: 'Allergien & Ernährung', fr: 'Allergies & régime', it: 'Allergie e dieta', es: 'Alergias y dieta' },
     label: { en: 'Allergy & Diet', ja: 'アレルギー・苦手な食材を伝える', 'zh-tw': '告知過敏・忌口食材', 'zh-cn': '告知过敏・忌口食材', ko: '알레르기・못 먹는 음식 알리기', de: 'Allergien & Ernährung', fr: 'Allergies & régime', it: 'Allergie e dieta', es: 'Alergias y dieta' },
     hint: { en: 'Allergies, halal, vegan', ja: 'アレルギー・ハラール・ヴィーガン', 'zh-tw': '過敏・清真・純素', 'zh-cn': '过敏・清真・纯素', ko: '알레르기・할랄・비건', de: 'Allergien, halal, vegan', fr: 'Allergies, halal, végan', it: 'Allergie, halal, vegano', es: 'Alergias, halal, vegano' },
   },
@@ -45,7 +46,7 @@ export const tools: (Tile & { langs: readonly Lang[]; secondary?: boolean })[] =
   },
   { ...card('emergency'), langs: allLangs() },
   {
-    id: 'smoking', kind: 'tool', icon: 'cigarette', path: 'smoking/', langs: allLangs(), secondary: true,
+    id: 'smoking', kind: 'tool', icon: 'cigarette', tone: 'daily', path: 'smoking/', langs: allLangs(),
     label: { en: 'Smoking Areas', ja: '喫煙所マップ', 'zh-tw': '吸菸區', 'zh-cn': '吸烟区', ko: '흡연구역', de: 'Raucherbereiche', fr: 'Espaces fumeurs', it: 'Aree fumatori', es: 'Zonas de fumadores' },
     hint: { en: 'Nearest smoking spots', ja: '現在地から近くを探す', 'zh-tw': '附近的吸菸區', 'zh-cn': '附近的吸烟区', ko: '가까운 흡연구역', de: 'Raucherbereiche in der Nähe', fr: 'Espaces fumeurs proches', it: 'Aree fumatori vicine', es: 'Zonas para fumar cercanas' },
   },
