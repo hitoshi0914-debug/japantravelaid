@@ -7,6 +7,17 @@ import { adsenseClient } from '../lib/adsense';
 {adsenseClient && (
   <>
     <meta name="google-adsense-account" content={adsenseClient} />
-    <script is:inline async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClient}`} crossorigin="anonymous"></script>
+    {/* 最初の表示を邪魔しないよう、ページの読み込みが終わってから広告のスクリプトを読む（2026-11-18 PageSpeed） */}
+    <script is:inline define:vars={{ adsenseClient }}>
+      addEventListener('load', function () {
+        setTimeout(function () {
+          var s = document.createElement('script');
+          s.async = true;
+          s.crossOrigin = 'anonymous';
+          s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + adsenseClient;
+          document.head.appendChild(s);
+        }, 1500);
+      });
+    </script>
   </>
 )}
