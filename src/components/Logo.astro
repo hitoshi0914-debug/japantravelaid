@@ -9,11 +9,10 @@ const { href } = Astro.props;
 
 <a class="brand" href={href} aria-label={siteConfig.siteName}>
   <LogoMark />
-  <span class="brand-name">Japan Travel <b>Aid</b></span>
+  <span class="brand-name">Japan Travel Aid</span>
 </a>
 
 <style>
   .brand { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--text); text-decoration: none; }
-  .brand-name { font-weight: 700; font-size: 1rem; letter-spacing: -0.01em; white-space: nowrap; }
-  .brand-name b { font-weight: 900; color: var(--accent); }
+  .brand-name { font-weight: 800; font-size: 1rem; letter-spacing: -0.01em; white-space: nowrap; }
 </style>
