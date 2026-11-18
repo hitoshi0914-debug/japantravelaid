@@ -7,17 +7,20 @@ import { tr, type Lang } from '../i18n/locales';
 interface Props {
   tile: Tile;
   lang: Lang;
+  /** トップの3列の小さなタイル（2026-11-18 ユーザーのデザイン改善: 全項目を1画面に） */
+  compact?: boolean;
 }
-const { tile, lang } = Astro.props;
+const { tile, lang, compact = false } = Astro.props;
+const label = compact && tile.short ? tile.short : tile.label;
 // そのツールにこの言語のページがなければ英語版へ。
 const hrefLang = !tile.langs || tile.langs.includes(lang) ? lang : 'en';
 ---
 
-<a class:list={['tile', `tile--${tile.tone ?? 'medical'}`]} href={`/${hrefLang}/${tile.path}`} data-ga="tile_click" data-ga-params={JSON.stringify({ tile: tile.id })}>
-  <span class="tile-pict"><Icon name={tile.icon} size={30} strokeWidth={2} /></span>
+<a class:list={['tile', `tile--${tile.tone ?? 'medical'}`, { 'tile--compact': compact }]} href={`/${hrefLang}/${tile.path}`} data-ga="tile_click" data-ga-params={JSON.stringify({ tile: tile.id })}>
+  <span class="tile-pict"><Icon name={tile.icon} size={compact ? 22 : 30} strokeWidth={2} /></span>
   <span class="tile-text">
-    <span class="tile-label">{tr(tile.label, lang)}</span>
-    {lang !== 'ja' && <span class="tile-ja" lang="ja">{tile.label.ja}</span>}
+    <span class="tile-label">{tr(label, lang)}</span>
+    {lang !== 'ja' && <span class="tile-ja" lang="ja">{label.ja}</span>}
   </span>
 </a>
 
@@ -50,6 +53,10 @@ const hrefLang = !tile.langs || tile.langs.includes(lang) ? lang : 'en';
   .tile-text { display: flex; flex-direction: column; gap: 2px; }
   .tile-label { font-weight: 800; font-size: 1rem; line-height: 1.2; }
   .tile-ja { font-size: 0.72rem; color: var(--muted); }
+  .tile--compact { min-height: 92px; padding: 10px 4px; gap: 6px; border-top-width: 3px; }
+  .tile--compact .tile-pict { width: 40px; height: 40px; }
+  .tile--compact .tile-label { font-size: 0.82rem; }
+  .tile--compact .tile-ja { font-size: 0.66rem; }
   /* 奇数個のとき最後の1枚（救急など）は横長にする */
-  :global(.tile-grid) > .tile:last-child:nth-child(odd), :global(.tools) > .tile:last-child:nth-child(odd) { grid-column: 1 / -1; flex-direction: row; justify-content: flex-start; min-height: 88px; padding: 12px 16px; text-align: left; gap: 14px; }
+  :global(.tile-grid) > .tile:last-child:nth-child(odd), :global(.tools:not(.tools--compact)) > .tile:last-child:nth-child(odd) { grid-column: 1 / -1; flex-direction: row; justify-content: flex-start; min-height: 88px; padding: 12px 16px; text-align: left; gap: 14px; }
 </style>

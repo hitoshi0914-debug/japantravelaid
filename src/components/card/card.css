@@ -54,7 +54,7 @@
 .card-section h2 { margin: 0 0 4px; font-size: 0.95rem; color: var(--accent); }
 .card-section ul { margin: 0; padding: 0; list-style: none; }
 .card-section li { display: flex; flex-direction: column; padding: 4px 0; }
-.card-ja { font-size: 2rem; font-weight: 900; line-height: 1.25; }   /* 店員さんが離れていても読める大きさ */
+.card-ja { font-size: 2.4rem; font-weight: 900; line-height: 1.25; }   /* 店員さんが離れていても読める大きさ（36px 以上、2026-11-18） */
 .card-en { font-size: 0.85rem; color: var(--muted); }
 .card-text { margin: 0; font-size: 2.2rem; font-weight: 900; line-height: 1.3; white-space: pre-line; overflow-wrap: anywhere; }
 .card-section--danger { background: var(--danger-soft); margin-inline: -16px; padding-inline: 16px; padding-bottom: 8px; border-top-color: var(--danger); }
@@ -76,9 +76,11 @@
 .answer--quick { border-style: solid; background: var(--accent-soft); }
 .answer-btn--quick { display: flex; flex-direction: column; gap: 2px; }
 .answer-btn--quick small { font-weight: 400; font-size: 0.75rem; color: var(--muted); }
-.answer-q-en { margin: 0; font-size: 1.6rem; font-weight: 900; line-height: 1.3; }
+.answer-q-en { margin: 0; font-size: 2.3rem; font-weight: 900; line-height: 1.3; }
 .answer-q-ja { margin: 4px 0 14px; color: var(--muted); }
 .answer-replies { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 14px; }
+/* 返事の選択肢はカードの下に固定して、店員が指差ししやすくする（2026-11-18 ユーザーのデザイン改善） */
+.answer--focused .answer-replies { position: sticky; bottom: 0; z-index: 1; margin-inline: -14px; padding: 10px 14px calc(10px + env(safe-area-inset-bottom)); background: #fff; border-top: 1px solid var(--border); box-shadow: 0 -6px 12px rgb(0 0 0 / 0.06); }
 .reply-btn {
   display: flex; align-items: center; justify-content: center; gap: 6px;
   min-height: 64px; border: 2px solid var(--accent); border-radius: 14px;

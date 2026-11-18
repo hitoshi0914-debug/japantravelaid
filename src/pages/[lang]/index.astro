@@ -1,6 +1,6 @@
 ---
-// サイトのトップ: 緊急帯（レイアウト）＋ ツールの大きなアイコン。ツールが増えたら src/data/tools.ts に足す。
-import HowToUse from '../../components/HowToUse.astro';
+// サイトのトップ: 緊急帯（レイアウト）＋ 見本カードと3ステップ ＋ ツールの小さなタイル（3列）。ツールが増えたら src/data/tools.ts に足す。
+// 2026-11-18 ユーザーのデザイン改善: 最初の画面にカードの見本、ボタンは「カードを使ってみる」1つ、全項目が1画面に入る3列タイル。
 import { Icon } from '../../components/Icon';
 import InstallHint from '../../components/InstallHint.astro';
 import Tile from '../../components/Tile.astro';
@@ -11,46 +11,70 @@ import Base from '../../layouts/Base.astro';
 
 export const getStaticPaths = () => langPaths();
 const lang = Astro.params.lang as Lang;
-// 医療・救急（赤系）と日常（青系）に分けて並べる（2026-10-27 外部の UI 評価: 緊急性の高いものを見分けやすく）
-const main = tools.filter((t) => !t.secondary);
-// 喫煙所は「飲食・美容・交通」の中に小さく出す（2026-11-18 ユーザーの SEO 改善リスト。カードの下に小さく、は従来どおり）
+
+// 見本カードの訳・3ステップ・ボタン。カードの日本語（頭が痛いです）はどの言語でも日本語のまま。
+const C: Record<Lang, { sub: string; sample: string; steps: [string, string, string]; cta: string; more: string }> = {
+  en: { sub: 'Free point-and-show cards. Work offline.', sample: 'I have a headache.', steps: ['Tap what you want to say', 'Show this screen to staff', 'Staff point to a reply, shown in your language'], cta: 'Try a card', more: 'How to use (with screenshots)' },
+  ja: { sub: '無料・オフラインで使える指差しカード', sample: 'I have a headache.', steps: ['伝えたいことをタップ', 'この画面を店員に見せる', '店員が返事を指差し → あなたの言葉で表示'], cta: 'カードを使ってみる', more: '画面写真つきの使い方' },
+  ko: { sub: '무료・오프라인에서도 쓰는 손가락 카드', sample: '머리가 아파요.', steps: ['전하고 싶은 것을 누르기', '이 화면을 직원에게 보여주기', '직원이 답을 가리키면 → 내 언어로 표시'], cta: '카드 써 보기', more: '화면 사진으로 보는 사용법' },
+  'zh-tw': { sub: '免費・離線可用的指示卡', sample: '我頭痛。', steps: ['點選想表達的內容', '把這個畫面給店員看', '店員指出回覆 → 以您的語言顯示'], cta: '試用卡片', more: '附畫面截圖的使用方法' },
+  'zh-cn': { sub: '免费・离线可用的指示卡', sample: '我头疼。', steps: ['点选想表达的内容', '把这个画面给店员看', '店员指出回复 → 以您的语言显示'], cta: '试用卡片', more: '附画面截图的使用方法' },
+  de: { sub: 'Kostenlose Zeigekarten, auch offline.', sample: 'Ich habe Kopfschmerzen.', steps: ['Antippen, was Sie sagen möchten', 'Diesen Bildschirm dem Personal zeigen', 'Das Personal zeigt auf die Antwort – in Ihrer Sprache'], cta: 'Karte ausprobieren', more: 'Anleitung mit Bildschirmfotos' },
+  fr: { sub: 'Cartes à montrer gratuites, même hors ligne.', sample: 'J’ai mal à la tête.', steps: ['Touchez ce que vous voulez dire', 'Montrez cet écran au personnel', 'Le personnel pointe une réponse, traduite pour vous'], cta: 'Essayer une carte', more: 'Mode d’emploi avec captures' },
+  it: { sub: 'Schede da mostrare gratuite, anche offline.', sample: 'Ho mal di testa.', steps: ['Tocca ciò che vuoi dire', 'Mostra questo schermo al personale', 'Il personale indica la risposta, nella tua lingua'], cta: 'Prova una scheda', more: 'Come si usa, con schermate' },
+  es: { sub: 'Tarjetas para mostrar, gratis y sin conexión.', sample: 'Me duele la cabeza.', steps: ['Toque lo que quiere decir', 'Muestre esta pantalla al personal', 'El personal señala la respuesta, en su idioma'], cta: 'Probar una tarjeta', more: 'Cómo se usa, con capturas' },
+};
+const t = C[lang] ?? C.en;
+
+// 医療・救急（赤）と飲食・美容・交通（緑）。並びは飲食店 → 美容院 → 交通 → 喫煙所。
+const order = ['allergy', 'salon', 'taxi', 'train', 'bus', 'smoking'];
+const daily = tools.filter((x) => x.tone === 'daily').sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
 const groups = [
-  { title: ui.groupHealth, items: main.filter((t) => t.tone !== 'daily'), note: ui.healthNote, more: [] as typeof tools },
-  { title: ui.groupDaily, items: main.filter((t) => t.tone === 'daily'), note: undefined, more: tools.filter((t) => t.secondary) },
+  { title: ui.groupHealth, items: tools.filter((x) => x.tone !== 'daily'), note: ui.healthNote },
+  { title: ui.groupDaily, items: daily, note: undefined },
 ];
 ---
 
 <Base lang={lang} title={tr(ui.topTitle, lang)} description={tr(ui.siteTagline, lang)} path="">
   <h1 class="top-h1">{tr(ui.topH1, lang)}</h1>
-  <p class="tagline">{tr(ui.siteTagline, lang)}</p>
+  <p class="tagline">{t.sub}</p>
+  <section class="hero">
+    <div class="sample" aria-hidden="true">
+      <p class="sample-ja" lang="ja">頭が<br />痛いです</p>
+      <p class="sample-tr">{t.sample}</p>
+    </div>
+    <ol class="steps">
+      {t.steps.map((s, i) => <li><span class="num">{i + 1}</span>{s}</li>)}
+    </ol>
+  </section>
+  <a class="cta" href={`/${lang}/medicine/pharmacist/`} data-ga="hero_try_card">{t.cta} →</a>
+  <a class="howto-link" href={`/${lang}/how-to-use/`} data-ga="howto_click">{t.more}</a>
   <InstallHint lang={lang} />
-  <HowToUse lang={lang} />
   {groups.map((g) => (
     <section class="tool-group">
       <h2>{tr(g.title, lang)}</h2>
-      <nav class="tools" aria-label={tr(g.title, lang)}>
-        {g.items.map((tool) => <Tile tile={tool} lang={lang} />)}
+      <nav class="tools tools--compact" aria-label={tr(g.title, lang)}>
+        {g.items.map((tool) => <Tile tile={tool} lang={lang} compact />)}
       </nav>
       {g.note && <p class="group-note">{tr(g.note, lang)}</p>}
-      {/* 喫煙所はカードの下に小さく（2026-10-09 ユーザー決定: サイトの中心は指差しカード） */}
-      {g.more.length > 0 && (
-        <ul class="more-tools">
-          {g.more.map((t) => (
-            <li><a href={`/${lang}/${t.path}`} data-ga="tile_click" data-ga-params={JSON.stringify({ tile: t.id })}><Icon name={t.icon} /> <span>{tr(t.label, lang)}</span><small>{tr(t.hint, lang)}</small></a></li>
-          ))}
-        </ul>
-      )}
     </section>
   ))}
 </Base>
 
 <style>
-  .top-h1 { margin: 12px 0 4px; font-size: 1.2rem; font-weight: 900; line-height: 1.3; }
-  .group-note { margin: 10px 0 0; padding: 10px 12px; border-radius: var(--radius); background: var(--medical-soft); font-size: 0.85rem; line-height: 1.45; }
-  .tagline { margin: 4px 0 16px; color: var(--muted); font-size: 0.9rem; }
-  .tool-group h2 { margin: 20px 0 8px; font-size: 0.85rem; font-weight: 800; letter-spacing: 0.04em; color: var(--muted); text-transform: uppercase; }
-  .tools { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-  .more-tools { list-style: none; margin: 12px 0 0; padding: 0; }
-  .more-tools a { display: flex; align-items: center; gap: 10px; min-height: 56px; padding: 0 16px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); color: var(--text); font-weight: 700; text-decoration: none; }
-  .more-tools small { margin-left: auto; font-weight: 400; font-size: 0.8rem; color: var(--muted); }
+  .top-h1 { margin: 12px 0 2px; font-size: 1.25rem; font-weight: 900; line-height: 1.3; }
+  .tagline { margin: 0 0 12px; color: var(--muted); font-size: 0.85rem; }
+  .hero { display: flex; gap: 12px; align-items: center; padding: 12px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); }
+  .sample { flex: 0 0 42%; display: flex; flex-direction: column; justify-content: center; min-height: 132px; padding: 10px 8px; border: 3px solid var(--accent); border-radius: 14px; background: #fff; color: #000; text-align: center; }
+  .sample-ja { margin: 0; font-size: 1.75rem; font-weight: 900; line-height: 1.25; }
+  .sample-tr { margin: 8px 0 0; font-size: 0.75rem; color: var(--muted); }
+  .steps { flex: 1; margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; font-size: 0.85rem; line-height: 1.35; }
+  .steps li { display: flex; gap: 6px; }
+  .steps li:nth-child(2) { color: var(--accent); font-weight: 700; }
+  .num { flex: none; display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid currentColor; font-size: 0.72rem; font-weight: 700; }
+  .cta { display: flex; align-items: center; justify-content: center; min-height: 52px; margin: 12px 0 0; border-radius: 999px; background: var(--accent); color: #fff; font-weight: 800; font-size: 1.05rem; text-decoration: none; }
+  .howto-link { display: flex; justify-content: center; align-items: center; min-height: 44px; font-size: 0.85rem; }
+  .tool-group h2 { margin: 12px 0 6px; font-size: 0.85rem; font-weight: 800; letter-spacing: 0.04em; color: var(--muted); text-transform: uppercase; }
+  .tools { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .group-note { margin: 8px 0 0; padding: 8px 12px; border-radius: var(--radius); background: var(--medical-soft); font-size: 0.8rem; line-height: 1.45; }
 </style>
