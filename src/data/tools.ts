@@ -20,7 +20,7 @@ export const tools: (Tile & { langs: readonly Lang[]; secondary?: boolean })[] =
   },
   {
     id: 'allergy', kind: 'tool', icon: 'utensils', tone: 'daily', path: 'allergy/', langs: allLangs(),
-    label: { en: 'Allergy & Diet', ja: '飲食店で見せる', 'zh-tw': '給餐廳看', 'zh-cn': '给餐厅看', ko: '음식점에서 보여주기', de: 'Allergien & Ernährung', fr: 'Allergies & régime', it: 'Allergie e dieta', es: 'Alergias y dieta' },
+    label: { en: 'Allergy & Diet', ja: 'アレルギー・苦手な食材を伝える', 'zh-tw': '告知過敏・忌口食材', 'zh-cn': '告知过敏・忌口食材', ko: '알레르기・못 먹는 음식 알리기', de: 'Allergien & Ernährung', fr: 'Allergies & régime', it: 'Allergie e dieta', es: 'Alergias y dieta' },
     hint: { en: 'Allergies, halal, vegan', ja: 'アレルギー・ハラール・ヴィーガン', 'zh-tw': '過敏・清真・純素', 'zh-cn': '过敏・清真・纯素', ko: '알레르기・할랄・비건', de: 'Allergien, halal, vegan', fr: 'Allergies, halal, végan', it: 'Allergie, halal, vegano', es: 'Alergias, halal, vegano' },
   },
   {
@@ -46,8 +46,8 @@ export const tools: (Tile & { langs: readonly Lang[]; secondary?: boolean })[] =
   { ...card('emergency'), langs: allLangs() },
   {
     id: 'smoking', kind: 'tool', icon: 'cigarette', path: 'smoking/', langs: allLangs(), secondary: true,
-    label: { en: 'Smoking Areas', ja: '喫煙所', 'zh-tw': '吸菸區', 'zh-cn': '吸烟区', ko: '흡연구역', de: 'Raucherbereiche', fr: 'Espaces fumeurs', it: 'Aree fumatori', es: 'Zonas de fumadores' },
-    hint: { en: 'Nearest smoking spots', ja: '近くの喫煙所', 'zh-tw': '附近的吸菸區', 'zh-cn': '附近的吸烟区', ko: '가까운 흡연구역', de: 'Raucherbereiche in der Nähe', fr: 'Espaces fumeurs proches', it: 'Aree fumatori vicine', es: 'Zonas para fumar cercanas' },
+    label: { en: 'Smoking Areas', ja: '喫煙所マップ', 'zh-tw': '吸菸區', 'zh-cn': '吸烟区', ko: '흡연구역', de: 'Raucherbereiche', fr: 'Espaces fumeurs', it: 'Aree fumatori', es: 'Zonas de fumadores' },
+    hint: { en: 'Nearest smoking spots', ja: '現在地から近くを探す', 'zh-tw': '附近的吸菸區', 'zh-cn': '附近的吸烟区', ko: '가까운 흡연구역', de: 'Raucherbereiche in der Nähe', fr: 'Espaces fumeurs proches', it: 'Aree fumatori vicine', es: 'Zonas para fumar cercanas' },
   },
 ];
 
