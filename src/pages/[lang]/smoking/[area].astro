@@ -7,6 +7,7 @@ import { langPaths, type Lang } from '../../../i18n/locales';
 import Base from '../../../layouts/Base.astro';
 import { areaName, cityName, contributionCounts, localized, spotLang, MIN_INDEXABLE_SPOTS, rankFor, reportUrl, routeUrl, type Spot } from '../../../lib/smoking';
 import { loadSpots, spotAreas } from '../../../lib/smokingData';
+import { areaGuides } from '../../../data/areaGuides';
 
 export function getStaticPaths() {
   return langPaths().flatMap(({ params }) =>
@@ -23,6 +24,10 @@ const counts = contributionCounts(loadSpots().spots);
 const indexable = spots.length >= MIN_INDEXABLE_SPOTS;
 
 const n = spots.length;
+// 地域ごとに確かめた「この地域について」（en・ja だけ）
+const guide = lang === 'en' || lang === 'ja' ? areaGuides[area.slug] : undefined;
+const G = guide?.[lang as 'en' | 'ja'];
+const GL = lang === 'ja' ? { h: `${area.city}で吸う前に`, checked: '確認日', src: '出典' } : { h: `Before you smoke in ${name}`, checked: 'Checked', src: 'Sources' };
 const city = cityName(area, lang);
 const L = {
   en: {
@@ -144,6 +149,18 @@ const spotName = (s: Spot) => localized(s.name, spotLang(lang)) ?? L.unnamed;
   <p class="lead">{L.lead}</p>
   <a class="cta" href={`/${lang}/smoking/`}><Icon name="pin" /> {L.nearMe}</a>
 
+  {guide && G && (
+    <section class="guide">
+      <h2>{GL.h}</h2>
+      <p>{G.sights}</p>
+      <ul>{G.rules.map((r) => <li>{r}</li>)}</ul>
+      <p class="guide-src">
+        {GL.checked}: {guide.checked}
+        {guide.sources.length > 0 && <> · {GL.src}: {guide.sources.map((x, i) => <>{i > 0 && ' / '}<a href={x.url} target="_blank" rel="noopener">{x.label}</a></>)}</>}
+      </p>
+    </section>
+  )}
+
   <ol class="spots">
     {spots.map((s) => {
       const report = reportUrl(s.id);
@@ -180,6 +197,12 @@ const spotName = (s: Spot) => localized(s.name, spotLang(lang)) ?? L.unnamed;
   .page-title { font-size: 1.35rem; margin: 8px 0 4px; }
   .lead { color: var(--muted); font-size: 0.88rem; }
   .cta { display: flex; align-items: center; justify-content: center; min-height: 52px; margin: 12px 0 16px; border-radius: var(--radius); background: #0f766e; color: #fff; font-weight: 800; text-decoration: none; }
+  .guide { margin: 0 0 16px; padding: 12px 14px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); font-size: 0.9rem; }
+  .guide h2 { margin: 0 0 6px; font-size: 1.05rem; }
+  .guide p { margin: 0 0 6px; }
+  .guide ul { margin: 0 0 6px; padding-left: 1.2em; }
+  .guide li { margin: 0 0 4px; }
+  .guide-src { font-size: 0.75rem; color: var(--muted); }
   .spots { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
   .spot { padding: 12px 14px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); }
   .spot h2 { margin: 0; font-size: 1.02rem; }
