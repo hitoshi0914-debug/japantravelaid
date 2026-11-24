@@ -9,8 +9,8 @@ import Base from '../../../layouts/Base.astro';
 export const getStaticPaths = () => langPaths();
 const lang = Astro.params.lang as Lang;
 const C = {
-  en: { title: 'Medicine & Emergency', desc: 'Point-and-show card for Japanese drugstores, medicine box kanji, and emergency numbers for visitors to Japan.' },
-  ja: { title: '市販薬・救急', desc: '訪日客が日本のドラッグストアで使う指差しカード、薬の箱の言葉、救急の電話番号。' },
+  en: { title: 'Medicine & Emergency', seoTitle: 'Buying medicine in Japan as a tourist: drugstore card & emergency numbers (English)', desc: 'How to find medicine at a Japanese drugstore in English: words on the box, a point-and-show card for the pharmacist, nearby drugstores and emergency numbers (119, #7119).' },
+  ja: { title: '市販薬・救急', seoTitle: '外国人旅行者が日本で薬を買う方法（英語の指差しカード・救急の電話）', desc: '訪日客が日本のドラッグストアで薬を探すときに。薬の箱の言葉の英語対訳、薬剤師に見せる指差しカード、近くのドラッグストア、救急の電話番号（119・#7119）。' },
   'zh-tw': { title: '藥品・急救', desc: '在日本藥妝店使用的指示卡、藥盒上的日文字詞，以及急救電話。' },
   'zh-cn': { title: '药品・急救', desc: '在日本药妆店使用的指示卡、药盒上的日文词语，以及急救电话。' },
   ko: { title: '의약품・응급', desc: '일본 드러그스토어에서 쓰는 손가락 카드, 약 상자의 일본어, 응급 전화번호.' },
@@ -21,7 +21,7 @@ const C = {
 }[lang];
 ---
 
-<Base lang={lang} title={C.title} description={C.desc} path="medicine/">
+<Base lang={lang} title={'seoTitle' in C ? C.seoTitle : C.title} description={C.desc} path="medicine/">
   <h1 class="section-title"><Icon name="pill" size={26} className="title-icon" /> {C.title}</h1>
   <p class="tagline">{tr(ui.tagline, lang)}</p>
   <TileGrid lang={lang} />

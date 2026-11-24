@@ -4,6 +4,7 @@ import { langsForPath, tools } from '../data/tools';
 import { locales } from '../i18n/locales';
 import { MIN_INDEXABLE_SPOTS } from '../lib/smoking';
 import { spotAreas } from '../lib/smokingData';
+import { guides } from '../data/guides';
 
 // 検索エンジン向けのサイトマップ（hreflang 付き）。そのページがある言語だけ載せる。
 // 喫煙所の地域ページは件数が MIN_INDEXABLE_SPOTS 以上のものだけ。
@@ -14,6 +15,7 @@ export const GET: APIRoute = ({ site }) => {
     ...tiles.map((t) => t.path),
     'smoking/areas/',
     ...spotAreas().filter((g) => g.spots.length >= MIN_INDEXABLE_SPOTS).map((g) => `smoking/${g.area.slug}/`),
+    ...guides.map((g) => `guide/${g.slug}/`),
     'how-to-use/',
     'about/',
     'privacy/',

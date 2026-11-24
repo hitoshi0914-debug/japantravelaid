@@ -20,6 +20,32 @@ const info = categoryInfo[tile.id];
 const items = medicines.filter((m) => m.category === tile.id);
 const cardLink = `/${lang}/medicine/pharmacist/?s=${(tile.symptoms ?? []).join(',')}`;
 
+// 検索結果に出るタイトルと説明文（en・ja だけ）。旅行者が検索する言葉に合わせる（2026-11-24）。
+// 製品名・「効く」「おすすめ」など薬の推奨にあたる言葉は書かない。ほかの言語はタイルの名前と intro のまま。
+const SEO: Record<string, Partial<Record<Lang, { title: string; description: string }>>> = {
+  pain: {
+    en: { title: 'Painkillers & headache medicine in Japan: how to read the box (English)', description: 'Looking for pain relief or fever medicine at a Japanese drugstore? Kanji on the box (頭痛, 解熱鎮痛薬) in English, ingredient names in katakana, and a card to show the pharmacist.' },
+    ja: { title: '日本で買える頭痛・痛み止めの薬（英語で探す方法）｜箱の言葉の対訳', description: '外国人旅行者が日本のドラッグストアで解熱鎮痛薬を探すときに。箱の「頭痛」「解熱鎮痛薬」などの言葉と主な成分名の英語対訳、薬剤師に見せる指差しカード。' },
+  },
+  cold: {
+    en: { title: 'Cold & cough medicine in Japan: how to read the box (English)', description: 'Caught a cold in Japan? Words on cold, cough and sore-throat boxes (総合かぜ薬, せき止め) in English, ingredient names in katakana, and a card to show the pharmacist.' },
+    ja: { title: '日本で買える風邪・せき・のどの薬（英語で探す方法）｜箱の言葉の対訳', description: '外国人旅行者が日本で風邪をひいたときに。箱の「総合かぜ薬」「せき止め」などの言葉と主な成分名の英語対訳、薬剤師に見せる指差しカード。' },
+  },
+  stomach: {
+    en: { title: 'Stomach medicine in Japan: diarrhea, upset stomach & motion sickness (English)', description: 'Upset stomach while traveling in Japan? Words on stomach, anti-diarrheal and motion-sickness boxes (胃腸薬, 下痢止め, 酔い止め) in English, plus a card to show the pharmacist.' },
+    ja: { title: '日本で買える胃腸薬・下痢止め・酔い止め（英語で探す方法）｜箱の言葉の対訳', description: '外国人旅行者がおなかの調子をくずしたときに。箱の「胃腸薬」「下痢止め」「酔い止め」などの言葉と主な成分名の英語対訳、薬剤師に見せる指差しカード。' },
+  },
+  skin: {
+    en: { title: 'Itch cream, insect bites & bandages in Japan: how to read the box (English)', description: 'Need anti-itch cream, a patch or bandages in Japan? Words on the box (かゆみ止め, 虫さされ, 湿布, 絆創膏) in English, ingredient names in katakana, and a card to show the pharmacist.' },
+    ja: { title: '日本で買えるかゆみ止め・虫さされ・湿布（英語で探す方法）｜箱の言葉の対訳', description: '外国人旅行者が日本で皮膚のかゆみ・虫さされ・けがのときに。箱の「かゆみ止め」「湿布」「絆創膏」などの言葉と成分名の英語対訳、薬剤師に見せる指差しカード。' },
+  },
+  eye: {
+    en: { title: 'Eye drops & allergy products in Japan: how to read the box (English)', description: 'Itchy or dry eyes in Japan? Words on eye-drop and allergy boxes (目薬, 点眼) in English, ingredient names in katakana, and a card to show the pharmacist.' },
+    ja: { title: '日本で買える目薬・花粉症の薬（英語で探す方法）｜箱の言葉の対訳', description: '外国人旅行者が日本で目のかゆみ・花粉症のときに。箱の「目薬」「点眼」などの言葉と成分名の英語対訳、薬剤師に見せる指差しカード。' },
+  },
+};
+const seo = SEO[tile.id]?.[lang];
+
 // 見出しと注記。ja のページでは言葉の意味は英語のまま（日本語↔英語の対訳表）。
 // 「名前を訳すだけで、どの製品が合うかは示さない」の注記はどの言語でも必ず残す。
 const C = {
@@ -71,7 +97,7 @@ const C = {
 }[lang];
 ---
 
-<Base lang={lang} title={tr(tile.label, lang)} description={tr(info.intro, lang)} path={`medicine/category/${tile.id}/`} backHref={`/${lang}/medicine/`}>
+<Base lang={lang} title={seo?.title ?? tr(tile.label, lang)} description={seo?.description ?? tr(info.intro, lang)} path={`medicine/category/${tile.id}/`} backHref={`/${lang}/medicine/`}>
   <h1 class="page-title"><Icon name={tile.icon} size={26} className="title-icon" /> {tr(tile.label, lang)}</h1>
   <p class="lead">{tr(info.intro, lang)}</p>
 

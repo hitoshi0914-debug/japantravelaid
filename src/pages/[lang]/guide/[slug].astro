@@ -1,0 +1,53 @@
+---
+// 指差しカードの「こんなときに使う」説明ページ（英語だけ）。中身は src/data/guides.ts。
+import { Icon } from '../../../components/Icon';
+import Disclaimer from '../../../components/Disclaimer.astro';
+import { guides, type Guide } from '../../../data/guides';
+import type { Lang } from '../../../i18n/locales';
+import Base from '../../../layouts/Base.astro';
+
+export function getStaticPaths() {
+  return guides.map((g) => ({ params: { lang: 'en', slug: g.slug }, props: { g } }));
+}
+
+const { g } = Astro.props as { g: Guide };
+const lang = Astro.params.lang as Lang;
+const cardHref = `/${lang}/${g.card}`;
+const others = guides.filter((x) => x.slug !== g.slug);
+---
+
+<Base lang={lang} title={g.title} description={g.description} path={`guide/${g.slug}/`} backHref={`/${lang}/`}>
+  <article class="guide">
+    <h1>{g.h1}</h1>
+    <p class="lead">{g.lead}</p>
+    <a class="cta" href={cardHref} data-ga="guide_card_click"><Icon name="pointer" /> {g.cardLabel}</a>
+    {g.sections.map((s) => (
+      <section>
+        <h2>{s.h}</h2>
+        {s.p?.map((x) => <p>{x}</p>)}
+        {s.list && <ul>{s.list.map((x) => <li>{x}</li>)}</ul>}
+      </section>
+    ))}
+    <a class="cta" href={cardHref} data-ga="guide_card_click"><Icon name="pointer" /> {g.cardLabel}</a>
+    <p class="note">The card is free and works on your phone, even offline.</p>
+  </article>
+  {g.medical && <Disclaimer lang={lang} />}
+  <nav class="more">
+    <h2>Other situations</h2>
+    <ul>{others.map((x) => <li><a href={`/${lang}/guide/${x.slug}/`}>{x.h1}</a></li>)}</ul>
+  </nav>
+</Base>
+
+<style>
+  .guide h1 { font-size: 1.45rem; margin: 8px 0 6px; line-height: 1.3; }
+  .lead { color: var(--muted); }
+  .guide h2 { font-size: 1.12rem; margin: 22px 0 6px; }
+  .guide p, .guide li { line-height: 1.65; }
+  .guide ul { padding-left: 1.2em; }
+  .cta { display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 52px; margin: 14px 0; border-radius: var(--radius); background: var(--accent, #0b7a55); color: #fff; font-weight: 800; text-decoration: none; }
+  .note { font-size: 0.82rem; color: var(--muted); }
+  .more { margin-top: 24px; }
+  .more h2 { font-size: 1rem; }
+  .more ul { list-style: none; padding: 0; margin: 0; }
+  .more a { display: flex; align-items: center; min-height: 44px; }
+</style>
