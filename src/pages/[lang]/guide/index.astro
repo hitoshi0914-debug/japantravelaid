@@ -1,0 +1,25 @@
+---
+// 旅行ガイドの一覧（英語だけ）。記事は src/data/guides.ts。
+import { guides } from '../../../data/guides';
+import type { Lang } from '../../../i18n/locales';
+import Base from '../../../layouts/Base.astro';
+
+export const getStaticPaths = () => [{ params: { lang: 'en' } }];
+const lang = Astro.params.lang as Lang;
+---
+
+<Base lang={lang} title="Travel guides: when things go wrong in Japan" description="Practical guides for visitors to Japan: drugstores, getting sick or hurt, food allergies, taxis, trains, local buses, haircuts and smoking rules." path="guide/">
+  <h1>Travel guides</h1>
+  <p class="lead">Short, practical guides to the situations visitors to Japan most often get stuck in. Each one ends with a free card you can show to Japanese staff.</p>
+  <ul class="list">
+    {guides.map((g) => <li><a href={`/${lang}/guide/${g.slug}/`}><strong>{g.h1}</strong><small>{g.description}</small></a></li>)}
+  </ul>
+</Base>
+
+<style>
+  h1 { font-size: 1.4rem; margin: 12px 0 8px; }
+  .lead { color: var(--muted); }
+  .list { list-style: none; padding: 0; margin: 16px 0 0; display: grid; gap: 12px; }
+  .list a { display: grid; gap: 4px; padding: 14px 16px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); color: var(--text); text-decoration: none; }
+  .list small { color: var(--muted); font-size: 0.85rem; }
+</style>

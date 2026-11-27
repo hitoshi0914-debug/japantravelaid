@@ -21,7 +21,8 @@ const name = areaName(area, lang);
 const updated = loadSpots().generated_at.slice(0, 10);
 // 投稿者のランクは全国の投稿数で決める
 const counts = contributionCounts(loadSpots().spots);
-const indexable = spots.length >= MIN_INDEXABLE_SPOTS;
+// 英語・日本語以外の地域ページは noindex（似たページが約300枚になるため。2026-11 AdSense「有用性の低いコンテンツ」対策）
+const indexable = spots.length >= MIN_INDEXABLE_SPOTS && (lang === 'en' || lang === 'ja');
 
 const n = spots.length;
 // 地域ごとに確かめた「この地域について」（en・ja だけ）

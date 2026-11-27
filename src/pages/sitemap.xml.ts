@@ -15,6 +15,7 @@ export const GET: APIRoute = ({ site }) => {
     ...tiles.map((t) => t.path),
     'smoking/areas/',
     ...spotAreas().filter((g) => g.spots.length >= MIN_INDEXABLE_SPOTS).map((g) => `smoking/${g.area.slug}/`),
+    'guide/',
     ...guides.map((g) => `guide/${g.slug}/`),
     'how-to-use/',
     'about/',
@@ -22,7 +23,9 @@ export const GET: APIRoute = ({ site }) => {
   ])];
   const url = (code: string, path: string) => new URL(`/${code}/${path}`, site).href;
   const entries = paths.flatMap((path) => {
-    const langs = locales.filter((l) => langsForPath(path).includes(l.code));
+    // 喫煙所の地域ページは英語・日本語だけ載せる（ほかの言語は noindex）
+    const isArea = path.startsWith('smoking/') && path !== 'smoking/' && path !== 'smoking/areas/';
+    const langs = locales.filter((l) => langsForPath(path).includes(l.code) && (!isArea || l.code === 'en' || l.code === 'ja'));
     return langs.map((l) => {
       const alternates = langs
         .map((alt) => `    <xhtml:link rel="alternate" hreflang="${alt.hreflang}" href="${url(alt.code, path)}"/>`)
