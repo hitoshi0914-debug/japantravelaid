@@ -3,17 +3,23 @@
 import { Icon } from '../../../components/Icon';
 import Disclaimer from '../../../components/Disclaimer.astro';
 import { guides, type Guide } from '../../../data/guides';
+import { guidesJa } from '../../../data/guidesJa';
 import type { Lang } from '../../../i18n/locales';
 import Base from '../../../layouts/Base.astro';
 
 export function getStaticPaths() {
-  return guides.map((g) => ({ params: { lang: 'en', slug: g.slug }, props: { g } }));
+  // 英語は全部、日本語は src/data/guidesJa.ts に訳があるものだけ
+  return [
+    ...guides.map((g) => ({ params: { lang: 'en', slug: g.slug }, props: { g } })),
+    ...guides.filter((g) => guidesJa[g.slug]).map((g) => ({ params: { lang: 'ja', slug: g.slug }, props: { g: { ...g, ...guidesJa[g.slug] } } })),
+  ];
 }
 
 const { g } = Astro.props as { g: Guide };
 const lang = Astro.params.lang as Lang;
 const cardHref = `/${lang}/${g.card}`;
-const others = guides.filter((x) => x.slug !== g.slug);
+const ja = lang === 'ja';
+const others = guides.filter((x) => x.slug !== g.slug).map((x) => (ja ? { ...x, ...guidesJa[x.slug] } : x));
 ---
 
 <Base lang={lang} title={g.title} description={g.description} path={`guide/${g.slug}/`} backHref={`/${lang}/`}>
@@ -29,11 +35,11 @@ const others = guides.filter((x) => x.slug !== g.slug);
       </section>
     ))}
     <a class="cta" href={cardHref} data-ga="guide_card_click"><Icon name="pointer" /> {g.cardLabel}</a>
-    <p class="note">The card is free and works on your phone, even offline.</p>
+    <p class="note">{ja ? 'カードは無料で、スマホでオフラインでも使えます。' : 'The card is free and works on your phone, even offline.'}</p>
   </article>
   {g.medical && <Disclaimer lang={lang} />}
   <nav class="more">
-    <h2>Other situations</h2>
+    <h2>{ja ? 'ほかの場面' : 'Other situations'}</h2>
     <ul>{others.map((x) => <li><a href={`/${lang}/guide/${x.slug}/`}>{x.h1}</a></li>)}</ul>
   </nav>
 </Base>

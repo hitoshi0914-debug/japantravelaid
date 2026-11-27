@@ -1,18 +1,24 @@
 ---
 // 旅行ガイドの一覧（英語だけ）。記事は src/data/guides.ts。
 import { guides } from '../../../data/guides';
+import { guidesJa } from '../../../data/guidesJa';
 import type { Lang } from '../../../i18n/locales';
 import Base from '../../../layouts/Base.astro';
 
-export const getStaticPaths = () => [{ params: { lang: 'en' } }];
+export const getStaticPaths = () => [{ params: { lang: 'en' } }, { params: { lang: 'ja' } }];
 const lang = Astro.params.lang as Lang;
+const ja = lang === 'ja';
+const list = ja ? guides.filter((g) => guidesJa[g.slug]).map((g) => ({ ...g, ...guidesJa[g.slug] })) : guides;
+const T = ja
+  ? { title: '旅行中に困ったときのガイド', description: '訪日旅行者向けの実用ガイド。ドラッグストア、病気・けが、食物アレルギー、タクシー、電車、路線バス、美容院、ホテル、コンビニ、地震、お金、喫煙ルールなど。', h1: '旅行ガイド', lead: '訪日旅行者がよく困る場面を、短く実用的にまとめました。各ガイドの最後に、日本人スタッフに見せる無料のカードがあります。' }
+  : { title: 'Travel guides: when things go wrong in Japan', description: 'Practical guides for visitors to Japan: drugstores, getting sick or hurt, food allergies, taxis, trains, local buses, haircuts, hotels, convenience stores, earthquakes, money and smoking rules.', h1: 'Travel guides', lead: 'Short, practical guides to the situations visitors to Japan most often get stuck in. Each one ends with a free card you can show to Japanese staff.' };
 ---
 
-<Base lang={lang} title="Travel guides: when things go wrong in Japan" description="Practical guides for visitors to Japan: drugstores, getting sick or hurt, food allergies, taxis, trains, local buses, haircuts and smoking rules." path="guide/">
-  <h1>Travel guides</h1>
-  <p class="lead">Short, practical guides to the situations visitors to Japan most often get stuck in. Each one ends with a free card you can show to Japanese staff.</p>
+<Base lang={lang} title={T.title} description={T.description} path="guide/">
+  <h1>{T.h1}</h1>
+  <p class="lead">{T.lead}</p>
   <ul class="list">
-    {guides.map((g) => <li><a href={`/${lang}/guide/${g.slug}/`}><strong>{g.h1}</strong><small>{g.description}</small></a></li>)}
+    {list.map((g) => <li><a href={`/${lang}/guide/${g.slug}/`}><strong>{g.h1}</strong><small>{g.description}</small></a></li>)}
   </ul>
 </Base>
 
