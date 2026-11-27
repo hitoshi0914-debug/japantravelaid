@@ -226,4 +226,106 @@ export const guides: Guide[] = [
       },
     ],
   },
+  {
+    slug: 'sick-or-injured-in-japan',
+    card: 'medicine/emergency/',
+    cardLabel: 'Open the emergency guide',
+    medical: true,
+    title: 'Sick or injured in Japan: what to do',
+    description: 'When to call 119, when a clinic is enough, what to bring to a hospital in Japan, costs for visitors without Japanese insurance, and where to get help in English.',
+    h1: 'Sick or injured in Japan: what to do',
+    lead: 'Falling ill abroad is stressful, and Japanese hospitals work differently from many other countries. Here is how to decide where to go, what to bring and how to communicate.',
+    sections: [
+      {
+        h: 'Emergencies: call 119',
+        p: [
+          '119 is the number for both ambulances and the fire service. It is free from any phone, including mobiles and public phones. Say "kyūkyū desu" (救急です, "it is a medical emergency"), then give your location. If you do not speak Japanese, many fire departments can connect an interpreter, so stay on the line.',
+          'Ambulances in Japan are free of charge, but the hospital treatment afterwards is not. Our emergency card shows the key phrases and lets you show your address and symptoms in Japanese.',
+        ],
+      },
+      {
+        h: 'Not sure if it is an emergency? #7119',
+        p: [
+          'In Tokyo, Osaka and some other prefectures, #7119 is a medical advice line that helps you decide whether to call an ambulance or which hospital to go to. It is mostly in Japanese and not available everywhere. If you cannot get through and you are worried, call 119.',
+          'The Japan National Tourism Organization (JNTO) runs a 24-hour Japan Visitor Hotline for travellers, which can help in English and other languages with medical and other problems. Look up the current number on the JNTO website before you travel.',
+        ],
+      },
+      {
+        h: 'Clinic (クリニック) or hospital (病院)?',
+        p: [
+          'For minor illness or injury, start at a local clinic (kurinikku or 医院). Clinics specialise: 内科 (internal medicine) for colds and fever, 外科 or 整形外科 for injuries, 皮膚科 for skin, 眼科 for eyes, 耳鼻咽喉科 for ear, nose and throat, 歯科 for teeth.',
+          'Large hospitals often charge an extra fee (several thousand yen) if you come without a referral letter from a clinic, and waiting times can be long. Many clinics close on Sundays, public holidays and one weekday afternoon. Local "on-duty" clinics (休日当番医) cover holidays; ask your hotel front desk.',
+        ],
+      },
+      {
+        h: 'What to bring',
+        list: [
+          'Your passport',
+          'Travel insurance details (policy number and the insurer\'s emergency phone number)',
+          'Cash and a credit card: some clinics are cash only',
+          'A list of your medicines, allergies and medical conditions',
+          'Your hotel name and address in Japanese',
+        ],
+      },
+      {
+        h: 'Costs for visitors',
+        p: [
+          'Visitors without Japanese health insurance pay the full cost, and some hospitals charge foreign visitors more than the standard price. A simple clinic visit may cost a few thousand to over ten thousand yen; emergency care and hospital stays can be very expensive. Travel insurance that covers medical treatment is strongly recommended. Keep every receipt and ask for a medical certificate (診断書) if your insurer needs one.',
+        ],
+      },
+      {
+        h: 'At reception',
+        p: [
+          'You will usually fill in a questionnaire (問診票) about your symptoms, allergies and history. Ask for an English version: many clinics in tourist areas have one. Writing your symptoms, allergies and medicines in advance, or showing them on your phone, saves time for you and the staff.',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'smoking-rules-in-japan',
+    card: 'smoking/',
+    cardLabel: 'Open the smoking area map',
+    title: 'Smoking rules in Japan: where you can and cannot smoke',
+    description: 'Street smoking bans and fines, the indoor smoking rules for restaurants and bars, heated tobacco rooms, the legal age, and how to find a designated smoking area in Japan.',
+    h1: 'Where you can and cannot smoke in Japan',
+    lead: 'Japan has strict rules on where you may smoke, but they are different from many countries: smoking on the street is often banned, while designated smoking areas outdoors are common. Knowing the rules avoids fines and awkward moments.',
+    sections: [
+      {
+        h: 'No smoking on the street in many cities',
+        p: [
+          'Many cities and wards, including large parts of central Tokyo, Osaka and Kyoto, ban smoking while walking or on the street, and some areas fine people on the spot. Look for 路上喫煙禁止 (no smoking on the street) signs on the pavement and poles. Even where it is not banned, smoking while walking is considered rude.',
+          'Instead, use a designated smoking area (喫煙所, kitsuen-jo). These are often near station exits, in parks or next to convenience stores, sometimes as an enclosed booth.',
+        ],
+      },
+      {
+        h: 'Indoors: restaurants, bars and hotels',
+        p: [
+          'Since 2020, smoking indoors is banned in principle in restaurants, offices, shops and other public buildings. Smoking is only allowed in designated smoking rooms, and you may not eat there. Some rooms are for heated tobacco only (加熱式たばこ専用喫煙室), where eating and drinking may be allowed.',
+          'Some small bars and cafés that existed before the law can allow smoking if they display a sign at the entrance; minors are not allowed in. Hotels decide for themselves, and many have only non-smoking rooms.',
+        ],
+      },
+      {
+        h: 'Age, buying and heated tobacco',
+        p: [
+          'The legal age for smoking and buying tobacco in Japan is 20. Convenience stores sell cigarettes and heated tobacco sticks over the counter; tell staff the number shown on the shelf behind the counter, and they may ask you to confirm your age on a touch screen.',
+          'Heated tobacco is very popular in Japan and is treated much like cigarettes under street smoking bans. Liquid e-cigarettes are not sold with nicotine in Japan.',
+        ],
+      },
+      {
+        h: 'Manners',
+        list: [
+          'Smoke only in designated areas and put your butts in the ashtray provided.',
+          'Carry a portable ashtray (携帯灰皿) if you smoke outdoors.',
+          'Keep away from children and building entrances.',
+          'Follow local signs: rules differ from city to city and change over time.',
+        ],
+      },
+      {
+        h: 'Finding a smoking area',
+        p: [
+          'Our smoking area map shows public smoking areas near you, with data from OpenStreetMap and other sources. Spots can close or move, so please follow the signs on site, and use the report button if something is wrong.',
+        ],
+      },
+    ],
+  },
 ];

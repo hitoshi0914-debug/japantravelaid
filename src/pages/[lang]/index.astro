@@ -4,6 +4,7 @@
 import { Icon } from '../../components/Icon';
 import InstallHint from '../../components/InstallHint.astro';
 import Tile from '../../components/Tile.astro';
+import { guides } from '../../data/guides';
 import { tools } from '../../data/tools';
 import { langPaths, tr, type Lang } from '../../i18n/locales';
 import { ui } from '../../i18n/ui';
@@ -59,6 +60,14 @@ const groups = [
       {g.note && <p class="group-note">{tr(g.note, lang)}</p>}
     </section>
   ))}
+  {/* 旅行ガイド（読み物、英語だけ）。2026-11-27 AdSense「有用性の低いコンテンツ」対策で入口を作る */}
+  {lang === 'en' && (
+    <section class="guides">
+      <h2>Travel guides</h2>
+      <ul>{guides.map((g) => <li><a href={`/${lang}/guide/${g.slug}/`}>{g.h1}</a></li>)}</ul>
+      <a class="howto-link" href={`/${lang}/guide/`}>All guides</a>
+    </section>
+  )}
 </Base>
 
 <style>
@@ -76,5 +85,8 @@ const groups = [
   .howto-link { display: flex; justify-content: center; align-items: center; min-height: 44px; font-size: 0.85rem; }
   .tool-group h2 { margin: 12px 0 6px; font-size: 0.85rem; font-weight: 800; letter-spacing: 0.04em; color: var(--muted); text-transform: uppercase; }
   .tools { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .guides h2 { margin: 24px 0 8px; font-size: 0.85rem; font-weight: 800; color: var(--muted); }
+  .guides ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .guides li a { display: flex; align-items: center; min-height: 48px; padding: 8px 14px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); color: var(--text); text-decoration: none; font-size: 0.92rem; }
   .group-note { margin: 8px 0 0; padding: 8px 12px; border-radius: var(--radius); background: var(--medical-soft); font-size: 0.8rem; line-height: 1.45; }
 </style>
