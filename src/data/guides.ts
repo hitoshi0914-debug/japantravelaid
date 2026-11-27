@@ -328,4 +328,292 @@ export const guides: Guide[] = [
       },
     ],
   },
+  {
+    slug: 'hotel-front-desk-japan',
+    card: 'how-to-use/',
+    cardLabel: 'See how the point-and-show cards work',
+    title: 'Hotels in Japan: check-in rules and what the front desk can help with',
+    description: 'Why Japanese hotels copy your passport, check-in and check-out times, accommodation tax, luggage storage, and the many things the front desk can help visitors with.',
+    h1: 'Hotels in Japan: what to expect and how the front desk can help',
+    lead: 'The hotel front desk is often the most helpful place in Japan for a visitor in trouble. Knowing the local rules makes check-in smoother and helps you ask for the right kind of help.',
+    sections: [
+      {
+        h: 'Check-in and your passport',
+        p: [
+          'Hotels in Japan are required by law to record the passport details of guests who do not live in Japan, so staff will ask to see and copy your passport at check-in. This is normal and not a sign of suspicion.',
+          'Check-in usually starts around 15:00 and check-out is often 10:00 or 11:00. Many hotels will keep your luggage before check-in and after check-out, even if your room is not ready.',
+        ],
+      },
+      {
+        h: 'Accommodation tax and payment',
+        p: [
+          'Some cities, including Tokyo, Osaka and Kyoto, charge a small accommodation tax per person per night. It may be included in an online booking or collected at the desk. Ask if you are unsure what you have already paid.',
+        ],
+      },
+      {
+        h: 'What the front desk can help with',
+        list: [
+          'Writing your destination or the hotel address in Japanese for a taxi.',
+          'Calling a taxi, or telling you where the nearest taxi rank is.',
+          'Finding a nearby clinic, pharmacy or the local on-duty doctor at night or on a holiday.',
+          'Sending luggage ahead to your next hotel or the airport by delivery service (takkyubin).',
+          'Lending items such as phone chargers, umbrellas or adapters.',
+        ],
+      },
+      {
+        h: 'Japanese-style inns (ryokan) and hot springs',
+        p: [
+          'At a ryokan, take off your shoes at the entrance and do not walk on tatami mats in slippers. Dinner and breakfast are often served at set times, so tell staff in advance about allergies or a special diet. Shared hot-spring baths are used without swimwear after washing at the showers, and some still refuse guests with tattoos; ask before you book.',
+        ],
+      },
+      {
+        h: 'When staff do not speak English',
+        p: [
+          'Staff at smaller hotels may speak little English. Our cards for drugstores, restaurants, taxis and stations show what you need in clear Japanese, so you can point instead of explaining.',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'dentist-in-japan',
+    card: 'medicine/emergency/',
+    cardLabel: 'Open the emergency guide',
+    medical: true,
+    title: 'Toothache or broken tooth in Japan: how to see a dentist',
+    description: 'How dental clinics work in Japan, why you should call first, holiday dental services, costs for visitors without Japanese insurance and what to bring.',
+    h1: 'Toothache or broken tooth in Japan: seeing a dentist',
+    lead: 'Dental clinics (歯科, shika) are very common in Japan, but most work by appointment. Here is how to get seen quickly when something goes wrong with your teeth on holiday.',
+    sections: [
+      {
+        h: 'Finding a dentist',
+        p: [
+          'Look for signs saying 歯科 or デンタルクリニック (dental clinic). Most clinics are small, run by one or two dentists, and see patients by appointment. Calling first, or asking your hotel to call for you, is much more effective than walking in.',
+          'Many clinics close on Sundays, public holidays and one weekday. Large cities often run a holiday dental clinic (休日歯科診療所) or list on-duty dentists; your hotel or the local tourist information centre can help you find it.',
+        ],
+      },
+      {
+        h: 'What to tell the clinic',
+        list: [
+          'What happened: pain, swelling, a broken or lost filling, a broken tooth, or a problem with a crown or brace.',
+          'Since when, and whether you have a fever or difficulty swallowing.',
+          'Allergies, medicine you take and any medical conditions.',
+          'How long you will stay in Japan, so the dentist can plan a temporary or permanent treatment.',
+        ],
+      },
+      {
+        h: 'Costs and what to bring',
+        p: [
+          'Without Japanese health insurance you pay the full cost. A first visit with an X-ray and simple treatment may cost several thousand yen or more. Bring your passport, your travel insurance details and enough cash, as some clinics do not take cards. Ask for a receipt and a short report in English if your insurer needs one.',
+        ],
+      },
+      {
+        h: 'When it is an emergency',
+        p: [
+          'Severe swelling of the face or neck, difficulty breathing or swallowing, or a serious injury to the mouth after an accident need urgent care. Call 119. Our emergency guide shows what to say.',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'convenience-stores-japan',
+    card: 'allergy/',
+    cardLabel: 'Open the allergy & diet card',
+    title: 'Japanese convenience stores (konbini): a visitor’s guide',
+    description: 'What you can do at a Japanese konbini: food, ATMs that take foreign cards, paying, sending luggage, toilets, rubbish, and how to check ingredients if you have allergies.',
+    h1: 'Japanese convenience stores: what you can do there',
+    lead: 'Convenience stores (コンビニ, konbini) are open around the clock almost everywhere in Japan. For visitors they are a lifeline: food, cash, tickets, toiletries and more, all in one place.',
+    sections: [
+      {
+        h: 'Food and drink',
+        p: [
+          'Konbini sell rice balls (onigiri), sandwiches, boxed meals (bento), hot snacks at the counter, coffee and drinks. When you buy a bento, staff may ask "atatamemasu ka?" (shall I heat it up?). Nod for yes or shake your head for no.',
+          'Ingredient labels are in Japanese only. Packaged food must show the main allergens, but some others are optional. If you have an allergy or follow a special diet, our allergy card helps you ask staff to check.',
+        ],
+      },
+      {
+        h: 'Cash and payment',
+        p: [
+          'ATMs in many konbini, especially Seven Bank ATMs in 7-Eleven, accept many foreign cards and have English menus. Most stores accept credit cards, IC transport cards and QR payments as well as cash. You can also top up an IC card at the register in many stores.',
+        ],
+      },
+      {
+        h: 'Other services',
+        list: [
+          'Buying tickets for events, museums and some buses.',
+          'Sending parcels and luggage by delivery service.',
+          'Printing and copying from a smartphone.',
+          'Toiletries, phone chargers, umbrellas and basic medical supplies such as plasters.',
+        ],
+      },
+      {
+        h: 'Manners and practical tips',
+        list: [
+          'Plastic bags cost a few yen; say "fukuro onegaishimasu" if you want one.',
+          'Public rubbish bins are rare in Japan. Many konbini have bins for things bought there; otherwise carry your rubbish with you.',
+          'Some stores let customers use the toilet; ask first and buy something if you can.',
+          'Eating while walking is often frowned upon. Eat in the store’s eat-in area or just outside.',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'earthquake-in-japan',
+    card: 'medicine/emergency/',
+    cardLabel: 'Open the emergency guide',
+    title: 'Earthquakes and disasters in Japan: what visitors should do',
+    description: 'What to do in an earthquake in Japan, earthquake and tsunami warnings, evacuation sites, the Safety tips app, emergency numbers and how to let family know you are safe.',
+    h1: 'If an earthquake or disaster happens while you are in Japan',
+    lead: 'Japan has many earthquakes, and most are small. Buildings and transport are designed for them, and warnings are fast. A few minutes of preparation means you will know what to do if a strong one happens.',
+    sections: [
+      {
+        h: 'Before you need it',
+        list: [
+          'Install the free "Safety tips" app from the Japan Tourism Agency. It sends earthquake, tsunami and weather warnings in several languages.',
+          'Check where the emergency exits are in your hotel.',
+          'Keep your phone charged and carry a little cash, water and any medicine you need.',
+          'Save your hotel address in Japanese on your phone.',
+        ],
+      },
+      {
+        h: 'During the shaking',
+        p: [
+          'Phones and TVs may sound an Earthquake Early Warning alarm (緊急地震速報) a few seconds before strong shaking. Protect your head, get under a sturdy table if you can, and stay away from windows and shelves. Do not run outside while the ground is shaking, as glass and signs may fall.',
+          'On a train, hold on; trains stop automatically. In a lift, press all floor buttons and get out at the first stop.',
+        ],
+      },
+      {
+        h: 'After the shaking',
+        p: [
+          'Follow staff instructions and announcements. Trains may stop for safety checks for some time. If you are near the coast and hear a tsunami warning (津波警報), move to high ground or the upper floors of a tall concrete building immediately; look for tsunami evacuation signs.',
+          'Evacuation sites (避難場所) and shelters (避難所), often schools and parks, are marked with green signs. They are open to everyone, including visitors.',
+        ],
+      },
+      {
+        h: 'Emergency numbers and staying in touch',
+        p: [
+          'Call 119 for fire and ambulance and 110 for police. Phone lines may be busy after a big earthquake. Use text messages and social media to tell family you are safe, and check NHK World-Japan for news in English. The disaster message dial 171 lets you record a voice message for others to hear.',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'lost-items-in-japan',
+    card: 'train/',
+    cardLabel: 'Open the station card',
+    title: 'Lost something in Japan? How to get it back',
+    description: 'What to do if you lose your wallet, phone, passport or bag in Japan: police boxes (koban), train and taxi lost-and-found, online search and lost passports.',
+    h1: 'Lost your wallet, phone or bag in Japan?',
+    lead: 'Japan has a strong habit of handing in lost property, so there is a good chance you will get your item back. The key is to report it quickly to the right place.',
+    sections: [
+      {
+        h: 'Where to report',
+        list: [
+          'On a train or at a station: tell station staff as soon as possible. Give the line, direction, time and, if you know it, the car number.',
+          'In a taxi: call the taxi company. The receipt shows the company name and car number.',
+          'In a shop, restaurant or hotel: ask the staff there first.',
+          'Anywhere else: go to a police box (交番, koban) or police station.',
+        ],
+      },
+      {
+        h: 'At the police box',
+        p: [
+          'Police will ask you to fill in a lost property report (遺失届) with a description of the item and where you think you lost it. Keep the report number: you will need it to follow up, and your travel insurer may ask for it. Items handed in to the police are collected at a lost property centre, and many prefectures let you search online.',
+        ],
+      },
+      {
+        h: 'Lost passport',
+        p: [
+          'Report a lost passport to the police and get a report number, then contact your embassy or consulate for an emergency travel document. Keep a photo or copy of your passport on your phone to make this easier.',
+        ],
+      },
+      {
+        h: 'Explaining without Japanese',
+        p: [
+          'Station staff and police are used to helping visitors, but many speak little English. Our station card shows common problems, including a lost item, in Japanese so you can point to what happened.',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'sim-wifi-japan',
+    card: 'how-to-use/',
+    cardLabel: 'See how the offline cards work',
+    title: 'Staying connected in Japan: eSIM, pocket Wi-Fi and free Wi-Fi',
+    description: 'Choosing between an eSIM, a prepaid SIM and pocket Wi-Fi in Japan, free Wi-Fi spots, why a phone number can matter, and how to prepare for times without signal.',
+    h1: 'Staying connected in Japan: eSIM, SIM and Wi-Fi',
+    lead: 'Maps, translation and transport apps make travelling in Japan much easier, so most visitors want mobile data. Here are the main options and what to prepare in case you lose signal.',
+    sections: [
+      {
+        h: 'Your options',
+        list: [
+          'eSIM: bought online before you travel and activated on arrival. Convenient if your phone supports it.',
+          'Prepaid data SIM: sold at airports and electronics shops. Usually data only, without a Japanese phone number.',
+          'Pocket Wi-Fi: a small rented router, picked up at the airport or delivered to your hotel. Good for groups sharing one connection; it needs charging every day.',
+          'Roaming with your home provider: easy but can be expensive; check the price first.',
+        ],
+      },
+      {
+        h: 'Free Wi-Fi',
+        p: [
+          'Free Wi-Fi is available at many airports, large stations, convenience stores, cafés and hotels, but it may require a short registration and can be slow or limited in time. It is better as a backup than as your only connection.',
+        ],
+      },
+      {
+        h: 'Do you need a phone number?',
+        p: [
+          'Most data-only options do not give you a Japanese phone number. That is fine for apps and messaging, but restaurants, taxis and clinics sometimes want a number to call you back. Your hotel phone number can help in these cases.',
+        ],
+      },
+      {
+        h: 'Prepare for no signal',
+        p: [
+          'Signal can be weak in the mountains, in some underground areas and after disasters. Download offline maps, save your hotel address in Japanese, and open the Japan Travel Aid cards once while you are online: after that they keep working offline, so you can still show staff what you need.',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'money-cash-japan',
+    card: 'taxi/',
+    cardLabel: 'Open the taxi card',
+    title: 'Money in Japan: cash, cards, IC cards and ATMs',
+    description: 'How much cash you need in Japan, where credit cards and IC cards work, ATMs that accept foreign cards, tax-free shopping and why there is no tipping.',
+    h1: 'Paying in Japan: cash, cards and IC cards',
+    lead: 'Japan has become much easier to pay in with cards and phones, but cash is still important in some places. A little planning avoids awkward moments at the till.',
+    sections: [
+      {
+        h: 'Where cards work, and where they do not',
+        p: [
+          'Credit cards are accepted at most hotels, department stores, chain restaurants, convenience stores and large shops, and in most city taxis. Small family-run restaurants, local shops, shrines and temples, rural buses and some clinics may accept cash only. Carry some cash every day, especially outside big cities.',
+        ],
+      },
+      {
+        h: 'IC transport cards',
+        p: [
+          'Rechargeable IC cards for trains and buses can also be used in many convenience stores, vending machines and shops. Some can be added to a smartphone wallet. Top them up with cash at station machines or convenience store registers.',
+        ],
+      },
+      {
+        h: 'Getting cash',
+        p: [
+          'ATMs in 7-Eleven stores and Japan Post (post office) ATMs accept many foreign cards and have English menus. Some bank ATMs do not accept foreign cards. Your own bank may charge a fee for overseas withdrawals.',
+        ],
+      },
+      {
+        h: 'Paying at the till',
+        list: [
+          'Put cash or your card on the small tray at the register instead of handing it over directly.',
+          'There is no tipping in Japan. Leaving extra money may cause staff to run after you to return it.',
+          'Many shops offer tax-free shopping to short-term visitors who show their passport and spend over a set amount.',
+          'Coins are used a lot: 1, 5, 10, 50, 100 and 500 yen. A coin purse is useful.',
+        ],
+      },
+      {
+        h: 'Telling staff how you will pay',
+        p: [
+          'In taxis and small shops, ask before you order or start the ride if you do not have cash. Our taxi card includes phrases such as "Can I pay by card?" in Japanese.',
+        ],
+      },
+    ],
+  },
 ];
