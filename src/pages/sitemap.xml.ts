@@ -24,7 +24,8 @@ export const GET: APIRoute = ({ site }) => {
   const url = (code: string, path: string) => new URL(`/${code}/${path}`, site).href;
   const entries = paths.flatMap((path) => {
     // 喫煙所の地域ページは英語・日本語だけ載せる（ほかの言語は noindex）
-    const isArea = path.startsWith('smoking/') && path !== 'smoking/' && path !== 'smoking/areas/';
+    // 喫煙所の地域ページと市販薬のカテゴリページは英語・日本語だけ（ほかの言語は noindex）
+    const isArea = (path.startsWith('smoking/') && path !== 'smoking/' && path !== 'smoking/areas/') || path.startsWith('medicine/category/');
     const langs = locales.filter((l) => langsForPath(path).includes(l.code) && (!isArea || l.code === 'en' || l.code === 'ja'));
     return langs.map((l) => {
       const alternates = langs

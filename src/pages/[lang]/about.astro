@@ -167,11 +167,14 @@ const C = {
   },
 }[lang];
 const title = tr(ui.about, lang);
+const OP: Partial<Record<Lang, string>> = { en: 'Operated by', ja: '運営', ko: '운영', 'zh-tw': '營運', 'zh-cn': '运营', de: 'Betreiber', fr: 'Exploité par', it: 'Gestito da', es: 'Operado por' };
 ---
 
 <Base lang={lang} title={title} path="about/">
   <h1>{title}</h1>
   <p>{C.intro}</p>
+  {/* 運営者（2026-11-27 ユーザー了承。AdSense の信頼性対策）。メールアドレスは出さない */}
+  <p class="operator"><strong>{OP[lang] ?? OP.en}:</strong> 株式会社山口商店 (Yamaguchi Shoten Co., Ltd.), Japan</p>
 
   <h2>{C.smokingH}</h2>
   <ul>{C.smoking.map((t) => <li>{t}</li>)}</ul>
