@@ -5,6 +5,7 @@ import { Icon } from '../../components/Icon';
 import InstallHint from '../../components/InstallHint.astro';
 import Tile from '../../components/Tile.astro';
 import { guides } from '../../data/guides';
+import { guidesJa } from '../../data/guidesJa';
 import { tools } from '../../data/tools';
 import { langPaths, tr, type Lang } from '../../i18n/locales';
 import { ui } from '../../i18n/ui';
@@ -61,11 +62,11 @@ const groups = [
     </section>
   ))}
   {/* 旅行ガイド（読み物、英語だけ）。2026-11-27 AdSense「有用性の低いコンテンツ」対策で入口を作る */}
-  {lang === 'en' && (
+  {(lang === 'en' || lang === 'ja') && (
     <section class="guides">
-      <h2>Travel guides</h2>
-      <ul>{guides.map((g) => <li><a href={`/${lang}/guide/${g.slug}/`}>{g.h1}</a></li>)}</ul>
-      <a class="howto-link" href={`/${lang}/guide/`}>All guides</a>
+      <h2>{lang === 'ja' ? '旅行ガイド' : 'Travel guides'}</h2>
+      <ul>{guides.map((g) => <li><a href={`/${lang}/guide/${g.slug}/`}>{lang === 'ja' ? guidesJa[g.slug]?.h1 ?? g.h1 : g.h1}</a></li>)}</ul>
+      <a class="howto-link" href={`/${lang}/guide/`}>{lang === 'ja' ? 'ガイドの一覧' : 'All guides'}</a>
     </section>
   )}
 </Base>

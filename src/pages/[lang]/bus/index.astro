@@ -27,7 +27,7 @@ const C = {
 >
   <h1 class="page-title"><Icon name="bus" size={26} className="title-icon" /> {C.title}</h1>
   <p class="lead">{C.lead}</p>
-  {lang === 'en' && <p class="guide-link"><a href="/en/guide/local-bus-japan-how-to/">When to use this card →</a></p>}
+  {(lang === 'en' || lang === 'ja') && <p class="guide-link"><a href={`/${lang}/guide/local-bus-japan-how-to/`}>{lang === 'ja' ? 'このカードを使う場面 →' : 'When to use this card →'}</a></p>}
   <BusApp client:load lang={lang} />
 </Base>
 

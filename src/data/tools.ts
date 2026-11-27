@@ -56,6 +56,6 @@ export const tools: (Tile & { langs: readonly Lang[] })[] = [
 /** 言語の後ろのパス（例: "medicine/pharmacist/"）のページが生成される言語。 */
 export function langsForPath(path: string): readonly Lang[] {
   // カードの説明ページ（/en/guide/）は英語だけ
-  if (path.startsWith('guide/')) return ['en'];
+  if (path.startsWith('guide/')) return ['en', 'ja'];
   return tools.find((t) => path.startsWith(t.path))?.langs ?? allLangs();
 }
